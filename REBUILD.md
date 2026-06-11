@@ -603,4 +603,42 @@ run build/tests, update todos + this file's "Progress log".
     (b) Escape when overlay closed (onEscape called without swallow so page keeps
     Escape); (c) pointer-lock + contextmenu suppression on xbox.com specifically
     (CSP/composedPath across the play iframe). Next: P7 features / P8 hygiene.
+
+- 2026-06-12: **P8 docs + repo hygiene COMPLETE — gates green.** Docs/hygiene
+  polish only; no runtime/build-behavior/src code changed.
+  - **README.md** rewritten for the new architecture (playful voice kept;
+    "Controller diss" + Disclaimer preserved verbatim). Install from source now
+    documents `npm install` → `npm run build` → Load unpacked the **`dist/`**
+    folder (not repo root), plus `npm run dev` for HMR. Bindings table verified
+    against `controller-actions.ts` defaultInputs (Right click→LT/Mouse2, Left
+    click→RT/Mouse0, etc.); toggle/show-binds rows reworded to "configurable
+    combo (default F8/F9)". Added a concise Architecture section (TS + Vite/CRXJS
+    + Svelte 5 + Tailwind v4, modular core/content/ui, 64 unit tests + CI).
+    Packaging switched to `npm run zip`. QoL note added (radial diagonal clamp,
+    bundled font, profile import/export, remap conflict warning). No unimplemented
+    features documented (per-game profiles / X-Y sensitivity / HUD reposition /
+    live aim pad deliberately omitted — not yet implemented).
+  - **CHANGELOG.md** created (Keep a Changelog). `[Unreleased]` summarizes the
+    rewrite under Added/Changed/Fixed sourced from this Progress log; `[1.0.0]`
+    referenced as the prior release.
+  - **CI** (`.github/workflows/ci.yml`): reviewed — coherent and correct
+    (checkout@v4, setup-node@v4 node 22 + npm cache, `npm ci`, format:check,
+    typecheck, test, build, upload-artifact@v4 of dist/). All referenced scripts
+    exist in package.json. No change needed.
+  - **Packaging**: `scripts/zip.mjs` already zipped `dist/` (not source) but
+    emitted a fixed `padm0nk.zip`. Fixed to version the name from package.json →
+    `padm0nk-<version>.zip`. `npm run zip` produces `padm0nk-1.0.0.zip`; `unzip -l`
+    top level = `manifest.json`, `assets/` (compiled JS + bind-icons SVGs),
+    `icons/`, built `src/{popup,options}/index.html` shells — **zero `.ts`/`.svelte`
+    source**. Verified via `unzip -l | grep '\.ts$'` → none.
+  - **docs/** reviewed: `index.html` + `privacy.html` are general marketing /
+    privacy copy with no build/install steps — accurate, left untouched.
+  - **Hygiene**: `.gitignore` covers `dist/`, `node_modules/`, `*.zip`, `.local/`;
+    `.prettierignore` covers `*.md` + `docs/` (README/CHANGELOG prettier-ignored,
+    gate satisfied; ci.yml is not ignored and stays prettier-clean). `git
+    status --short` = ` M README.md`, ` M scripts/zip.mjs`, `?? CHANGELOG.md` —
+    no stray junk; zip gitignored. Nothing committed (left for human).
+  - **Gate evidence**: `npm run format` then `npm run format:check` → "All matched
+    files use Prettier code style!". `npm run build` → `✓ built in 1.06s`. Did not
+    touch code, so typecheck/test untouched (still 64 green from P6).
 ```
