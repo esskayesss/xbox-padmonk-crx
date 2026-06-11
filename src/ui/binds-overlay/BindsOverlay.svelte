@@ -59,6 +59,7 @@
 	const rightRows: Row[] = [
 		{ icon: 'right-trigger.svg', label: 'RT', action: { t: 'b', i: 7 } },
 		{ icon: 'right-bumper.svg', label: 'RB', action: { t: 'b', i: 5 } },
+		{ icon: 'right-stick.svg', label: 'Right stick', value: 'Mouse move' },
 		{ icon: 'right-stick-press.svg', label: 'R3', action: { t: 'b', i: 11 } },
 		{ icon: 'a.svg', label: 'A', action: { t: 'b', i: 0 } },
 		{ icon: 'b.svg', label: 'B', action: { t: 'b', i: 1 } },
@@ -66,9 +67,8 @@
 		{ icon: 'y.svg', label: 'Y', action: { t: 'b', i: 3 } },
 	];
 
-	// Docked under the controller art (center card): right stick + system buttons.
-	const centerChips: Row[] = [
-		{ icon: 'right-stick.svg', label: 'Right stick', value: 'Mouse move' },
+	// System buttons docked at the bottom of the center controller card.
+	const systemChips: Row[] = [
 		{ icon: 'view.svg', label: 'View', action: { t: 'b', i: 8 } },
 		{ icon: 'guide.svg', label: 'Guide', action: { t: 'b', i: 16 } },
 		{ icon: 'menu.svg', label: 'Menu', action: { t: 'b', i: 9 } },
@@ -238,9 +238,9 @@
 					{/each}
 				</div>
 
-				<!-- CENTER: controller art + right stick / system buttons docked below -->
+				<!-- CENTER: controller art on top; system buttons + aim bar docked bottom -->
 				<div
-					class="min-w-0 rounded-[22px] border p-3 max-[900px]:order-first"
+					class="flex min-w-0 flex-col rounded-[22px] border p-3 max-[900px]:order-first"
 					style="border-color:rgba(255,255,255,.08);background:radial-gradient(circle at 50% 18%, color-mix(in srgb, var(--color-pad-green) 22%, transparent), transparent 42%), rgba(255,255,255,.035);"
 				>
 					<div
@@ -257,35 +257,49 @@
 							/>
 						{/if}
 					</div>
-					<!-- Right stick + system buttons (View/Guide/Menu) docked at card bottom -->
-					<div class="mt-2.5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-						{#each centerChips as chip (chip.label)}
-							<div
-								class="grid min-h-[44px] grid-cols-[28px_1fr] items-center gap-2 rounded-[13px] border px-2.5 py-[7px]"
-								style="border-color:rgba(255,255,255,.09);background:rgba(255,255,255,.045);"
-							>
-								<div class="grid h-7 w-7 place-items-center">
+
+					<!-- Docked at the bottom of the card: system buttons + aim bar -->
+					<div class="mt-auto grid gap-2.5 pt-3">
+						<!-- View / Guide / Menu strip -->
+						<div
+							class="flex justify-center gap-2 rounded-2xl border p-[7px] backdrop-blur-[10px]"
+							style="border-color:color-mix(in srgb, var(--color-pad-accent) 18%, transparent);background:rgba(5,9,12,.72);box-shadow:0 12px 28px rgba(0,0,0,.34);"
+						>
+							{#each systemChips as chip (chip.label)}
+								<div
+									class="grid min-w-[100px] grid-cols-[24px_auto] items-center gap-[7px] rounded-[11px] border px-2 py-[5px]"
+									style="border-color:rgba(255,255,255,.08);background:rgba(255,255,255,.045);"
+								>
 									{#if bindIconBase}
 										<img
 											src={bindIconBase + chip.icon}
 											alt={chip.label}
-											class="max-h-[26px] max-w-[26px] object-contain"
+											class="h-[22px] w-[22px] object-contain"
 											style="filter:drop-shadow(0 2px 4px rgba(0,0,0,.45));"
 										/>
 									{:else}
 										<span class="text-pad-muted text-xs" aria-hidden="true">•</span>
 									{/if}
+									<div class="min-w-0">
+										<span class="text-pad-muted block text-[9px] tracking-[0.09em] uppercase">
+											{chip.label}
+										</span>
+										<span class="text-pad-text block truncate text-xs">{rowValue(chip)}</span>
+									</div>
 								</div>
-								<div class="min-w-0">
-									<span class="text-pad-muted block text-[10px] tracking-[0.09em] uppercase">
-										{chip.label}
-									</span>
-									<span class="text-pad-text block truncate text-sm leading-[1.2]">
-										{rowValue(chip)}
-									</span>
-								</div>
-							</div>
-						{/each}
+							{/each}
+						</div>
+
+						<!-- Aim bar -->
+						<div
+							class="flex items-center justify-between gap-3 rounded-[14px] border px-3 py-2.5"
+							style="border-color:color-mix(in srgb, var(--color-pad-accent) 19%, transparent);background:color-mix(in srgb, var(--color-pad-green) 18%, transparent);"
+						>
+							<span class="text-pad-accent text-xs uppercase">Right stick aim</span>
+							<span class="text-pad-text text-right text-sm"
+								>Mouse movement while pointer locked</span
+							>
+						</div>
 					</div>
 				</div>
 
