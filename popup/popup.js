@@ -1,4 +1,4 @@
-// PadKey popup.js — reads/writes the config in chrome.storage.sync.
+// padm0nk popup.js — reads/writes the config in chrome.storage.sync.
 
 const DEFAULTS = {
 	enabled: true,

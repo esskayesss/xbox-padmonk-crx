@@ -1,8 +1,8 @@
-// PadKey bridge.js — isolated content-script world.
+// padm0nk bridge.js — isolated content-script world.
 // Has chrome.* APIs; relays stored config into the MAIN-world inject.js.
 (() => {
 	function post(config) {
-		window.postMessage({ __padkey: "config", config: config || {} }, "*");
+		window.postMessage({ __padm0nk: "config", config: config || {} }, "*");
 	}
 
 	// initial load: local is the fast/live store; sync is fallback for old installs.

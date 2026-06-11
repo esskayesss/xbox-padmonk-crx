@@ -1,9 +1,9 @@
-// PadKey inject.js — runs in the page's MAIN world at document_start.
+// padm0nk inject.js — runs in the page's MAIN world at document_start.
 // Overrides the Gamepad API so xCloud (and gamepad testers) see a virtual
 // Xbox controller driven by keyboard + mouse. No drivers, no native code.
 (() => {
-	if (window.__padkeyInstalled) return;
-	window.__padkeyInstalled = true;
+	if (window.__padm0nkInstalled) return;
+	window.__padm0nkInstalled = true;
 
 	// ---- Standard gamepad layout (W3C "standard" mapping) ----
 	// buttons: 0 A,1 B,2 X,3 Y,4 LB,5 RB,6 LT,7 RT,8 View,9 Menu,
@@ -168,7 +168,7 @@
 	// ---- Build a spec-shaped Gamepad snapshot on demand ----
 	function snapshot(index = 0) {
 		return {
-			id: "PadKey Virtual Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)",
+			id: "padm0nk Virtual Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)",
 			index,
 			connected: state.connected,
 			mapping: "standard",
@@ -219,7 +219,7 @@
 			value: getGamepadsOverride,
 		});
 	} catch (e) {
-		console.warn("[PadKey] failed to override getGamepads", e);
+		console.warn("[padm0nk] failed to override getGamepads", e);
 	}
 
 	function fireConnect() {
@@ -341,8 +341,8 @@
 	}
 
 	function bindKeyboardGuards(target) {
-		if (!target || target.__padkeyKeyboardGuards) return;
-		target.__padkeyKeyboardGuards = true;
+		if (!target || target.__padm0nkKeyboardGuards) return;
+		target.__padm0nkKeyboardGuards = true;
 		target.addEventListener("keydown", (e) => onKey(e, true), true);
 		target.addEventListener("keypress", onKeyPress, true);
 		target.addEventListener("keyup", (e) => onKey(e, false), true);
@@ -459,7 +459,7 @@
 		}
 		hudEl.style.color = config.enabled ? "#9fef7f" : "#888";
 		hudEl.textContent =
-			`PadKey ${config.enabled ? "ON" : "OFF"}  ·  aim ${pointerLocked ? "LOCKED" : "click to lock"}\n` +
+			`padm0nk ${config.enabled ? "ON" : "OFF"}  ·  aim ${pointerLocked ? "LOCKED" : "click to lock"}\n` +
 			`${comboLabel(currentToggleCombo())} toggle · ${comboLabel(currentHelpCombo())} binds · Esc release mouse`;
 	}
 
@@ -506,7 +506,7 @@
 
 	function helpText() {
 		return [
-			"🎮 PadKey bindings",
+			"🎮 padm0nk bindings",
 			"────────────────────────────────",
 			`🕹️  Move          ${inputsForAction({ t: "a", a: 1, v: -1 })}/${inputsForAction({ t: "a", a: 0, v: -1 })}/${inputsForAction({ t: "a", a: 1, v: 1 })}/${inputsForAction({ t: "a", a: 0, v: 1 })}  (W/A/S/D style)`,
 			"🎯  Aim           Mouse movement (pointer locked)",
@@ -528,7 +528,7 @@
 			helpLine("D-pad ←", "⬅️", { t: "b", i: 14 }),
 			helpLine("D-pad →", "➡️", { t: "b", i: 15 }),
 			"────────────────────────────────",
-			`${comboLabel(currentToggleCombo())} toggle PadKey`,
+			`${comboLabel(currentToggleCombo())} toggle padm0nk`,
 			`${comboLabel(currentHelpCombo())} show/hide this · Esc close`,
 		].join("\n");
 	}
@@ -575,7 +575,7 @@
 	window.addEventListener("message", (e) => {
 		if (e.source !== window) return;
 		const d = e.data;
-		if (!d || d.__padkey !== "config") return;
+		if (!d || d.__padm0nk !== "config") return;
 		config = Object.assign(structuredClone(DEFAULT_CONFIG), d.config || {});
 		if (d.config && d.config.bindings) config.bindings = d.config.bindings;
 		hud();
@@ -585,5 +585,5 @@
 	if (document.body) hud();
 	else document.addEventListener("DOMContentLoaded", hud, { once: true });
 
-	console.log("[PadKey] installed — keyboard+mouse → virtual Xbox controller");
+	console.log("[padm0nk] installed — keyboard+mouse → virtual Xbox controller");
 })();

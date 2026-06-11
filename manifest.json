@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "PadKey — Keyboard & Mouse for xCloud",
+  "name": "padm0nk — Keyboard & Mouse for xCloud",
   "version": "1.0.0",
   "description": "Play Xbox Cloud Gaming with mouse + keyboard by emulating an Xbox controller via the Gamepad API. Free, no drivers.",
   "minimum_chrome_version": "111",
@@ -16,7 +16,7 @@
     "open_in_tab": true
   },
   "action": {
-    "default_title": "PadKey",
+    "default_title": "padm0nk",
     "default_popup": "popup/popup.html",
     "default_icon": {
       "16": "icons/icon-16.png",

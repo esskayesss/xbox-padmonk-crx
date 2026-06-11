@@ -1,4 +1,4 @@
-// PadKey options.js — full remapping UI backed by chrome.storage.sync.
+// padm0nk options.js — full remapping UI backed by chrome.storage.sync.
 
 // Must mirror DEFAULT_CONFIG in src/inject.js.
 const DEFAULTS = {

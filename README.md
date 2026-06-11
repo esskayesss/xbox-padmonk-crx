@@ -1,6 +1,6 @@
-# 🎮 PadKey — Keyboard & Mouse for Xbox Cloud Gaming
+# 🎮 padm0nk — Keyboard & Mouse for Xbox Cloud Gaming
 
-Play **Xbox Cloud Gaming (xCloud)** with a mouse and keyboard. PadKey emulates an
+Play **Xbox Cloud Gaming (xCloud)** with a mouse and keyboard. padm0nk emulates an
 Xbox controller **inside the browser** by overriding the Gamepad API on the xCloud
 page — so it works **on macOS and Windows identically**, with:
 
@@ -25,9 +25,9 @@ Mouse → right stick (aim), WASD → left stick, keys/clicks → buttons.
 
 1. Open <https://hardwaretester.com/gamepad> (or gamepad-tester.com).
 2. Press **any mapped key** (e.g. `Space`) — a controller should appear:
-   *"PadKey Virtual Xbox 360 Controller ... STANDARD GAMEPAD"*.
+   *"padm0nk Virtual Xbox 360 Controller ... STANDARD GAMEPAD"*.
 3. Press WASD → left stick moves. Click the page → mouse locks → move mouse →
-   right stick moves. `Esc` releases the mouse. `F8` toggles PadKey on/off.
+   right stick moves. `Esc` releases the mouse. `F8` toggles padm0nk on/off.
    `F9` shows/hides the in-game keybind overlay.
 
 If the pad shows up and sticks/buttons respond, you're good for xCloud.
@@ -78,7 +78,7 @@ Config changes apply live to open xCloud/tester tabs. If a tab somehow misses an
 | Shift / C | L3 / R3 |
 | Tab / Enter / Backquote | View / Menu / Guide |
 | Arrows or 1-4 | D-pad |
-| F8 | Toggle PadKey (configurable combo) |
+| F8 | Toggle padm0nk (configurable combo) |
 | F9 | Show/hide keybind overlay (configurable combo) |
 
 ## How it works
@@ -98,12 +98,12 @@ with `chrome.storage.sync` kept as a debounced backup.
 - xCloud occasionally changes its input handling; an update can temporarily break
   injection until the extension is updated.
 - If xCloud is set to its built-in **Native Mouse & Keyboard** mode, it bypasses the
-  gamepad layer — keep the controller input mode selected for PadKey to work.
+  gamepad layer — keep the controller input mode selected for padm0nk to work.
 
 ## Packaging & publishing
 
 ```sh
-./scripts/pack.sh   # writes dist/padkey-<version>.zip (runtime files only)
+./scripts/pack.sh   # writes dist/padm0nk-<version>.zip (runtime files only)
 ```
 
 Upload the zip to the Chrome Web Store / Edge Add-ons. The privacy policy lives in
@@ -112,6 +112,6 @@ source: `/docs`), giving a public URL to paste into the store dashboard.
 
 ## Disclaimer
 
-PadKey is an independent tool. It is **not affiliated with, endorsed by, or sponsored
+padm0nk is an independent tool. It is **not affiliated with, endorsed by, or sponsored
 by Microsoft**. Xbox is a trademark of Microsoft Corporation. No data is collected or
 transmitted — see [`docs/privacy.html`](docs/privacy.html).
