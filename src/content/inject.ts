@@ -22,7 +22,7 @@ import {
 } from '../core/gamepad-state';
 import { step } from '../core/mapper';
 import { allBindsConfigured } from '../core/controller-actions';
-import type { Action, Config } from '../core/types';
+import type { Config } from '../core/types';
 import {
 	mountHud,
 	mountOverlay,
@@ -114,8 +114,7 @@ function main(): void {
 		toggleCombo: config.toggleCombo,
 		helpCombo: config.helpCombo,
 		onClose: closeOverlay,
-		onBind: bindInOverlay,
-		onUnbind: unbindInOverlay,
+		onConfigure: openOptions,
 	});
 
 	function mountUi(): void {
@@ -242,21 +241,9 @@ function main(): void {
 	function persistEnabled(): void {
 		window.postMessage({ __padm0nk: 'set-enabled', enabled: config.enabled }, '*');
 	}
-	function bindInOverlay(action: Action, inputId: string): void {
-		const next: Config = {
-			...config,
-			bindings: { ...config.bindings, [inputId]: { ...action } },
-		};
-		config = normalizeConfig(next);
-		window.postMessage({ __padm0nk: 'bind', action, inputId }, '*');
-		refreshUi();
-	}
-	function unbindInOverlay(inputId: string): void {
-		const bindings = { ...config.bindings };
-		delete bindings[inputId];
-		config = normalizeConfig({ ...config, bindings });
-		window.postMessage({ __padm0nk: 'unbind', inputId }, '*');
-		refreshUi();
+	// Open the advanced settings page (relayed isolated-world → service worker).
+	function openOptions(): void {
+		window.postMessage({ __padm0nk: 'open-options' }, '*');
 	}
 
 	// 7. Config bridge (isolated world → MAIN). Asset URLs arrive ONLY here.

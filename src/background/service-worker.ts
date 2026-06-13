@@ -40,3 +40,11 @@ chrome.storage.onChanged.addListener((changes, area) => {
 		void setActionIcon(normalizeConfig(changes.config.newValue).enabled);
 	}
 });
+
+// Open the advanced settings page on request (the binds overlay links here).
+// openOptionsPage isn't exposed to content scripts, so the bridge relays here.
+chrome.runtime.onMessage.addListener((msg) => {
+	if (msg?.__padm0nk === 'open-options') {
+		void chrome.runtime.openOptionsPage();
+	}
+});

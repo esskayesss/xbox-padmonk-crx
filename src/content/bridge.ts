@@ -92,6 +92,14 @@ window.addEventListener('message', (e) => {
 		post(lastConfig);
 		return;
 	}
+	if (d.__padm0nk === 'open-options') {
+		try {
+			chrome.runtime?.sendMessage?.({ __padm0nk: 'open-options' });
+		} catch {
+			/* service worker unavailable */
+		}
+		return;
+	}
 	if (d.__padm0nk === 'set-enabled' && typeof d.enabled === 'boolean') {
 		persist({ ...currentConfig(), enabled: d.enabled });
 		return;

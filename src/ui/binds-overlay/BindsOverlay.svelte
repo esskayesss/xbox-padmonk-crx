@@ -30,8 +30,7 @@
 		toggleCombo: Combo;
 		helpCombo: Combo;
 		onClose: () => void;
-		onBind: (action: Action, inputId: string) => void;
-		onUnbind: (inputId: string) => void;
+		onConfigure: () => void;
 	}
 	let {
 		open,
@@ -43,8 +42,7 @@
 		toggleCombo,
 		helpCombo,
 		onClose,
-		onBind,
-		onUnbind,
+		onConfigure,
 	}: Props = $props();
 
 	/** A rail/system row: either a bound action or a static INFO value. */
@@ -87,9 +85,6 @@
 		return false;
 	}
 
-	type CaptureState = { row: string; action: Action } | null;
-	let capturing = $state<CaptureState>(null);
-
 	function inputIdsFor(action: Action): string[] {
 		return Object.keys(bindings).filter((id) => actionEq(bindings[id]!, action));
 	}
@@ -101,59 +96,6 @@
 		return ids.length ? ids.map(prettyInput).join(' / ') : 'UNMAPPED';
 	}
 
-	function startCapture(row: Row): void {
-		if (!row.action) return;
-		capturing = { row: row.label, action: row.action };
-	}
-
-	function cancelCapture(): void {
-		capturing = null;
-	}
-
-	function close(): void {
-		capturing = null;
-		onClose();
-	}
-
-	$effect(() => {
-		if (!open) capturing = null;
-	});
-
-	function commitInput(inputId: string): void {
-		if (!capturing) return;
-		onBind(capturing.action, inputId);
-		capturing = null;
-	}
-
-	function captureKey(e: KeyboardEvent): void {
-		if (!open || !capturing) return;
-		e.preventDefault();
-		e.stopPropagation();
-		e.stopImmediatePropagation();
-		if (e.key === 'Escape') {
-			cancelCapture();
-			return;
-		}
-		commitInput(e.code);
-	}
-
-	function captureMouse(e: MouseEvent): void {
-		if (!open || !capturing) return;
-		if ((e.target as Element | null)?.closest('button')) return;
-		e.preventDefault();
-		e.stopPropagation();
-		e.stopImmediatePropagation();
-		commitInput('Mouse' + e.button);
-	}
-
-	function captureWheel(e: WheelEvent): void {
-		if (!open || !capturing) return;
-		e.preventDefault();
-		e.stopPropagation();
-		e.stopImmediatePropagation();
-		commitInput(e.deltaY < 0 ? 'WheelUp' : 'WheelDown');
-	}
-
 	// Second line of defense (see shadow.ts CLICK-SAFETY): swallow on the panel.
 	const stop = (e: Event) => e.stopPropagation();
 
@@ -163,50 +105,30 @@
 
 {#snippet bindEditor(row: Row, compact = false)}
 	{#if row.action}
-		<div class="mt-1 flex flex-wrap items-center gap-1">
-			{#each inputIdsFor(row.action) as id (id)}
-				<span
-					class="bg-pad-chip border-pad-hairline inline-flex max-w-full items-center gap-1 rounded-sm border px-1.5 py-0.5"
-				>
-					<span class="text-pad-key truncate font-semibold {compact ? 'text-2xs' : 'text-xs'}"
-						>{prettyInput(id)}</span
+		{@const ids = inputIdsFor(row.action)}
+		{#if ids.length}
+			<div class="mt-1 flex flex-wrap items-center gap-1">
+				{#each ids as id (id)}
+					<span
+						class="bg-pad-chip border-pad-hairline inline-flex max-w-full items-center rounded-sm border px-1.5 py-0.5"
 					>
-					<button
-						type="button"
-						class="text-pad-muted hover:text-pad-danger cursor-pointer leading-none"
-						onclick={() => onUnbind(id)}
-						aria-label={`Unbind ${prettyInput(id)} from ${row.label}`}
-					>
-						×
-					</button>
-				</span>
-			{/each}
-			<button
-				type="button"
-				class="border-pad-accent/25 bg-pad-chip/80 text-pad-accent hover:border-pad-accent cursor-pointer rounded-sm border px-1.5 py-0.5 {compact
-					? 'text-2xs'
-					: 'text-xs'}"
-				onclick={() => startCapture(row)}
+						<span class="text-pad-key truncate font-semibold {compact ? 'text-2xs' : 'text-xs'}"
+							>{prettyInput(id)}</span
+						>
+					</span>
+				{/each}
+			</div>
+		{:else}
+			<span class="text-pad-muted mt-1 block {compact ? 'text-2xs' : 'text-xs'} tracking-wide"
+				>UNMAPPED</span
 			>
-				{capturing?.row === row.label
-					? 'press input…'
-					: inputIdsFor(row.action).length
-						? '+ add'
-						: '+ bind'}
-			</button>
-		</div>
+		{/if}
 	{:else}
 		<span class="text-pad-text block truncate {compact ? 'text-xs' : 'text-sm'} leading-tight">
 			{rowValue(row)}
 		</span>
 	{/if}
 {/snippet}
-
-<svelte:window
-	onkeydowncapture={captureKey}
-	onmousedowncapture={captureMouse}
-	onwheelcapture={captureWheel}
-/>
 
 {#if open}
 	<!-- Backdrop: pointer-events on (host is click-through); click closes. -->
@@ -221,10 +143,10 @@
 			e.stopPropagation();
 		}}
 		onclick={(e) => {
-			if (e.target === e.currentTarget) close();
+			if (e.target === e.currentTarget) onClose();
 		}}
 		onkeydown={(e) => {
-			if (e.key === 'Escape') close();
+			if (e.key === 'Escape') onClose();
 		}}
 		role="presentation"
 	>
@@ -244,7 +166,7 @@
 					class="bg-pad-danger text-pad-bg -mx-5 -mt-5 mb-4 px-5 py-2 text-center text-sm font-semibold tracking-wide uppercase"
 					role="alert"
 				>
-					Some controls are unmapped — bind every action below for full coverage
+					Some controls are unmapped — open Configure keybinds to map them
 				</div>
 			{/if}
 			<!-- Header: brand orb + title/subtitle | shortcut legends -->
@@ -278,15 +200,25 @@
 					</div>
 				</div>
 
-				<div class="grid min-w-64 grid-cols-2 gap-2.5 max-[900px]:min-w-0 max-[900px]:flex-1">
-					<div class="pad-surface rounded-sm border px-3 py-2">
-						<span class="text-pad-muted block text-xs uppercase">Toggle</span>
-						<span class="text-pad-text block text-sm">{comboLabel(toggleCombo)}</span>
+				<div class="flex items-stretch gap-2.5 max-[900px]:flex-1">
+					<div class="grid min-w-64 grid-cols-2 gap-2.5 max-[900px]:min-w-0 max-[900px]:flex-1">
+						<div class="pad-surface rounded-sm border px-3 py-2">
+							<span class="text-pad-muted block text-xs uppercase">Toggle</span>
+							<span class="text-pad-text block text-sm">{comboLabel(toggleCombo)}</span>
+						</div>
+						<div class="pad-surface rounded-sm border px-3 py-2">
+							<span class="text-pad-muted block text-xs uppercase">Close</span>
+							<span class="text-pad-text block text-sm">{comboLabel(helpCombo)} / Esc</span>
+						</div>
 					</div>
-					<div class="pad-surface rounded-sm border px-3 py-2">
-						<span class="text-pad-muted block text-xs uppercase">Close</span>
-						<span class="text-pad-text block text-sm">{comboLabel(helpCombo)} / Esc</span>
-					</div>
+					<button
+						type="button"
+						class="pad-surface text-pad-accent hover:border-pad-accent flex cursor-pointer flex-col items-start rounded-sm border px-3 py-2"
+						onclick={onConfigure}
+					>
+						<span class="text-pad-text text-sm">Configure keybinds</span>
+						<span class="mt-1 text-lg leading-none" aria-hidden="true">↗</span>
+					</button>
 				</div>
 			</div>
 
