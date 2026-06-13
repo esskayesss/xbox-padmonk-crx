@@ -193,21 +193,24 @@
 			<b class="text-pad-accent">{helpLabel}</b> edits binds. Click game to lock aim; Esc releases.
 		</p>
 
-		<div class="grid grid-cols-2 gap-2">
-			<button
-				type="button"
-				class="bg-pad-sponsor text-pad-sponsor-soft hover:bg-pad-sponsor-strong border-pad-sponsor/70 cursor-pointer rounded-sm border px-2 py-2 text-xs font-black tracking-wide uppercase"
-				onclick={() => openUrl(GITHUB_SPONSORS_URL)}
-			>
-				❤ GitHub
-			</button>
-			<button
-				type="button"
-				class="border-pad-coffee-border bg-pad-coffee text-pad-coffee-text hover:bg-pad-coffee-hover cursor-pointer rounded-sm border px-2 py-2 text-xs font-black tracking-wide uppercase"
-				onclick={() => openUrl(BUY_ME_COFFEE_URL)}
-			>
-				☕ Coffee
-			</button>
+		<div class="space-y-1.5">
+			<p class="text-pad-muted text-2xs tracking-wide uppercase">Support padm0nk</p>
+			<div class="grid grid-cols-2 gap-2">
+				<button
+					type="button"
+					class="bg-pad-sponsor text-pad-sponsor-soft hover:bg-pad-sponsor-strong border-pad-sponsor/70 cursor-pointer rounded-sm border px-2 py-2 text-xs font-black tracking-wide uppercase"
+					onclick={() => openUrl(GITHUB_SPONSORS_URL)}
+				>
+					❤ Sponsor
+				</button>
+				<button
+					type="button"
+					class="border-pad-coffee-border bg-pad-coffee text-pad-coffee-text hover:bg-pad-coffee-hover cursor-pointer rounded-sm border px-2 py-2 text-xs font-black tracking-wide uppercase"
+					onclick={() => openUrl(BUY_ME_COFFEE_URL)}
+				>
+					☕ Buy a coffee
+				</button>
+			</div>
 		</div>
 	</section>
 </main>

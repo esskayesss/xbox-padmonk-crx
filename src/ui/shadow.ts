@@ -126,7 +126,12 @@ function buildStyleText(fontUrl: string | undefined): string {
 			`font-stretch:normal;font-display:swap;src:url("${fontUrl}") format("woff");}`
 		: '';
 	// Scoped reset + font on the root wrapper. Colors come only from theme tokens.
-	const base = `:host{all:initial}.padm0nk-ui{font-family:${FONT_FAMILY};}`;
+	// --tw-border-style: Tailwind v4 `border` utilities resolve border-style via
+	// this var, whose default comes from an @property rule that does NOT take
+	// effect inside a shadow root. Without it, var() is guaranteed-invalid and
+	// border-style computes to `none` (visible widths, invisible borders). Seed it
+	// as a normal inherited custom property so every descendant utility works.
+	const base = `:host{all:initial}.padm0nk-ui{font-family:${FONT_FAMILY};--tw-border-style:solid;}`;
 	return `${fontFace}\n${compiledCss}\n${base}`;
 }
 

@@ -25,6 +25,8 @@
 	const groups = groupsForOptions();
 	const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/esskayesss';
 	const BUY_ME_COFFEE_URL = 'https://buymeacoffee.com/esskayesss';
+	const GITHUB_REPO_URL = 'https://github.com/esskayesss/xbox-padm0nk-crx';
+	const WEBSITE_URL = 'https://esskayesss.github.io/xbox-padm0nk-crx/';
 
 	/** Groups whose inputs are fixed and cannot be rebound (display-only). */
 	const FIXED_GROUPS = new Set<string>([GROUP_TITLES.leftStick]);
@@ -539,4 +541,20 @@
 			Reset everything to defaults
 		</button>
 	</div>
+
+	<footer
+		class="border-pad-border text-pad-muted mt-10 flex flex-wrap items-center gap-4 border-t pt-4 text-xs"
+	>
+		<a
+			href={GITHUB_REPO_URL}
+			target="_blank"
+			rel="noreferrer"
+			class="text-pad-accent hover:underline"
+		>
+			GitHub repository ↗
+		</a>
+		<a href={WEBSITE_URL} target="_blank" rel="noreferrer" class="text-pad-accent hover:underline">
+			Website ↗
+		</a>
+	</footer>
 </div>
