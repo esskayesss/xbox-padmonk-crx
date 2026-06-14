@@ -67,6 +67,7 @@
 	--grid-template-columns-binds: minmax(11.25rem, 0.75fr) minmax(25.625rem, 1.5fr)
 		minmax(11.25rem, 0.75fr);
 	--grid-template-columns-field: 8.75rem 1fr;
+	--grid-template-columns-aim-field: minmax(16rem, 22rem) minmax(24rem, 1fr);
 
 	/* Named breakpoint for the binds-overlay reflow (was max-[900px]). */
 	--breakpoint-binds: 900px;

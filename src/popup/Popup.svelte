@@ -20,6 +20,7 @@
 
 	const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/esskayesss';
 	const BUY_ME_COFFEE_URL = 'https://buymeacoffee.com/esskayesss';
+	const BUG_REPORT_URL = 'https://github.com/esskayesss/xbox-padm0nk-crx/issues';
 
 	let config = $state<Config>(structuredClone(DEFAULT_CONFIG));
 	let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -56,6 +57,7 @@
 	}
 
 	function resetSliders(): void {
+		if (!window.confirm('Reset aim tuning values to defaults?')) return;
 		config = {
 			...config,
 			sensitivity: DEFAULT_CONFIG.sensitivity,
@@ -75,7 +77,9 @@
 	}
 </script>
 
-<main class="bg-pad-bg text-pad-text w-70 overflow-hidden p-2 font-sans text-sm leading-tight">
+<main
+	class="bg-pad-bg text-pad-text w-70 select-none overflow-hidden p-2 font-sans text-sm leading-tight"
+>
 	<section class="pad-panel-bg border-pad-accent/40 rounded-md border p-3">
 		<header class="flex items-center justify-between gap-2">
 			<div class="text-xl font-semibold tracking-wide uppercase">padm0nk</div>
@@ -171,7 +175,7 @@
 			{/each}
 		</section>
 
-		<div class="grid grid-cols-2 gap-2">
+		<div class="grid grid-cols-3 gap-2">
 			<button
 				type="button"
 				class="bg-pad-chip text-pad-text border-pad-border hover:border-pad-accent cursor-pointer rounded-sm border px-2 py-2 text-xs font-semibold"
@@ -185,6 +189,13 @@
 				onclick={() => chrome.tabs?.create?.({ url: 'https://hardwaretester.com/gamepad' })}
 			>
 				Test pad
+			</button>
+			<button
+				type="button"
+				class="bg-pad-chip text-pad-text border-pad-border hover:border-pad-accent cursor-pointer rounded-sm border px-2 py-2 text-xs font-semibold"
+				onclick={() => openUrl(BUG_REPORT_URL)}
+			>
+				Report bug
 			</button>
 		</div>
 

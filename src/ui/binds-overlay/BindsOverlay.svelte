@@ -137,7 +137,7 @@
 	>
 		<!-- Panel -->
 		<div
-			class="text-pad-text pad-panel-bg pad-binds-panel border-pad-accent/40 overflow-auto rounded-lg border p-5"
+			class="text-pad-text pad-panel-bg pad-binds-panel border-pad-accent/40 select-none overflow-auto rounded-lg border p-5"
 			onpointerdowncapture={stop}
 			onmousedowncapture={stop}
 			onmouseupcapture={stop}

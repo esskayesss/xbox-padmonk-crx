@@ -26,7 +26,39 @@
 	const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/esskayesss';
 	const BUY_ME_COFFEE_URL = 'https://buymeacoffee.com/esskayesss';
 	const GITHUB_REPO_URL = 'https://github.com/esskayesss/xbox-padm0nk-crx';
+	const BUG_REPORT_URL = 'https://github.com/esskayesss/xbox-padm0nk-crx/issues';
 	const WEBSITE_URL = 'https://esskayesss.github.io/xbox-padm0nk-crx/';
+
+	const OPTIONS_AIM_COPY = {
+		sensitivity: {
+			label: 'Mouse sensitivity',
+			description:
+				'Higher values turn faster with less mouse movement. Lower values give steadier aim and require larger mouse movement.',
+		},
+		smoothing: {
+			label: 'Aim smoothing',
+			description:
+				'Higher values soften sudden mouse movement for smoother tracking, but feel heavier. Lower values feel sharper and more immediate.',
+		},
+		aimMin: {
+			label: 'Anti-deadzone',
+			description:
+				'Helps small mouse movements register against in-game stick deadzones. Raise if slow aim feels stuck; lower if aim feels twitchy.',
+		},
+		aimCurve: {
+			label: 'Aim response curve',
+			description:
+				'Changes how mouse movement ramps into stick output. Higher values improve micro-aim near center. Lower values feel more linear and raw.',
+		},
+	} satisfies Record<(typeof AIM_CONTROLS)[number]['key'], { label: string; description: string }>;
+
+	const BEHAVIOR_COPY = {
+		invertY: 'Reverses vertical aim: mouse up looks down, mouse down looks up.',
+		lockPointerOnClick:
+			'Captures the cursor when you click the game so mouse movement controls aim instead of moving the page cursor. Press Esc to release.',
+		toggleCombo: 'Hotkey for turning padm0nk on or off while in game.',
+		helpCombo: 'Hotkey for opening the in-game controls overlay.',
+	} as const;
 
 	/** Resolve a bind-icon asset URL for the options (extension) page. */
 	function iconUrl(icon: string): string {
@@ -223,7 +255,7 @@
 	}
 
 	function resetAll(): void {
-		if (!confirm('Reset ALL bindings and settings to defaults?')) return;
+		if (!window.confirm('Reset all bindings and settings to defaults?')) return;
 		config = normalizeConfig(structuredClone(DEFAULT_CONFIG));
 		save();
 	}
@@ -374,17 +406,30 @@
 		{/if}
 	{/each}
 
-	<!-- Mouse & behaviour -->
+	<!-- Mouse & aim behavior -->
 	<h2
 		class="text-pad-muted border-pad-chip mt-7 mb-2.5 border-b pb-1.5 text-sm font-normal tracking-widest uppercase"
 	>
-		Mouse &amp; behaviour
+		Mouse &amp; aim behavior
 	</h2>
-	<div class="grid grid-cols-field items-center gap-x-3.5 gap-y-2">
+	<p class="text-pad-muted mb-4 max-w-3xl text-sm leading-6">
+		Tune how mouse movement becomes virtual right-stick aim. These settings affect controller output
+		only; they cannot bypass the game's built-in turn-speed limits.
+	</p>
+	<div class="grid grid-cols-aim-field items-center gap-x-6 gap-y-3">
 		{#each AIM_CONTROLS as s (s.key)}
-			<label id={`options-${s.key}-label`} for={`options-${s.key}-range`} class="text-pad-text/80">
-				{s.label}
-			</label>
+			<div>
+				<label
+					id={`options-${s.key}-label`}
+					for={`options-${s.key}-range`}
+					class="text-pad-text/85 block font-semibold"
+				>
+					{OPTIONS_AIM_COPY[s.key].label}
+				</label>
+				<p class="text-pad-muted mt-1 text-xs leading-snug">
+					{OPTIONS_AIM_COPY[s.key].description}
+				</p>
+			</div>
 			<div class="flex items-center gap-3">
 				<input
 					id={`options-${s.key}-range`}
@@ -412,9 +457,16 @@
 			</div>
 		{/each}
 
-		<label id="options-invertY-label" for="options-invertY" class="text-pad-text/80"
-			>Invert Y axis</label
-		>
+		<div>
+			<label
+				id="options-invertY-label"
+				for="options-invertY"
+				class="text-pad-text/85 block font-semibold"
+			>
+				Invert Y axis
+			</label>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.invertY}</p>
+		</div>
 		<div>
 			<input
 				id="options-invertY"
@@ -425,9 +477,16 @@
 			/>
 		</div>
 
-		<label id="options-lockPointer-label" for="options-lockPointer" class="text-pad-text/80">
-			Lock pointer on click (aim)
-		</label>
+		<div>
+			<label
+				id="options-lockPointer-label"
+				for="options-lockPointer"
+				class="text-pad-text/85 block font-semibold"
+			>
+				Click to lock mouse aim
+			</label>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.lockPointerOnClick}</p>
+		</div>
 		<div>
 			<input
 				id="options-lockPointer"
@@ -438,7 +497,10 @@
 			/>
 		</div>
 
-		<div class="text-pad-text/80">Toggle on/off key combo</div>
+		<div>
+			<div class="text-pad-text/85 font-semibold">Enable/disable hotkey</div>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.toggleCombo}</p>
+		</div>
 		<div>
 			<button
 				type="button"
@@ -455,7 +517,10 @@
 			</button>
 		</div>
 
-		<div class="text-pad-text/80">Show keybinds combo</div>
+		<div>
+			<div class="text-pad-text/85 font-semibold">Show binds overlay hotkey</div>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.helpCombo}</p>
+		</div>
 		<div>
 			<button
 				type="button"
@@ -544,6 +609,14 @@
 		</a>
 		<a href={WEBSITE_URL} target="_blank" rel="noreferrer" class="text-pad-accent hover:underline">
 			Website ↗
+		</a>
+		<a
+			href={BUG_REPORT_URL}
+			target="_blank"
+			rel="noreferrer"
+			class="text-pad-accent hover:underline"
+		>
+			Report a bug ↗
 		</a>
 	</footer>
 </div>
