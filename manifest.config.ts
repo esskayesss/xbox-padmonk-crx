@@ -20,13 +20,13 @@ const WAR_MATCHES = [
 
 export default defineManifest({
 	manifest_version: 3,
-	name: 'padm0nk — Keyboard & Mouse for xCloud',
+	name: 'padm0nk — Mouse & Keyboard for Xbox Cloud Gaming',
 	version: VERSION,
 	// Free-form, shown on the chrome://extensions card. Carries the git hash +
 	// build timestamp so a reloaded build is unambiguously identifiable.
 	version_name: VERSION_NAME,
 	description:
-		'Play Xbox Cloud Gaming with mouse + keyboard by emulating an Xbox controller via the Gamepad API. Free, no drivers.',
+		'Bring mouse and keyboard controls to Xbox Cloud Gaming where a controller is expected. Runs locally with no drivers or telemetry.',
 	minimum_chrome_version: '111',
 	permissions: ['storage'],
 	icons: {
