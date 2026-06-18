@@ -39,13 +39,13 @@ export const AIM_CONTROLS: readonly AimSettingControl[] = [
 	{
 		key: 'sensitivity',
 		label: 'Look speed',
-		hint: 'Default = 100%',
+		hint: 'Default = 80%',
 		min: 10,
 		max: 280,
 		step: 5,
 		dp: 0,
 		unit: '%',
-		fallback: 100,
+		fallback: 80,
 		toDisplay: (v) =>
 			(clamp(v, AIM_LIMITS.sensitivity.min, AIM_LIMITS.sensitivity.max) / BASE_SENSITIVITY) * 100,
 		toConfig: (v) =>
@@ -57,10 +57,10 @@ export const AIM_CONTROLS: readonly AimSettingControl[] = [
 		hint: '0 = sharp, 95 = floaty',
 		min: 0,
 		max: 95,
-		step: 5,
+		step: 1,
 		dp: 0,
 		unit: '%',
-		fallback: 25,
+		fallback: 12,
 		toDisplay: (v) => clamp(v, AIM_LIMITS.smoothing.min, AIM_LIMITS.smoothing.max) * 100,
 		toConfig: (v) => clamp(v / 100, AIM_LIMITS.smoothing.min, AIM_LIMITS.smoothing.max),
 	},

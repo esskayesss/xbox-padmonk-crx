@@ -8,8 +8,8 @@ import type { Action, Bindings, Combo, Config } from './types';
 /** Built once; bindings derived from the controller-actions registry. */
 export const DEFAULT_CONFIG: Config = {
 	enabled: true,
-	sensitivity: 0.018,
-	smoothing: 0.25,
+	sensitivity: 0.0144,
+	smoothing: 0.12,
 	aimMin: 0.12,
 	aimCurve: 0.75,
 	invertY: false,

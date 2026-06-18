@@ -38,8 +38,8 @@ describe('DEFAULT_CONFIG', () => {
 
 	it('scalar defaults match the spec', () => {
 		expect(DEFAULT_CONFIG.enabled).toBe(true);
-		expect(DEFAULT_CONFIG.sensitivity).toBe(0.018);
-		expect(DEFAULT_CONFIG.smoothing).toBe(0.25);
+		expect(DEFAULT_CONFIG.sensitivity).toBe(0.0144);
+		expect(DEFAULT_CONFIG.smoothing).toBe(0.12);
 		expect(DEFAULT_CONFIG.aimMin).toBe(0.12);
 		expect(DEFAULT_CONFIG.aimCurve).toBe(0.75);
 		expect(DEFAULT_CONFIG.invertY).toBe(false);
