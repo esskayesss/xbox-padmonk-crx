@@ -38,7 +38,7 @@ export const AXIS = {
 
 /** Exact id string the page sees for our virtual pad. */
 export const GAMEPAD_ID =
-	'padm0nk Virtual Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)';
+	'padmonk Virtual Xbox 360 Controller (STANDARD GAMEPAD Vendor: 045e Product: 028e)';
 
 /** W3C mapping reported by the virtual pad. */
 export const GAMEPAD_MAPPING = 'standard';

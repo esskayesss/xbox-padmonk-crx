@@ -20,7 +20,7 @@ const WAR_MATCHES = [
 
 export default defineManifest({
 	manifest_version: 3,
-	name: 'padm0nk — Mouse & Keyboard for Xbox Cloud Gaming',
+	name: 'padmonk — Mouse & Keyboard for Xbox Cloud Gaming',
 	version: VERSION,
 	// Free-form, shown on the chrome://extensions card. Carries the git hash +
 	// build timestamp so a reloaded build is unambiguously identifiable.
@@ -40,7 +40,7 @@ export default defineManifest({
 		open_in_tab: true,
 	},
 	action: {
-		default_title: 'padm0nk',
+		default_title: 'padmonk',
 		default_popup: 'src/popup/index.html',
 		default_icon: {
 			'16': 'icons/icon-16.png',
@@ -59,7 +59,7 @@ export default defineManifest({
 				'assets/xbox-controller.svg',
 				'assets/bind-icons/*.svg',
 				'assets/fonts/*.woff',
-				'icons/padm0nk.png',
+				'icons/padmonk.png',
 				'icons/icon-disabled-*.png',
 			],
 			matches: WAR_MATCHES,

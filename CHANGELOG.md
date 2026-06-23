@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to padm0nk are documented here.
+All notable changes to padmonk are documented here.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -41,7 +41,7 @@ preserved (with the diagonal-speed fix below as the one intentional divergence).
 - Install from source now requires a build step; load the `dist/` build output
   as an unpacked extension rather than the repo root.
 - Packaging moved from `scripts/pack.sh` to `npm run zip` (builds, then zips the
-  `dist/` output to `padm0nk-<version>.zip`).
+  `dist/` output to `padmonk-<version>.zip`).
 
 ### Fixed
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	// Passive HUD dock — bottom-left. Shows the padm0nk icon, ON/OFF state, and
+	// Passive HUD dock — bottom-left. Shows the padmonk icon, ON/OFF state, and
 	// the real toggle + help combos as key hints. Click-safe: stops pointer/mouse
 	// events from reaching the page (legacy parity; P6 also checks composedPath).
 	//
@@ -32,7 +32,7 @@
 	onmouseupcapture={stop}
 	onclickcapture={stop}
 	role="status"
-	aria-label="padm0nk HUD"
+	aria-label="padmonk HUD"
 >
 	<div class="flex items-center gap-2">
 		<div class="grid shrink-0 justify-items-center gap-0.5">
@@ -43,7 +43,7 @@
 				{#if iconUrl}
 					<img
 						src={iconUrl}
-						alt="padm0nk"
+						alt="padmonk"
 						class="h-full w-full object-contain"
 						class:grayscale={!enabled}
 					/>

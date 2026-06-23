@@ -1,4 +1,4 @@
-// padm0nk bridge — ISOLATED content-script world.
+// padmonk bridge — ISOLATED content-script world.
 //
 // Only this world has chrome.* APIs. The MAIN-world inject coordinator has NO
 // chrome.* access (different JS world), so the bridge is the sole channel that:
@@ -19,7 +19,7 @@ import { onConfigChanged, readConfig, writeConfig } from '../shared/storage';
 import type { Action, Config } from '../core/types';
 
 interface BridgePayload {
-	__padm0nk: 'config';
+	__padmonk: 'config';
 	config: Config | Record<string, never>;
 	controllerUrl: string;
 	iconUrl: string;
@@ -43,10 +43,10 @@ let lastConfig: Config | Record<string, never> = {};
 function post(config: Config | Record<string, never>): void {
 	lastConfig = config;
 	const payload: BridgePayload = {
-		__padm0nk: 'config',
+		__padmonk: 'config',
 		config,
 		controllerUrl: getURL('assets/xbox-controller.svg'),
-		iconUrl: getURL('icons/padm0nk.png'),
+		iconUrl: getURL('icons/padmonk.png'),
 		bindIconBase: getURL('assets/bind-icons/'),
 		// NEW (Bug 6): bundled font, no longer hotlinked from the xbox CDN.
 		fontUrl: getURL('assets/fonts/bahnschrift.woff'),
@@ -82,34 +82,34 @@ function persist(config: Config): void {
 window.addEventListener('message', (e) => {
 	if (e.source !== window) return;
 	const d = e.data as {
-		__padm0nk?: string;
+		__padmonk?: string;
 		enabled?: unknown;
 		action?: unknown;
 		inputId?: unknown;
 	} | null;
 	if (!d) return;
-	if (d.__padm0nk === 'hello') {
+	if (d.__padmonk === 'hello') {
 		post(lastConfig);
 		return;
 	}
-	if (d.__padm0nk === 'open-options') {
+	if (d.__padmonk === 'open-options') {
 		try {
-			chrome.runtime?.sendMessage?.({ __padm0nk: 'open-options' });
+			chrome.runtime?.sendMessage?.({ __padmonk: 'open-options' });
 		} catch {
 			/* service worker unavailable */
 		}
 		return;
 	}
-	if (d.__padm0nk === 'set-enabled' && typeof d.enabled === 'boolean') {
+	if (d.__padmonk === 'set-enabled' && typeof d.enabled === 'boolean') {
 		persist({ ...currentConfig(), enabled: d.enabled });
 		return;
 	}
-	if (d.__padm0nk === 'bind' && typeof d.inputId === 'string' && isAction(d.action)) {
+	if (d.__padmonk === 'bind' && typeof d.inputId === 'string' && isAction(d.action)) {
 		const config = currentConfig();
 		persist({ ...config, bindings: { ...config.bindings, [d.inputId]: { ...d.action } } });
 		return;
 	}
-	if (d.__padm0nk === 'unbind' && typeof d.inputId === 'string') {
+	if (d.__padmonk === 'unbind' && typeof d.inputId === 'string') {
 		const config = currentConfig();
 		const bindings = { ...config.bindings };
 		delete bindings[d.inputId];

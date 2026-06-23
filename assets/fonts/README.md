@@ -2,7 +2,7 @@
 
 ## bahnschrift.woff (required — drop the binary here)
 
-Legacy padm0nk hotlinked **Bahnschrift** from the xbox CDN
+Legacy padmonk hotlinked **Bahnschrift** from the xbox CDN
 (`assets.play.xbox.com/.../Bahnschrift.woff`). That is **Bug 6** — we do NOT
 hotlink anymore. Instead the font is bundled and exposed as a web-accessible
 resource.

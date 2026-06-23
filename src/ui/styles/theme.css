@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 /*
- * padm0nk design tokens — the SINGLE source of style truth.
+ * padmonk design tokens — the SINGLE source of style truth.
  *
  * Rule of the house (see REBUILD.md "Hygiene"): components must NOT use
  * arbitrary Tailwind brackets (rounded-[14px], p-[7px], text-[10px], ...) or

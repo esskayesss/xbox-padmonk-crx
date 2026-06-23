@@ -1,4 +1,4 @@
-// padm0nk inject.ts — MAIN-world THIN coordinator (runs at document_start).
+// padmonk inject.ts — MAIN-world THIN coordinator (runs at document_start).
 //
 // Wires the pure core modules + injected shadow UI into the live page:
 //   - patches navigator.getGamepads so the page sees our virtual Xbox pad,
@@ -36,13 +36,13 @@ import { installNavGuard, shouldArmNavGuard } from './nav-guard';
 
 declare global {
 	interface Window {
-		__padm0nkInstalled?: boolean;
+		__padmonkInstalled?: boolean;
 	}
 }
 
 // 1. Install guard — never double-install in one world.
-if (!window.__padm0nkInstalled) {
-	window.__padm0nkInstalled = true;
+if (!window.__padmonkInstalled) {
+	window.__padmonkInstalled = true;
 	main();
 }
 
@@ -265,11 +265,11 @@ function main(): void {
 		setOverlay(false);
 	}
 	function persistEnabled(): void {
-		window.postMessage({ __padm0nk: 'set-enabled', enabled: config.enabled }, '*');
+		window.postMessage({ __padmonk: 'set-enabled', enabled: config.enabled }, '*');
 	}
 	// Open the advanced settings page (relayed isolated-world → service worker).
 	function openOptions(): void {
-		window.postMessage({ __padm0nk: 'open-options' }, '*');
+		window.postMessage({ __padmonk: 'open-options' }, '*');
 	}
 
 	// 7. Config bridge (isolated world → MAIN). Asset URLs arrive ONLY here.
@@ -279,8 +279,8 @@ function main(): void {
 	let gotConfig = false;
 	window.addEventListener('message', (e) => {
 		if (e.source !== window) return;
-		const d = e.data as { __padm0nk?: string; config?: unknown } & Record<string, unknown>;
-		if (!d || d.__padm0nk !== 'config') return;
+		const d = e.data as { __padmonk?: string; config?: unknown } & Record<string, unknown>;
+		if (!d || d.__padmonk !== 'config') return;
 		gotConfig = true;
 		if (typeof d.iconUrl === 'string' && d.iconUrl) iconUrl = d.iconUrl;
 		if (typeof d.bindIconBase === 'string' && d.bindIconBase) bindIconBase = d.bindIconBase;
@@ -291,7 +291,7 @@ function main(): void {
 	});
 	function requestConfig(): void {
 		if (gotConfig) return;
-		window.postMessage({ __padm0nk: 'hello' }, '*');
+		window.postMessage({ __padmonk: 'hello' }, '*');
 	}
 	requestConfig();
 	for (const t of [50, 150, 400, 900]) setTimeout(requestConfig, t);

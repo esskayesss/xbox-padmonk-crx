@@ -1,4 +1,4 @@
-// padm0nk nav-guard — neutralize mouse back/forward (buttons 3/4) navigation.
+// padmonk nav-guard — neutralize mouse back/forward (buttons 3/4) navigation.
 //
 // WHY THIS EXISTS (and why preventDefault can't do it):
 //   - Chrome does NOT forward back/forward mouse button presses (X1/X2, button
@@ -19,7 +19,7 @@
 // keeps us clear of xCloud's lobby->launch routing.
 
 /** Tag key stamped onto our sentinel history entry. */
-export const NAV_SENTINEL_KEY = '__padm0nkNav';
+export const NAV_SENTINEL_KEY = '__padmonkNav';
 
 /** True when a history state object is one of OUR sentinel entries. */
 export function isNavSentinel(state: unknown): boolean {

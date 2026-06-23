@@ -18,9 +18,12 @@
 		{ key: 'lockPointerOnClick', label: 'Aim lock', hint: 'Click game to capture mouse' },
 	] as const;
 
-	const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/esskayesss';
-	const BUY_ME_COFFEE_URL = 'https://buymeacoffee.com/esskayesss';
-	const BUG_REPORT_URL = 'https://github.com/esskayesss/xbox-padm0nk-crx/issues';
+	const GITHUB_SPONSORS_URL =
+		'https://redirects.esskayesss.dev/sponsor-github?utm_source=padmonk-ext&utm_medium=popup&utm_campaign=support&skip';
+	const BUY_ME_COFFEE_URL =
+		'https://redirects.esskayesss.dev/sponsor-coffee?utm_source=padmonk-ext&utm_medium=popup&utm_campaign=support&skip';
+	const BUG_REPORT_URL =
+		'https://redirects.esskayesss.dev/padmonk-issues?utm_source=padmonk-ext&utm_medium=popup&utm_campaign=bug-report&skip';
 
 	let config = $state<Config>(structuredClone(DEFAULT_CONFIG));
 	let saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -82,7 +85,7 @@
 >
 	<section class="pad-panel-bg border-pad-accent/40 rounded-md border p-3">
 		<header class="flex items-center justify-between gap-2">
-			<div class="text-xl font-semibold tracking-wide uppercase">padm0nk</div>
+			<div class="text-xl font-semibold tracking-wide uppercase">padmonk</div>
 			<span
 				class="rounded-sm border px-2 py-0.5 text-2xs tracking-widest uppercase"
 				class:border-pad-accent={config.enabled}

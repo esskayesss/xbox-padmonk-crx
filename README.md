@@ -1,8 +1,8 @@
-# padm0nk — Mouse and keyboard for Xbox Cloud Gaming
+# padmonk — Mouse and keyboard for Xbox Cloud Gaming
 
-[![Install padm0nk from the Chrome Web Store](assets/chrome-webstore.svg)](https://redirect.esskayesss.dev/padmonk)
+[![Install padmonk from the Chrome Web Store](assets/chrome-webstore.svg)](https://redirects.esskayesss.dev/padmonk-ext)
 
-padm0nk lets desktop Chromium players use mouse and keyboard on Xbox Cloud Gaming by presenting a virtual Xbox controller to the page. No driver install, no native helper app, no account, no telemetry. Open the extension, lock your mouse, tune aim, queue up.
+padmonk lets desktop Chromium players use mouse and keyboard on Xbox Cloud Gaming by presenting a virtual Xbox controller to the page. No driver install, no native helper app, no account, no telemetry. Open the extension, lock your mouse, tune aim, queue up.
 
 This repo is for players, tinkerers, and contributors who want xCloud controls to feel less like menu wrestling and more like a proper loadout.
 
@@ -17,7 +17,7 @@ This repo is for players, tinkerers, and contributors who want xCloud controls t
 
 ## Install from source
 
-padm0nk is now a bundled extension — it builds from TypeScript/Svelte sources into a `dist/` folder, and that built folder is what you load.
+padmonk is now a bundled extension — it builds from TypeScript/Svelte sources into a `dist/` folder, and that built folder is what you load.
 
 1. Install dependencies: `npm install`
 2. Build the extension: `npm run build`
@@ -36,7 +36,7 @@ Desktop Chromium required. Safari/WebKit ignores this page-level virtual pad pat
 
 1. Open <https://hardwaretester.com/gamepad> or <https://gamepad-tester.com>.
 2. Press mapped input such as `Space`.
-3. Confirm `padm0nk Virtual Xbox 360 Controller` appears.
+3. Confirm `padmonk Virtual Xbox 360 Controller` appears.
 4. Press WASD and confirm left stick moves.
 5. Click page, move mouse, and confirm right stick moves.
 6. Press `Esc` to release mouse.
@@ -48,7 +48,7 @@ If tester sees pad and inputs move, xCloud should see same controller layer.
 1. Go to <https://www.xbox.com/play>.
 2. Start a game.
 3. Click game video to lock mouse for aim.
-4. Press your toggle combo (default `F8`) to toggle padm0nk if you need real-controller control back.
+4. Press your toggle combo (default `F8`) to toggle padmonk if you need real-controller control back.
 5. Press your show-binds combo (default `F9`) while the game page has focus to show the visual controller binds overlay.
 6. Tune settings from the extension popup.
 
@@ -56,7 +56,7 @@ The toggle and show-binds shortcuts are configurable combos (defaults `F8` / `F9
 
 ## Settings
 
-Tune these from the extension popup (or Advanced remapping). The UI shows player-facing values; internally, padm0nk converts them to the right-stick mapper constants.
+Tune these from the extension popup (or Advanced remapping). The UI shows player-facing values; internally, padmonk converts them to the right-stick mapper constants.
 
 | Setting | Default | Range | What it does |
 | --- | --- | --- | --- |
@@ -98,14 +98,14 @@ In-game, raise look sensitivity and disable aim deadzone when the game allows it
 | Enter | Menu |
 | Backquote | Guide |
 | Arrows or 1-4 | D-pad |
-| Toggle combo (default F8) | Toggle padm0nk |
+| Toggle combo (default F8) | Toggle padmonk |
 | Show-binds combo (default F9) | Show/hide keybind overlay |
 
 Open the extension popup, then Advanced remapping, to change bindings or the toggle/show-binds combos. Multiple inputs per Xbox control are supported, and remapping warns when an input is already bound elsewhere.
 
 ## Why browser-only
 
-padm0nk patches `navigator.getGamepads()` in the page MAIN world at `document_start`. xCloud asks the browser for gamepads, the browser answers with the padm0nk virtual Xbox pad, and input state comes from keyboard and mouse events.
+padmonk patches `navigator.getGamepads()` in the page MAIN world at `document_start`. xCloud asks the browser for gamepads, the browser answers with the padmonk virtual Xbox pad, and input state comes from keyboard and mouse events.
 
 A second content script runs in the isolated world as an extension-side relay. The popup and options pages write config to `chrome.storage.local`; the relay forwards updates into the page through `postMessage` so active games adapt without reinstalling the extension or restarting the browser. The MAIN-world side has no `chrome.*` access — asset URLs and config arrive only through that bridge.
 
@@ -119,7 +119,7 @@ This keeps install surface small:
 
 ## Architecture
 
-padm0nk is TypeScript end to end, built with Vite + [`@crxjs/vite-plugin`](https://crxjs.dev) (handles MV3 manifest, MAIN-world content-script bundling, and HMR). The UI is Svelte 5; styling is Tailwind v4 with a shared theme palette (no inline hex). The source is modular:
+padmonk is TypeScript end to end, built with Vite + [`@crxjs/vite-plugin`](https://crxjs.dev) (handles MV3 manifest, MAIN-world content-script bundling, and HMR). The UI is Svelte 5; styling is Tailwind v4 with a shared theme palette (no inline hex). The source is modular:
 
 - `src/core/` — pure, framework-free logic (gamepad state, mapper math, config, combos, labels) driven by a single control **registry** (`controller-actions.ts`) that is the source of truth for default bindings, the options page, the overlay, and the table above. Fully unit-tested.
 - `src/content/` — `bridge.ts` (isolated world: storage → `postMessage`, asset URLs) and `inject.ts` (MAIN world: thin coordinator) plus `input-capture.ts` (keyboard/mouse/wheel/pointer-lock wiring).
@@ -154,16 +154,16 @@ Before sending changes, run `npm run typecheck`, `npm run test`, and `npm run bu
 npm run zip
 ```
 
-This zips the current `dist/` output to `padm0nk-<version>.zip`. Local builds use `package.json` as the fallback version; release builds set `PADM0NK_VERSION` from the git tag so the packaged `manifest.json` version and zip filename match the release tag.
+This zips the current `dist/` output to `padmonk-<version>.zip`. Local builds use `package.json` as the fallback version; release builds set `PADMONK_VERSION` from the git tag so the packaged `manifest.json` version and zip filename match the release tag.
 
 For a local release-style build:
 
 ```bash
-PADM0NK_VERSION=1.2.3 npm run build
-PADM0NK_VERSION=1.2.3 npm run zip
+PADMONK_VERSION=1.2.3 npm run build
+PADMONK_VERSION=1.2.3 npm run zip
 ```
 
-`PADM0NK_VERSION` must be a Chrome extension version like `1.2.3` or `1.2.3.4`.
+`PADMONK_VERSION` must be a Chrome extension version like `1.2.3` or `1.2.3.4`.
 
 ## Releases
 
@@ -174,13 +174,13 @@ git tag -a v1.2.3 -m "Release v1.2.3"
 git push origin v1.2.3
 ```
 
-The GitHub release workflow derives `PADM0NK_VERSION=1.2.3` from the tag, runs format/typecheck/tests/build, verifies `dist/manifest.json.version` matches the tag, rejects dirty release builds, zips the extension, and attaches `padm0nk-1.2.3.zip` to a GitHub Release with generated notes.
+The GitHub release workflow derives `PADMONK_VERSION=1.2.3` from the tag, runs format/typecheck/tests/build, verifies `dist/manifest.json.version` matches the tag, rejects dirty release builds, zips the extension, and attaches `padmonk-1.2.3.zip` to a GitHub Release with generated notes.
 
 Project page source lives at [`docs/index.html`](docs/index.html). It includes the local-only data statement store dashboards tend to ask for, without pretending a tiny open-source extension needs a corporate privacy microsite.
 
 ## Limitations
 
-- xCloud only sees padm0nk on allow-listed pages.
+- xCloud only sees padmonk on allow-listed pages.
 - Pointer Lock is required for mouse aim.
 - Native mouse-and-keyboard mode in xCloud bypasses controller emulation. Use controller input mode.
 - Some games have heavy deadzones or aim curves that need tuning.
@@ -188,10 +188,10 @@ Project page source lives at [`docs/index.html`](docs/index.html). It includes t
 
 ## Disclaimer
 
-padm0nk is independent software. It is not affiliated with, endorsed by, or sponsored by Microsoft. Xbox is a trademark of Microsoft Corporation. padm0nk does not collect or transmit user data; see the local-only statement on [`docs/index.html`](docs/index.html).
+padmonk is independent software. It is not affiliated with, endorsed by, or sponsored by Microsoft. Xbox is a trademark of Microsoft Corporation. padmonk does not collect or transmit user data; see the local-only statement on [`docs/index.html`](docs/index.html).
 
 ## Controller diss, requested by esskayesss
 
 Controllers had good run. Respect to couch warriors, claw-grip elders, stick-drift survivors, and everyone who learned to aim by gently bullying two tiny mushrooms. But some of us want crosshair control, not thumb-based astrology. Some of us want reload on `R`, not whatever plastic rune decided today. Some of us looked at right stick acceleration and said: absolutely not, send mouse.
 
-padm0nk walks into xCloud wearing green LEDs, drops WASD on left stick, bolts mouse aim to right stick, and tells controllers to hold this L in party chat. If someone says “skill issue,” please auto-ricochet that comment directly back to their aim-assist dependency, then ask why getting shot in the back requires turning 180 degrees at the pace of a scenic railway. Is this a little cringe? Yes. Is it still cleaner than pretending stick drift is personality? Also yes.
+padmonk walks into xCloud wearing green LEDs, drops WASD on left stick, bolts mouse aim to right stick, and tells controllers to hold this L in party chat. If someone says “skill issue,” please auto-ricochet that comment directly back to their aim-assist dependency, then ask why getting shot in the back requires turning 180 degrees at the pace of a scenic railway. Is this a little cringe? Yes. Is it still cleaner than pretending stick drift is personality? Also yes.

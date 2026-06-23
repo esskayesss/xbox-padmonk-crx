@@ -1,4 +1,4 @@
-// Shared, framework-free types for the padm0nk core.
+// Shared, framework-free types for the padmonk core.
 //
 // An input id is a string key identifying a physical input:
 //   - KeyboardEvent.code (e.g. "KeyW", "Space", "ArrowUp", "Backquote")

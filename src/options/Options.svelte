@@ -23,11 +23,16 @@
 	import type { Action, Config } from '../core/types';
 
 	const groups = groupsForOptions();
-	const GITHUB_SPONSORS_URL = 'https://github.com/sponsors/esskayesss';
-	const BUY_ME_COFFEE_URL = 'https://buymeacoffee.com/esskayesss';
-	const GITHUB_REPO_URL = 'https://github.com/esskayesss/xbox-padm0nk-crx';
-	const BUG_REPORT_URL = 'https://github.com/esskayesss/xbox-padm0nk-crx/issues';
-	const WEBSITE_URL = 'https://esskayesss.github.io/xbox-padm0nk-crx/';
+	const GITHUB_SPONSORS_URL =
+		'https://redirects.esskayesss.dev/sponsor-github?utm_source=padmonk-ext&utm_medium=options&utm_campaign=support';
+	const BUY_ME_COFFEE_URL =
+		'https://redirects.esskayesss.dev/sponsor-coffee?utm_source=padmonk-ext&utm_medium=options&utm_campaign=support';
+	const GITHUB_REPO_URL =
+		'https://redirects.esskayesss.dev/padmonk-repo?utm_source=padmonk-ext&utm_medium=options&utm_campaign=repo';
+	const BUG_REPORT_URL =
+		'https://redirects.esskayesss.dev/padmonk-issues?utm_source=padmonk-ext&utm_medium=options&utm_campaign=bug-report';
+	const WEBSITE_URL =
+		'https://redirects.esskayesss.dev/padmonk-web?utm_source=padmonk-ext&utm_medium=options&utm_campaign=docs';
 
 	const OPTIONS_AIM_COPY = {
 		sensitivity: {
@@ -56,7 +61,7 @@
 		invertY: 'Reverses vertical aim: mouse up looks down, mouse down looks up.',
 		lockPointerOnClick:
 			'Captures the cursor when you click the game so mouse movement controls aim instead of moving the page cursor. Press Esc to release.',
-		toggleCombo: 'Hotkey for turning padm0nk on or off while in game.',
+		toggleCombo: 'Hotkey for turning padmonk on or off while in game.',
 		helpCombo: 'Hotkey for opening the in-game controls overlay.',
 	} as const;
 
@@ -234,7 +239,7 @@
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'padm0nk-profile.json';
+		a.download = 'padmonk-profile.json';
 		a.click();
 		URL.revokeObjectURL(url);
 	}
@@ -271,7 +276,7 @@
 		class="bg-pad-sponsor text-pad-sponsor-soft border-pad-sponsor-strong mb-4 flex flex-col gap-3 rounded-md border px-4 py-3 shadow-pad-hud sm:flex-row sm:items-center sm:justify-between"
 	>
 		<div>
-			<div class="text-sm font-black tracking-wide uppercase">❤ Support padm0nk</div>
+			<div class="text-sm font-black tracking-wide uppercase">❤ Support padmonk</div>
 			<div class="text-pad-sponsor-soft/85 text-xs">
 				Help keep the extension free, open source, and actively maintained.
 			</div>
@@ -297,7 +302,7 @@
 	</section>
 
 	<h1 class="text-pad-accent m-0 mb-1 flex items-center gap-2 text-xl">
-		🎮 padm0nk Configuration
+		🎮 padmonk Configuration
 		<span
 			class="text-pad-accent text-xs transition-opacity duration-200"
 			class:opacity-0={!saved}

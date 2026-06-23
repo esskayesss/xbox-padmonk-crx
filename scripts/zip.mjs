@@ -4,10 +4,10 @@ import archiver from 'archiver';
 
 const root = resolve(import.meta.dirname, '..');
 
-// Release builds pass PADM0NK_VERSION from the git tag; local dev falls back to package.json.
+// Release builds pass PADMONK_VERSION from the git tag; local dev falls back to package.json.
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
-const version = process.env.PADM0NK_VERSION || pkg.version;
-const zipName = `padm0nk-${version}.zip`;
+const version = process.env.PADMONK_VERSION || pkg.version;
+const zipName = `padmonk-${version}.zip`;
 
 const out = createWriteStream(resolve(root, zipName));
 const archive = archiver('zip', { zlib: { level: 9 } });

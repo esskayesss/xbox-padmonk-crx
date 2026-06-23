@@ -17,7 +17,7 @@ const DISABLED_ICON = {
 
 async function setActionIcon(enabled: boolean): Promise<void> {
 	await chrome.action.setIcon({ path: enabled ? COLORED_ICON : DISABLED_ICON });
-	await chrome.action.setTitle({ title: enabled ? 'padm0nk — ON' : 'padm0nk — OFF' });
+	await chrome.action.setTitle({ title: enabled ? 'padmonk — ON' : 'padmonk — OFF' });
 }
 
 async function updateActionIconFromStorage(): Promise<void> {
@@ -44,7 +44,7 @@ chrome.storage.onChanged.addListener((changes, area) => {
 // Open the advanced settings page on request (the binds overlay links here).
 // openOptionsPage isn't exposed to content scripts, so the bridge relays here.
 chrome.runtime.onMessage.addListener((msg) => {
-	if (msg?.__padm0nk === 'open-options') {
+	if (msg?.__padmonk === 'open-options') {
 		void chrome.runtime.openOptionsPage();
 	}
 });

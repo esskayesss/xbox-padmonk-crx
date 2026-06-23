@@ -17,7 +17,7 @@
 //   }
 //
 // CLICK-SAFETY (P6 relies on this):
-//   - Each host carries a stable attribute: `data-padm0nk="hud"` | `"overlay"`.
+//   - Each host carries a stable attribute: `data-padmonk="hud"` | `"overlay"`.
 //     Match it in `event.composedPath()` to SKIP pointer-lock / game-bind on
 //     clicks landing on our UI. Helpers exported below:
 //       HUD_HOST_SELECTOR, OVERLAY_HOST_SELECTOR, isPadm0nkUiEvent(e)
@@ -49,7 +49,7 @@ import type { Bindings, Combo } from '../core/types';
 import compiledCss from './styles/theme.css?inline';
 
 /** Attribute used to identify our shadow hosts in composedPath. */
-export const HOST_ATTR = 'data-padm0nk';
+export const HOST_ATTR = 'data-padmonk';
 export const HUD_HOST_VALUE = 'hud';
 export const OVERLAY_HOST_VALUE = 'overlay';
 export const HUD_HOST_SELECTOR = `[${HOST_ATTR}="${HUD_HOST_VALUE}"]`;
@@ -131,14 +131,14 @@ function buildStyleText(fontUrl: string | undefined): string {
 	// effect inside a shadow root. Without it, var() is guaranteed-invalid and
 	// border-style computes to `none` (visible widths, invisible borders). Seed it
 	// as a normal inherited custom property so every descendant utility works.
-	const base = `:host{all:initial}.padm0nk-ui{font-family:${FONT_FAMILY};--tw-border-style:solid;}`;
+	const base = `:host{all:initial}.padmonk-ui{font-family:${FONT_FAMILY};--tw-border-style:solid;}`;
 	return `${fontFace}\n${compiledCss}\n${base}`;
 }
 
 /**
  * Create a fixed, full-viewport, click-through shadow host and inject the
  * compiled CSS (+ font) into its open shadow root. Returns the host, root, and
- * a mount target div (class `padm0nk-ui`, where the Svelte component mounts).
+ * a mount target div (class `padmonk-ui`, where the Svelte component mounts).
  */
 function createShadowHost(
 	hostValue: string,
@@ -157,7 +157,7 @@ function createShadowHost(
 	root.appendChild(style);
 
 	const target = document.createElement('div');
-	target.className = 'padm0nk-ui';
+	target.className = 'padmonk-ui';
 	root.appendChild(target);
 
 	return { host, root, target };

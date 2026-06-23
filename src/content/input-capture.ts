@@ -1,4 +1,4 @@
-// padm0nk input-capture — MAIN-world DOM event wiring.
+// padmonk input-capture — MAIN-world DOM event wiring.
 //
 // All keyboard / mouse / wheel / pointer-lock / scroll-suppression / focus-loss
 // listeners live here, ported faithfully from the legacy inject.js monolith. The

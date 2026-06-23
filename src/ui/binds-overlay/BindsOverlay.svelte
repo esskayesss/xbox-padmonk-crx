@@ -143,7 +143,7 @@
 			onmouseupcapture={stop}
 			role="dialog"
 			aria-modal="true"
-			aria-label="padm0nk binds"
+			aria-label="padmonk binds"
 			tabindex="-1"
 		>
 			{#if !bindsComplete}
@@ -164,7 +164,7 @@
 						{#if iconUrl}
 							<img
 								src={iconUrl}
-								alt="padm0nk"
+								alt="padmonk"
 								class="pad-icon-glow block size-9 object-contain"
 								class:grayscale={!enabled}
 								class:opacity-60={!enabled}
@@ -174,13 +174,13 @@
 						{/if}
 					</span>
 					<div>
-						<div class="text-2xl tracking-wide uppercase">padm0nk binds</div>
+						<div class="text-2xl tracking-wide uppercase">padmonk binds</div>
 						<div
 							class="mt-0.5 text-sm uppercase"
 							class:text-pad-accent={enabled}
 							class:text-pad-muted={!enabled}
 						>
-							{enabled ? 'Virtual Xbox pad online' : 'padm0nk disabled'}
+							{enabled ? 'Virtual Xbox pad online' : 'padmonk disabled'}
 						</div>
 					</div>
 				</div>
