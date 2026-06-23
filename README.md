@@ -1,5 +1,7 @@
 # padm0nk — Mouse and keyboard for Xbox Cloud Gaming
 
+[![Install padm0nk from the Chrome Web Store](assets/chrome-webstore.svg)](https://redirect.esskayesss.dev/padmonk)
+
 padm0nk lets desktop Chromium players use mouse and keyboard on Xbox Cloud Gaming by presenting a virtual Xbox controller to the page. No driver install, no native helper app, no account, no telemetry. Open the extension, lock your mouse, tune aim, queue up.
 
 This repo is for players, tinkerers, and contributors who want xCloud controls to feel less like menu wrestling and more like a proper loadout.
