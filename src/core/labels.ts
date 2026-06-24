@@ -5,10 +5,10 @@
 // Digit1 -> "1") and pass-through codes (Space, F8, Enter) stay verbatim since
 // they carry no translatable words.
 
-import { baseLocale, type m, t, type Locale } from './i18n';
+import { baseLocale, t, type Locale, type MessageKey } from './i18n';
 
 /** Message key for each named input id; absent ids fall back to derivation. */
-const NAMED: Record<string, keyof typeof m> = {
+const NAMED: Record<string, MessageKey> = {
 	Mouse0: 'input_mouse_left',
 	Mouse1: 'input_mouse_middle',
 	Mouse2: 'input_mouse_right',

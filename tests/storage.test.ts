@@ -84,10 +84,26 @@ describe('readConfig', () => {
 		expect((localStore.config as Config).smoothing).toBe(0.5);
 	});
 
-	it('returns normalized defaults when nothing stored', async () => {
+	it('returns normalized defaults when nothing stored and chrome.i18n is absent', async () => {
 		const { readConfig } = await loadStorage();
 		const cfg = await readConfig();
 		expect(cfg).toEqual(DEFAULT_CONFIG);
+	});
+
+	it('seeds the locale from chrome.i18n only on true first run', async () => {
+		(globalThis as unknown as { chrome: typeof chrome }).chrome.i18n = {
+			getUILanguage: vi.fn(() => 'pt-PT'),
+		} as unknown as typeof chrome.i18n;
+
+		const { readConfig } = await loadStorage();
+		const seeded = await readConfig();
+		expect(seeded.locale).toBe('pt-BR');
+		expect((localStore.config as Config).locale).toBe('pt-BR');
+
+		localStore.config = { ...DEFAULT_CONFIG, locale: 'de' };
+		const stored = await readConfig();
+		expect(stored.locale).toBe('de');
+		expect(chrome.i18n.getUILanguage).toHaveBeenCalledTimes(1);
 	});
 });
 

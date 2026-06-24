@@ -46,6 +46,28 @@ describe('message key parity', () => {
 		expect(enKeys.has('ext_description')).toBe(true);
 		expect(enKeys.has('action_title')).toBe(true);
 	});
+
+	it('manifest-facing strings stay within Chrome limits and avoid em dashes', () => {
+		for (const locale of ALL_LOCALES) {
+			const raw = JSON.parse(readFileSync(messagesDir(locale), 'utf8')) as Record<string, unknown>;
+			const name = raw.ext_name;
+			const description = raw.ext_description;
+			expect(typeof name).toBe('string');
+			expect(typeof description).toBe('string');
+			expect(
+				(name as string).length,
+				`${locale} ext_name exceeds Chrome's 75-char limit`,
+			).toBeLessThanOrEqual(75);
+			expect(
+				(description as string).length,
+				`${locale} ext_description exceeds Chrome's 132-char limit`,
+			).toBeLessThanOrEqual(132);
+			expect(
+				`${name}${description}`,
+				`${locale} manifest strings contain an em dash`,
+			).not.toContain('—');
+		}
+	});
 });
 
 describe('autonym coverage', () => {

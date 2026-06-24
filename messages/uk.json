@@ -2,7 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
 	"ext_name": "padmonk: миша та клавіатура для Xbox Cloud Gaming",
-	"ext_description": "Додайте керування мишею та клавіатурою до Xbox Cloud Gaming, де очікується контролер. Працює локально, без драйверів і телеметрії.",
+	"ext_description": "Грайте в Xbox Cloud Gaming з мишею та клавіатурою. Налаштуйте приціл і клавіші локально, без драйверів і телеметрії.",
 	"action_title": "padmonk",
 	"input_mouse_left": "Лівий клік",
 	"input_mouse_middle": "Середній клік",

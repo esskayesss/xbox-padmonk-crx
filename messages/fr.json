@@ -2,7 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
 	"ext_name": "padmonk: souris et clavier pour Xbox Cloud Gaming",
-	"ext_description": "Ajoutez le contrôle à la souris et au clavier dans Xbox Cloud Gaming où une manette est attendue. Fonctionne localement, sans pilotes ni télémétrie.",
+	"ext_description": "Jouez à Xbox Cloud Gaming avec souris et clavier. Ajustez visée et touches localement, sans pilotes ni télémétrie.",
 	"action_title": "padmonk",
 	"input_mouse_left": "Clic gauche",
 	"input_mouse_middle": "Clic milieu",

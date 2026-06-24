@@ -2,7 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
 	"ext_name": "padmonk: Xbox Cloud Gaming 用のマウスとキーボード",
-	"ext_description": "コントローラーが必要な Xbox Cloud Gaming にマウスとキーボード操作を追加します。ドライバーやテレメトリなしでローカルに動作します。",
+	"ext_description": "Xbox Cloud Gaming をマウスとキーボードでプレイ。照準とキー割り当てをローカル調整。ドライバー不要、テレメトリなし。",
 	"action_title": "padmonk",
 
 	"input_mouse_left": "左クリック",

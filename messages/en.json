@@ -2,7 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
 	"ext_name": "padmonk: Mouse & Keyboard for Xbox Cloud Gaming",
-	"ext_description": "Play Xbox Cloud Gaming with mouse and keyboard. Tunable aim, custom key binds, and fully local. No drivers, no telemetry.",
+	"ext_description": "Play Xbox Cloud Gaming with mouse and keyboard. Tune aim, set key binds, stay local. No drivers or telemetry.",
 	"action_title": "padmonk",
 
 	"input_mouse_left": "Left Click",

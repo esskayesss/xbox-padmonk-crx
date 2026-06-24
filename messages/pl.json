@@ -2,7 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
 	"ext_name": "padmonk: mysz i klawiatura do Xbox Cloud Gaming",
-	"ext_description": "Dodaj sterowanie myszą i klawiaturą do Xbox Cloud Gaming, gdzie wymagany jest kontroler. Działa lokalnie, bez sterowników i telemetrii.",
+	"ext_description": "Graj w Xbox Cloud Gaming myszą i klawiaturą. Lokalnie dostosuj celowanie i klawisze, bez sterowników i telemetrii.",
 	"action_title": "padmonk",
 	"input_mouse_left": "Lewy przycisk",
 	"input_mouse_middle": "Środkowy przycisk",

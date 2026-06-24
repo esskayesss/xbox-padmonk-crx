@@ -2,7 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
 	"ext_name": "padmonk: 适用于 Xbox Cloud Gaming 的鼠标和键盘",
-	"ext_description": "在需要手柄的 Xbox Cloud Gaming 中使用鼠标和键盘操作。本地运行，无需驱动程序，也无遥测。",
+	"ext_description": "用鼠标和键盘畅玩 Xbox Cloud Gaming。本地调整瞄准和按键绑定，无需驱动程序，无遥测。",
 	"action_title": "padmonk",
 
 	"input_mouse_left": "左键单击",
