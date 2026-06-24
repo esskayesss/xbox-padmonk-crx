@@ -1,6 +1,10 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
+	"ext_name": "padmonk — Mouse & Keyboard for Xbox Cloud Gaming",
+	"ext_description": "Bring mouse and keyboard controls to Xbox Cloud Gaming where a controller is expected. Runs locally with no drivers or telemetry.",
+	"action_title": "padmonk",
+
 	"input_mouse_left": "Left Click",
 	"input_mouse_middle": "Middle Click",
 	"input_mouse_right": "Right Click",

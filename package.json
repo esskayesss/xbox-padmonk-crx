@@ -6,9 +6,12 @@
 	"description": "Keyboard & Mouse for xCloud — Xbox controller emulation via the Gamepad API.",
 	"scripts": {
 		"i18n": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
+		"gen:locales": "node scripts/gen-locales.mjs",
+		"predev": "npm run gen:locales",
 		"dev": "vite",
 		"build": "vite build",
-		"prebuild": "npm run i18n",
+		"prebuild": "npm run i18n && npm run gen:locales",
+		"postbuild": "node scripts/copy-locales.mjs",
 		"typecheck": "npm run i18n && svelte-check --tsconfig ./tsconfig.json && tsc --noEmit -p tsconfig.json",
 		"test": "vitest run",
 		"pretest": "npm run i18n",

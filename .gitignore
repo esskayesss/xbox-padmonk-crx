@@ -11,3 +11,6 @@ dist/
 
 # Paraglide compiler output — regenerated from messages/ via `npm run i18n`
 src/paraglide/
+
+# Chrome-native _locales output — regenerated from messages/ via `npm run gen:locales`
+_locales/

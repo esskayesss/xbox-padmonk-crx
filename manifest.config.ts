@@ -20,13 +20,16 @@ const WAR_MATCHES = [
 
 export default defineManifest({
 	manifest_version: 3,
-	name: 'padmonk — Mouse & Keyboard for Xbox Cloud Gaming',
+	// Localized via Chrome-native _locales (see scripts/gen-locales.mjs). The
+	// __MSG_*__ tokens resolve from _locales/<default_locale>/messages.json and
+	// its siblings; default_locale is REQUIRED whenever _locales/ is present.
+	name: '__MSG_extName__',
 	version: VERSION,
 	// Free-form, shown on the chrome://extensions card. Carries the git hash +
 	// build timestamp so a reloaded build is unambiguously identifiable.
 	version_name: VERSION_NAME,
-	description:
-		'Bring mouse and keyboard controls to Xbox Cloud Gaming where a controller is expected. Runs locally with no drivers or telemetry.',
+	description: '__MSG_extDescription__',
+	default_locale: 'en',
 	minimum_chrome_version: '111',
 	permissions: ['storage'],
 	icons: {
@@ -40,7 +43,7 @@ export default defineManifest({
 		open_in_tab: true,
 	},
 	action: {
-		default_title: 'padmonk',
+		default_title: '__MSG_actionTitle__',
 		default_popup: 'src/popup/index.html',
 		default_icon: {
 			'16': 'icons/icon-16.png',
