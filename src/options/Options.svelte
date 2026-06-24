@@ -17,6 +17,7 @@
 	} from '../core/aim-settings';
 	import { actionEq, groupsForOptions, allBindsConfigured } from '../core/controller-actions';
 	import { DEFAULT_CONFIG, normalizeConfig } from '../core/config';
+	import { configToProfile, profileToConfig } from '../core/profile';
 	import { comboFromEvent, comboLabel } from '../core/combos';
 	import { prettyInput } from '../core/labels';
 	import { m, t as translate, locales, localeName } from '../core/i18n';
@@ -144,8 +145,6 @@
 		if (capturing?.kind !== 'toggle' && capturing?.kind !== 'help') return;
 		const combo = comboFromEvent(e);
 		if (capturing.kind === 'toggle') {
-			// Combo is source of truth; keep legacy toggleKey in sync for old reads.
-			config.toggleKey = combo.code;
 			config.toggleCombo = combo;
 		} else {
 			config.helpCombo = combo;
@@ -212,11 +211,11 @@
 
 	// ---- import / export ----
 	function exportToBox(): void {
-		jsonText = JSON.stringify($state.snapshot(config), null, 2);
+		jsonText = JSON.stringify(configToProfile($state.snapshot(config)), null, 2);
 	}
 	function importFromBox(): void {
 		try {
-			config = normalizeConfig(JSON.parse(jsonText));
+			config = profileToConfig(JSON.parse(jsonText));
 			save();
 		} catch (err) {
 			alert(
@@ -228,7 +227,7 @@
 		}
 	}
 	function downloadProfile(): void {
-		const blob = new Blob([JSON.stringify($state.snapshot(config), null, 2)], {
+		const blob = new Blob([JSON.stringify(configToProfile($state.snapshot(config)), null, 2)], {
 			type: 'application/json',
 		});
 		const url = URL.createObjectURL(blob);
@@ -244,7 +243,7 @@
 		const reader = new FileReader();
 		reader.onload = () => {
 			try {
-				config = normalizeConfig(JSON.parse(String(reader.result)));
+				config = profileToConfig(JSON.parse(String(reader.result)));
 				save();
 			} catch (err) {
 				alert(
