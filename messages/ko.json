@@ -1,7 +1,7 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
-	"ext_name": "padmonk — Xbox Cloud Gaming용 마우스 및 키보드",
+	"ext_name": "padmonk: Xbox Cloud Gaming용 마우스 및 키보드",
 	"ext_description": "컨트롤러가 필요한 Xbox Cloud Gaming에 마우스와 키보드 조작을 추가합니다. 드라이버나 텔레메트리 없이 로컬에서 실행됩니다.",
 	"action_title": "padmonk",
 

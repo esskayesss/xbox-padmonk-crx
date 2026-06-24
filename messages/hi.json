@@ -1,7 +1,7 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
-	"ext_name": "padmonk — Xbox Cloud Gaming के लिए माउस और कीबोर्ड",
+	"ext_name": "padmonk: Xbox Cloud Gaming के लिए माउस और कीबोर्ड",
 	"ext_description": "Xbox Cloud Gaming में माउस और कीबोर्ड नियंत्रण लाएँ, जहाँ कंट्रोलर की अपेक्षा होती है। बिना किसी ड्राइवर या टेलीमेट्री के स्थानीय रूप से चलता है।",
 	"action_title": "padmonk",
 	"input_mouse_left": "बायाँ क्लिक",

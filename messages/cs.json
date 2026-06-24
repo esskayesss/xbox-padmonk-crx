@@ -1,7 +1,7 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
-	"ext_name": "padmonk — myš a klávesnice pro Xbox Cloud Gaming",
+	"ext_name": "padmonk: myš a klávesnice pro Xbox Cloud Gaming",
 	"ext_description": "Přidejte ovládání myší a klávesnicí do Xbox Cloud Gaming, kde se očekává ovladač. Běží lokálně, bez ovladačů a telemetrie.",
 	"action_title": "padmonk",
 

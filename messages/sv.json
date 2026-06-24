@@ -1,7 +1,7 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 
-	"ext_name": "padmonk — mus och tangentbord för Xbox Cloud Gaming",
+	"ext_name": "padmonk: mus och tangentbord för Xbox Cloud Gaming",
 	"ext_description": "Lägg till mus- och tangentbordsstyrning i Xbox Cloud Gaming där en handkontroll förväntas. Körs lokalt, utan drivrutiner eller telemetri.",
 	"action_title": "padmonk",
 
