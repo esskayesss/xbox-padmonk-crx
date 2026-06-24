@@ -5,7 +5,7 @@
 // Digit1 -> "1") and pass-through codes (Space, F8, Enter) stay verbatim since
 // they carry no translatable words.
 
-import { baseLocale, m, type Locale } from './i18n';
+import { baseLocale, type m, t, type Locale } from './i18n';
 
 /** Message key for each named input id; absent ids fall back to derivation. */
 const NAMED: Record<string, keyof typeof m> = {
@@ -32,7 +32,7 @@ const NAMED: Record<string, keyof typeof m> = {
 /** Human-readable label for an input id, in the given locale (default base). */
 export function prettyInput(id: string, locale: Locale = baseLocale): string {
 	const key = NAMED[id];
-	if (key) return (m[key] as (i?: object, o?: { locale?: Locale }) => string)({}, { locale });
+	if (key) return t(key, locale);
 	if (id.startsWith('Key')) return id.slice(3);
 	if (id.startsWith('Digit')) return id.slice(5);
 	return id;

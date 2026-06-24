@@ -44,7 +44,6 @@ describe('DEFAULT_CONFIG', () => {
 		expect(DEFAULT_CONFIG.aimCurve).toBe(0.75);
 		expect(DEFAULT_CONFIG.invertY).toBe(false);
 		expect(DEFAULT_CONFIG.lockPointerOnClick).toBe(true);
-		expect(DEFAULT_CONFIG.toggleKey).toBe('F8');
 		expect(DEFAULT_CONFIG.toggleCombo).toEqual({
 			code: 'F8',
 			ctrl: false,
@@ -118,7 +117,6 @@ describe('normalizeConfig', () => {
 
 	it('derives toggleCombo from a legacy toggleKey-only profile', () => {
 		const c = normalizeConfig({ toggleKey: 'F10' });
-		expect(c.toggleKey).toBe('F10');
 		expect(c.toggleCombo).toEqual({
 			code: 'F10',
 			ctrl: false,

@@ -53,8 +53,6 @@ export interface Config {
 	aimCurve: number;
 	invertY: boolean;
 	lockPointerOnClick: boolean;
-	/** Legacy single-key toggle; kept readable for old profiles. */
-	toggleKey: string;
 	toggleCombo: Combo;
 	helpCombo: Combo;
 	bindings: Bindings;

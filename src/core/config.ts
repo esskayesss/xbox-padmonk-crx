@@ -16,7 +16,6 @@ export const DEFAULT_CONFIG: Config = {
 	aimCurve: 0.75,
 	invertY: false,
 	lockPointerOnClick: true,
-	toggleKey: 'F8',
 	toggleCombo: { code: 'F8', ctrl: false, alt: false, shift: false, meta: false },
 	helpCombo: { code: 'F9', ctrl: false, alt: false, shift: false, meta: false },
 	bindings: buildDefaultBindings(),
@@ -84,13 +83,17 @@ function normalizeCombo(raw: unknown, fallback: Combo): Combo {
 export function normalizeConfig(raw: unknown): Config {
 	const src = isRecord(raw) ? raw : {};
 
-	const toggleKey = typeof src.toggleKey === 'string' ? src.toggleKey : DEFAULT_CONFIG.toggleKey;
+	// Legacy migration: old profiles stored only `toggleKey` (a bare code). Read
+	// it off the raw input solely to derive a combo when no explicit toggleCombo
+	// is present. `toggleKey` is no longer a persisted Config field.
+	const legacyToggleKey =
+		typeof src.toggleKey === 'string' ? src.toggleKey : DEFAULT_CONFIG.toggleCombo.code;
 
-	// Prefer an explicit toggleCombo; otherwise derive from legacy toggleKey.
+	// Prefer an explicit toggleCombo; otherwise derive from the legacy toggleKey.
 	const toggleCombo = isRecord(src.toggleCombo)
 		? normalizeCombo(src.toggleCombo, DEFAULT_CONFIG.toggleCombo)
 		: normalizeCombo(
-				{ code: toggleKey, ctrl: false, alt: false, shift: false, meta: false },
+				{ code: legacyToggleKey, ctrl: false, alt: false, shift: false, meta: false },
 				DEFAULT_CONFIG.toggleCombo,
 			);
 
@@ -120,7 +123,6 @@ export function normalizeConfig(raw: unknown): Config {
 		),
 		invertY: bool(src.invertY, DEFAULT_CONFIG.invertY),
 		lockPointerOnClick: bool(src.lockPointerOnClick, DEFAULT_CONFIG.lockPointerOnClick),
-		toggleKey,
 		toggleCombo,
 		helpCombo: normalizeCombo(src.helpCombo, DEFAULT_CONFIG.helpCombo),
 		bindings,
