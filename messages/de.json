@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"input_mouse_left": "Linksklick",
 	"input_mouse_middle": "Mittelklick",
 	"input_mouse_right": "Rechtsklick",
@@ -19,12 +18,10 @@
 	"input_alt_left": "L-Alt",
 	"input_alt_right": "R-Alt",
 	"input_backquote": "` (Tilde)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Bewegung — Linker Stick",
 	"group_right_stick": "Zielen — Rechter Stick",
 	"group_face": "Aktionstasten",
@@ -33,7 +30,6 @@
 	"group_menu": "Menü",
 	"group_dpad": "Steuerkreuz",
 	"group_right_stick_info": "Per Mausbewegung gesteuert. Empfindlichkeit / Glättung unten anpassen.",
-
 	"action_stick_up": "Hoch",
 	"action_stick_down": "Runter",
 	"action_stick_left": "Links",
@@ -55,7 +51,6 @@
 	"action_dpad_down": "Runter",
 	"action_dpad_left": "Links",
 	"action_dpad_right": "Rechts",
-
 	"aim_sensitivity_label": "Blickgeschwindigkeit",
 	"aim_sensitivity_hint": "Standard = 80 %",
 	"aim_smoothing_label": "Glättung",
@@ -65,7 +60,6 @@
 	"aim_curve_label": "Feinzielen-Boost",
 	"aim_curve_hint": "0 = linear, + verstärkt Mikrozielen",
 	"aim_value_aria": "Wert für {label}",
-
 	"opt_aim_sensitivity_label": "Mausempfindlichkeit",
 	"opt_aim_sensitivity_desc": "Höhere Werte drehen schneller mit weniger Mausbewegung. Niedrigere Werte sorgen für ruhigeres Zielen und erfordern größere Mausbewegungen.",
 	"opt_aim_smoothing_label": "Zielglättung",
@@ -74,12 +68,10 @@
 	"opt_aim_deadzone_desc": "Hilft kleinen Mausbewegungen, gegen die Stick-Deadzones im Spiel zu greifen. Erhöhen, wenn langsames Zielen klemmt; senken, wenn das Zielen zittrig wirkt.",
 	"opt_aim_curve_label": "Zielreaktionskurve",
 	"opt_aim_curve_desc": "Ändert, wie Mausbewegung in die Stick-Ausgabe übergeht. Höhere Werte verbessern das Mikrozielen nahe der Mitte. Niedrigere Werte wirken linearer und roher.",
-
 	"opt_behavior_invert_desc": "Kehrt das vertikale Zielen um: Maus hoch blickt runter, Maus runter blickt hoch.",
 	"opt_behavior_lock_desc": "Fängt den Cursor ein, wenn du ins Spiel klickst, sodass die Mausbewegung das Zielen statt des Seitencursors steuert. Esc drücken zum Freigeben.",
 	"opt_behavior_toggle_desc": "Tastenkürzel, um padmonk im Spiel ein- oder auszuschalten.",
 	"opt_behavior_help_desc": "Tastenkürzel zum Öffnen des Steuerungs-Overlays im Spiel.",
-
 	"opt_support_title": "padmonk unterstützen",
 	"opt_support_subtitle": "Hilf mit, die Erweiterung kostenlos, quelloffen und aktiv gepflegt zu halten.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -117,7 +109,6 @@
 	"opt_footer_web": "Website ↗",
 	"opt_footer_bug": "Fehler melden ↗",
 	"opt_language_label": "Sprache",
-
 	"popup_state_armed": "aktiv",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Aktiviert",
@@ -130,12 +121,11 @@
 	"popup_reset_confirm": "Ziel-Feintuning-Werte auf Standard zurücksetzen?",
 	"popup_advanced": "Erweitert",
 	"popup_test_pad": "Pad testen",
-	"popup_report_bug": "Fehler melden",
+	"popup_report_bug": "Bug melden",
 	"popup_hint_toggle": "schaltet im Spiel um.",
 	"popup_hint_help": "bearbeitet Belegungen.",
 	"popup_sponsor": "Sponsern",
 	"popup_coffee": "Einen Kaffee spendieren",
-
 	"hud_on": "EIN",
 	"hud_off": "AUS",
 	"hud_toggle": "umschalten",
@@ -143,7 +133,6 @@
 	"hud_release_lock": "Zielsperre freigeben",
 	"hud_click_lock": "Ins Spiel klicken, um Ziel zu sperren",
 	"hud_unmapped": "Nicht belegte Steuerungen — Belegungen öffnen",
-
 	"overlay_unmapped_banner": "Einige Steuerungen sind nicht belegt — Tastenbelegung öffnen, um sie zu belegen",
 	"overlay_title": "padmonk-Belegungen",
 	"overlay_online": "Virtuelles Xbox-Pad online",
@@ -171,6 +160,5 @@
 	"overlay_view": "Ansicht",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Menü",
-
 	"lang_name_de": "Deutsch"
 }

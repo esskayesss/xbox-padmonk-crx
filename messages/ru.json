@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"input_mouse_left": "Левый клик",
 	"input_mouse_middle": "Средний клик",
 	"input_mouse_right": "Правый клик",
@@ -19,12 +18,10 @@
 	"input_alt_left": "Л-Alt",
 	"input_alt_right": "П-Alt",
 	"input_backquote": "` (тильда)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Движение — левый стик",
 	"group_right_stick": "Прицеливание — правый стик",
 	"group_face": "Основные кнопки",
@@ -33,7 +30,6 @@
 	"group_menu": "Меню",
 	"group_dpad": "Крестовина",
 	"group_right_stick_info": "Управляется движением мыши. Настройте чувствительность / сглаживание ниже.",
-
 	"action_stick_up": "Вверх",
 	"action_stick_down": "Вниз",
 	"action_stick_left": "Влево",
@@ -55,7 +51,6 @@
 	"action_dpad_down": "Вниз",
 	"action_dpad_left": "Влево",
 	"action_dpad_right": "Вправо",
-
 	"aim_sensitivity_label": "Скорость обзора",
 	"aim_sensitivity_hint": "По умолчанию = 80%",
 	"aim_smoothing_label": "Сглаживание",
@@ -65,7 +60,6 @@
 	"aim_curve_label": "Точное усиление прицела",
 	"aim_curve_hint": "0 = линейно, + усиливает микроприцеливание",
 	"aim_value_aria": "Значение {label}",
-
 	"opt_aim_sensitivity_label": "Чувствительность мыши",
 	"opt_aim_sensitivity_desc": "Высокие значения поворачивают быстрее при меньшем движении мыши. Низкие дают более стабильный прицел и требуют большего движения мыши.",
 	"opt_aim_smoothing_label": "Сглаживание прицела",
@@ -74,12 +68,10 @@
 	"opt_aim_deadzone_desc": "Помогает малым движениям мыши срабатывать вопреки игровым мёртвым зонам стика. Поднимите, если медленный прицел застревает; снизьте, если прицел дёргается.",
 	"opt_aim_curve_label": "Кривая отклика прицела",
 	"opt_aim_curve_desc": "Меняет, как движение мыши переходит в сигнал стика. Высокие значения улучшают микроприцеливание у центра. Низкие — линейнее и сырее.",
-
 	"opt_behavior_invert_desc": "Инвертирует вертикальный прицел: мышь вверх — взгляд вниз, мышь вниз — взгляд вверх.",
 	"opt_behavior_lock_desc": "Захватывает курсор при клике по игре, чтобы движение мыши управляло прицелом вместо перемещения курсора страницы. Нажмите Esc, чтобы освободить.",
 	"opt_behavior_toggle_desc": "Горячая клавиша для включения или выключения padmonk во время игры.",
 	"opt_behavior_help_desc": "Горячая клавиша для открытия игрового оверлея управления.",
-
 	"opt_support_title": "Поддержать padmonk",
 	"opt_support_subtitle": "Помогите сохранить расширение бесплатным, с открытым кодом и активно поддерживаемым.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -117,25 +109,23 @@
 	"opt_footer_web": "Веб-сайт ↗",
 	"opt_footer_bug": "Сообщить об ошибке ↗",
 	"opt_language_label": "Язык",
-
 	"popup_state_armed": "активно",
 	"popup_state_offline": "офлайн",
 	"popup_enabled": "Включено",
 	"popup_toggle_invert_label": "Инверт. Y",
 	"popup_toggle_invert_hint": "Перевернуть вертикальный прицел",
-	"popup_toggle_lock_label": "Блокировка прицела",
+	"popup_toggle_lock_label": "Прицел",
 	"popup_toggle_lock_hint": "Кликните игру, чтобы захватить мышь",
 	"popup_aim_tuning": "Настройка прицела",
 	"popup_reset": "Сбросить",
 	"popup_reset_confirm": "Сбросить значения настройки прицела до значений по умолчанию?",
-	"popup_advanced": "Дополнительно",
-	"popup_test_pad": "Тест геймпада",
-	"popup_report_bug": "Сообщить об ошибке",
+	"popup_advanced": "Настройки",
+	"popup_test_pad": "Тест пада",
+	"popup_report_bug": "Баг-репорт",
 	"popup_hint_toggle": "переключает в игре.",
 	"popup_hint_help": "редактирует привязки.",
 	"popup_sponsor": "Спонсировать",
 	"popup_coffee": "Купить кофе",
-
 	"hud_on": "ВКЛ",
 	"hud_off": "ВЫКЛ",
 	"hud_toggle": "переключить",
@@ -143,7 +133,6 @@
 	"hud_release_lock": "освободить блокировку прицела",
 	"hud_click_lock": "кликните игру, чтобы заблокировать прицел",
 	"hud_unmapped": "Неназначенные элементы — открыть привязки",
-
 	"overlay_unmapped_banner": "Некоторые элементы не назначены — откройте «Настроить клавиши», чтобы назначить их",
 	"overlay_title": "Привязки padmonk",
 	"overlay_online": "Виртуальный геймпад Xbox онлайн",
@@ -171,6 +160,5 @@
 	"overlay_view": "Просмотр",
 	"overlay_guide": "Гид",
 	"overlay_menu": "Меню",
-
 	"lang_name_ru": "Русский"
 }

@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"input_mouse_left": "Clic gauche",
 	"input_mouse_middle": "Clic milieu",
 	"input_mouse_right": "Clic droit",
@@ -19,12 +18,10 @@
 	"input_alt_left": "Alt gauche",
 	"input_alt_right": "Alt droite",
 	"input_backquote": "` (tilde)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Déplacement — Stick gauche",
 	"group_right_stick": "Visée — Stick droit",
 	"group_face": "Boutons d’action",
@@ -33,7 +30,6 @@
 	"group_menu": "Menu",
 	"group_dpad": "Croix directionnelle",
 	"group_right_stick_info": "Piloté par le mouvement de la souris. Ajustez la sensibilité / le lissage ci-dessous.",
-
 	"action_stick_up": "Haut",
 	"action_stick_down": "Bas",
 	"action_stick_left": "Gauche",
@@ -55,7 +51,6 @@
 	"action_dpad_down": "Bas",
 	"action_dpad_left": "Gauche",
 	"action_dpad_right": "Droite",
-
 	"aim_sensitivity_label": "Vitesse de visée",
 	"aim_sensitivity_hint": "Par défaut = 80 %",
 	"aim_smoothing_label": "Lissage",
@@ -65,7 +60,6 @@
 	"aim_curve_label": "Renfort de visée fine",
 	"aim_curve_hint": "0 = linéaire, + renforce la micro-visée",
 	"aim_value_aria": "Valeur de {label}",
-
 	"opt_aim_sensitivity_label": "Sensibilité de la souris",
 	"opt_aim_sensitivity_desc": "Des valeurs élevées tournent plus vite avec moins de mouvement de souris. Des valeurs basses donnent une visée plus stable et demandent un mouvement de souris plus ample.",
 	"opt_aim_smoothing_label": "Lissage de la visée",
@@ -74,12 +68,10 @@
 	"opt_aim_deadzone_desc": "Aide les petits mouvements de souris à être pris en compte malgré les zones mortes du stick dans le jeu. Augmentez si la visée lente semble bloquée ; baissez si la visée semble nerveuse.",
 	"opt_aim_curve_label": "Courbe de réponse de visée",
 	"opt_aim_curve_desc": "Modifie la façon dont le mouvement de souris se traduit en sortie du stick. Des valeurs élevées améliorent la micro-visée près du centre. Des valeurs basses semblent plus linéaires et brutes.",
-
 	"opt_behavior_invert_desc": "Inverse la visée verticale : souris vers le haut regarde vers le bas, souris vers le bas regarde vers le haut.",
 	"opt_behavior_lock_desc": "Capture le curseur quand vous cliquez sur le jeu afin que le mouvement de souris contrôle la visée au lieu de déplacer le curseur de la page. Appuyez sur Esc pour le libérer.",
 	"opt_behavior_toggle_desc": "Raccourci pour activer ou désactiver padmonk en jeu.",
 	"opt_behavior_help_desc": "Raccourci pour ouvrir la surcouche des commandes en jeu.",
-
 	"opt_support_title": "Soutenir padmonk",
 	"opt_support_subtitle": "Aidez à garder l’extension gratuite, open source et activement maintenue.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -117,25 +109,23 @@
 	"opt_footer_web": "Site web ↗",
 	"opt_footer_bug": "Signaler un bug ↗",
 	"opt_language_label": "Langue",
-
 	"popup_state_armed": "actif",
 	"popup_state_offline": "hors ligne",
 	"popup_enabled": "Activé",
 	"popup_toggle_invert_label": "Inverser Y",
 	"popup_toggle_invert_hint": "Inverser la visée verticale",
-	"popup_toggle_lock_label": "Verrou de visée",
+	"popup_toggle_lock_label": "Verrou",
 	"popup_toggle_lock_hint": "Cliquez sur le jeu pour capturer la souris",
 	"popup_aim_tuning": "Réglage de la visée",
 	"popup_reset": "Réinitialiser",
 	"popup_reset_confirm": "Réinitialiser les valeurs de réglage de visée aux valeurs par défaut ?",
 	"popup_advanced": "Avancé",
-	"popup_test_pad": "Tester la manette",
+	"popup_test_pad": "Test pad",
 	"popup_report_bug": "Signaler un bug",
 	"popup_hint_toggle": "active/désactive en jeu.",
 	"popup_hint_help": "modifie les assignations.",
 	"popup_sponsor": "Sponsoriser",
 	"popup_coffee": "Offrir un café",
-
 	"hud_on": "ON",
 	"hud_off": "OFF",
 	"hud_toggle": "basculer",
@@ -143,7 +133,6 @@
 	"hud_release_lock": "libérer le verrou de visée",
 	"hud_click_lock": "cliquez sur le jeu pour verrouiller la visée",
 	"hud_unmapped": "Commandes non assignées — ouvrir les assignations",
-
 	"overlay_unmapped_banner": "Certaines commandes ne sont pas assignées — ouvrez Configurer les raccourcis pour les associer",
 	"overlay_title": "Assignations padmonk",
 	"overlay_online": "Manette Xbox virtuelle connectée",
@@ -171,6 +160,5 @@
 	"overlay_view": "Vue",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Menu",
-
 	"lang_name_fr": "Français"
 }

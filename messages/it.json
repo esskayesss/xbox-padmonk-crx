@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"input_mouse_left": "Clic sinistro",
 	"input_mouse_middle": "Clic centrale",
 	"input_mouse_right": "Clic destro",
@@ -19,12 +18,10 @@
 	"input_alt_left": "Alt sin.",
 	"input_alt_right": "Alt des.",
 	"input_backquote": "` (tilde)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Movimento — Levetta sinistra",
 	"group_right_stick": "Mira — Levetta destra",
 	"group_face": "Pulsanti frontali",
@@ -33,7 +30,6 @@
 	"group_menu": "Menu",
 	"group_dpad": "Croce direzionale",
 	"group_right_stick_info": "Guidata dal movimento del mouse. Regola sensibilità / livellamento qui sotto.",
-
 	"action_stick_up": "Su",
 	"action_stick_down": "Giù",
 	"action_stick_left": "Sinistra",
@@ -55,7 +51,6 @@
 	"action_dpad_down": "Giù",
 	"action_dpad_left": "Sinistra",
 	"action_dpad_right": "Destra",
-
 	"aim_sensitivity_label": "Velocità di mira",
 	"aim_sensitivity_hint": "Predefinito = 80%",
 	"aim_smoothing_label": "Livellamento",
@@ -65,7 +60,6 @@
 	"aim_curve_label": "Potenziamento mira fine",
 	"aim_curve_hint": "0 = lineare, + potenzia la micro-mira",
 	"aim_value_aria": "Valore di {label}",
-
 	"opt_aim_sensitivity_label": "Sensibilità del mouse",
 	"opt_aim_sensitivity_desc": "Valori più alti ruotano più velocemente con meno movimento del mouse. Valori più bassi danno una mira più stabile e richiedono un movimento del mouse più ampio.",
 	"opt_aim_smoothing_label": "Livellamento della mira",
@@ -74,12 +68,10 @@
 	"opt_aim_deadzone_desc": "Aiuta i piccoli movimenti del mouse a essere registrati nonostante le zone morte della levetta nel gioco. Aumenta se la mira lenta sembra bloccata; abbassa se la mira sembra nervosa.",
 	"opt_aim_curve_label": "Curva di risposta della mira",
 	"opt_aim_curve_desc": "Cambia il modo in cui il movimento del mouse si traduce nell’uscita della levetta. Valori più alti migliorano la micro-mira vicino al centro. Valori più bassi risultano più lineari e diretti.",
-
 	"opt_behavior_invert_desc": "Inverte la mira verticale: mouse verso l’alto guarda in basso, mouse verso il basso guarda in alto.",
 	"opt_behavior_lock_desc": "Cattura il cursore quando fai clic sul gioco, così il movimento del mouse controlla la mira invece di spostare il cursore della pagina. Premi Esc per rilasciarlo.",
 	"opt_behavior_toggle_desc": "Scorciatoia per attivare o disattivare padmonk durante il gioco.",
 	"opt_behavior_help_desc": "Scorciatoia per aprire la sovrapposizione dei comandi nel gioco.",
-
 	"opt_support_title": "Sostieni padmonk",
 	"opt_support_subtitle": "Aiuta a mantenere l’estensione gratuita, open source e attivamente aggiornata.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -117,7 +109,6 @@
 	"opt_footer_web": "Sito web ↗",
 	"opt_footer_bug": "Segnala un bug ↗",
 	"opt_language_label": "Lingua",
-
 	"popup_state_armed": "attivo",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Abilitato",
@@ -129,13 +120,12 @@
 	"popup_reset": "Ripristina",
 	"popup_reset_confirm": "Ripristinare i valori di regolazione della mira ai predefiniti?",
 	"popup_advanced": "Avanzate",
-	"popup_test_pad": "Prova controller",
+	"popup_test_pad": "Test pad",
 	"popup_report_bug": "Segnala bug",
 	"popup_hint_toggle": "attiva/disattiva nel gioco.",
 	"popup_hint_help": "modifica le assegnazioni.",
 	"popup_sponsor": "Sostieni",
 	"popup_coffee": "Offri un caffè",
-
 	"hud_on": "ON",
 	"hud_off": "OFF",
 	"hud_toggle": "attiva",
@@ -143,7 +133,6 @@
 	"hud_release_lock": "rilascia blocco mira",
 	"hud_click_lock": "clicca sul gioco per bloccare la mira",
 	"hud_unmapped": "Comandi non assegnati — apri le assegnazioni",
-
 	"overlay_unmapped_banner": "Alcuni comandi non sono assegnati — apri Configura scorciatoie per assegnarli",
 	"overlay_title": "Assegnazioni padmonk",
 	"overlay_online": "Controller Xbox virtuale online",
@@ -171,6 +160,5 @@
 	"overlay_view": "Visualizza",
 	"overlay_guide": "Guida",
 	"overlay_menu": "Menu",
-
 	"lang_name_it": "Italiano"
 }

@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"input_mouse_left": "Лівий клік",
 	"input_mouse_middle": "Середній клік",
 	"input_mouse_right": "Правий клік",
@@ -19,12 +18,10 @@
 	"input_alt_left": "Л-Alt",
 	"input_alt_right": "П-Alt",
 	"input_backquote": "` (тильда)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Рух — лівий стик",
 	"group_right_stick": "Прицілювання — правий стик",
 	"group_face": "Основні кнопки",
@@ -33,7 +30,6 @@
 	"group_menu": "Меню",
 	"group_dpad": "Хрестовина",
 	"group_right_stick_info": "Керується рухом миші. Налаштуйте чутливість / згладжування нижче.",
-
 	"action_stick_up": "Вгору",
 	"action_stick_down": "Вниз",
 	"action_stick_left": "Вліво",
@@ -55,7 +51,6 @@
 	"action_dpad_down": "Вниз",
 	"action_dpad_left": "Вліво",
 	"action_dpad_right": "Вправо",
-
 	"aim_sensitivity_label": "Швидкість огляду",
 	"aim_sensitivity_hint": "Типово = 80%",
 	"aim_smoothing_label": "Згладжування",
@@ -65,7 +60,6 @@
 	"aim_curve_label": "Точне підсилення прицілу",
 	"aim_curve_hint": "0 = лінійно, + підсилює мікроприцілювання",
 	"aim_value_aria": "Значення {label}",
-
 	"opt_aim_sensitivity_label": "Чутливість миші",
 	"opt_aim_sensitivity_desc": "Вищі значення повертають швидше з меншим рухом миші. Нижчі дають стабільніший приціл і потребують більшого руху миші.",
 	"opt_aim_smoothing_label": "Згладжування прицілу",
@@ -74,12 +68,10 @@
 	"opt_aim_deadzone_desc": "Допомагає малим рухам миші спрацьовувати попри ігрові мертві зони стика. Підніміть, якщо повільний приціл застрягає; знизьте, якщо приціл смикається.",
 	"opt_aim_curve_label": "Крива відгуку прицілу",
 	"opt_aim_curve_desc": "Змінює, як рух миші переходить у вихід стика. Вищі значення покращують мікроприцілювання біля центру. Нижчі — лінійніше й сирим.",
-
 	"opt_behavior_invert_desc": "Інвертує вертикальний приціл: миша вгору — погляд вниз, миша вниз — погляд вгору.",
 	"opt_behavior_lock_desc": "Захоплює курсор, коли ви клікаєте по грі, щоб рух миші керував прицілом замість переміщення курсора сторінки. Натисніть Esc, щоб звільнити.",
 	"opt_behavior_toggle_desc": "Гаряча клавіша для ввімкнення чи вимкнення padmonk під час гри.",
 	"opt_behavior_help_desc": "Гаряча клавіша для відкриття ігрового оверлею керування.",
-
 	"opt_support_title": "Підтримати padmonk",
 	"opt_support_subtitle": "Допоможіть зберегти розширення безкоштовним, відкритим і активно підтримуваним.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -117,25 +109,23 @@
 	"opt_footer_web": "Вебсайт ↗",
 	"opt_footer_bug": "Повідомити про помилку ↗",
 	"opt_language_label": "Мова",
-
 	"popup_state_armed": "активно",
 	"popup_state_offline": "офлайн",
 	"popup_enabled": "Увімкнено",
 	"popup_toggle_invert_label": "Інверт. Y",
 	"popup_toggle_invert_hint": "Перевернути вертикальний приціл",
-	"popup_toggle_lock_label": "Фіксація прицілу",
+	"popup_toggle_lock_label": "Прицел",
 	"popup_toggle_lock_hint": "Клікніть гру, щоб захопити мишу",
 	"popup_aim_tuning": "Налаштування прицілу",
 	"popup_reset": "Скинути",
 	"popup_reset_confirm": "Скинути значення налаштувань прицілу до типових?",
 	"popup_advanced": "Розширені",
-	"popup_test_pad": "Тест геймпада",
-	"popup_report_bug": "Повідомити про помилку",
+	"popup_test_pad": "Тест пада",
+	"popup_report_bug": "Баг-репорт",
 	"popup_hint_toggle": "перемикає у грі.",
 	"popup_hint_help": "редагує прив’язки.",
 	"popup_sponsor": "Спонсорувати",
 	"popup_coffee": "Купити каву",
-
 	"hud_on": "УВІМК",
 	"hud_off": "ВИМК",
 	"hud_toggle": "перемкнути",
@@ -143,7 +133,6 @@
 	"hud_release_lock": "звільнити фіксацію прицілу",
 	"hud_click_lock": "клікніть гру, щоб зафіксувати приціл",
 	"hud_unmapped": "Непризначені елементи — відкрити прив’язки",
-
 	"overlay_unmapped_banner": "Деякі елементи не призначені — відкрийте «Налаштувати клавіші», щоб призначити їх",
 	"overlay_title": "Прив’язки padmonk",
 	"overlay_online": "Віртуальний геймпад Xbox онлайн",
@@ -171,6 +160,5 @@
 	"overlay_view": "Перегляд",
 	"overlay_guide": "Гайд",
 	"overlay_menu": "Меню",
-
 	"lang_name_uk": "Українська"
 }

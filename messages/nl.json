@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"input_mouse_left": "Linkerklik",
 	"input_mouse_middle": "Middenklik",
 	"input_mouse_right": "Rechterklik",
@@ -19,12 +18,10 @@
 	"input_alt_left": "L-Alt",
 	"input_alt_right": "R-Alt",
 	"input_backquote": "` (tilde)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Beweging — Linkerstick",
 	"group_right_stick": "Richten — Rechterstick",
 	"group_face": "Actieknoppen",
@@ -33,7 +30,6 @@
 	"group_menu": "Menu",
 	"group_dpad": "D-pad",
 	"group_right_stick_info": "Aangestuurd door muisbeweging. Gevoeligheid / vloeiendheid hieronder afstellen.",
-
 	"action_stick_up": "Omhoog",
 	"action_stick_down": "Omlaag",
 	"action_stick_left": "Links",
@@ -55,7 +51,6 @@
 	"action_dpad_down": "Omlaag",
 	"action_dpad_left": "Links",
 	"action_dpad_right": "Rechts",
-
 	"aim_sensitivity_label": "Kijksnelheid",
 	"aim_sensitivity_hint": "Standaard = 80%",
 	"aim_smoothing_label": "Vloeiendheid",
@@ -65,7 +60,6 @@
 	"aim_curve_label": "Fijnrichten-boost",
 	"aim_curve_hint": "0 = lineair, + versterkt microrichten",
 	"aim_value_aria": "Waarde voor {label}",
-
 	"opt_aim_sensitivity_label": "Muisgevoeligheid",
 	"opt_aim_sensitivity_desc": "Hogere waarden draaien sneller met minder muisbeweging. Lagere waarden geven stabieler richten en vereisen grotere muisbeweging.",
 	"opt_aim_smoothing_label": "Richtvloeiendheid",
@@ -74,12 +68,10 @@
 	"opt_aim_deadzone_desc": "Helpt kleine muisbewegingen tegen de in-game stick-deadzones te registreren. Verhoog als traag richten blijft hangen; verlaag als richten schokkerig aanvoelt.",
 	"opt_aim_curve_label": "Richtresponscurve",
 	"opt_aim_curve_desc": "Verandert hoe muisbeweging in stickuitvoer oploopt. Hogere waarden verbeteren microrichten nabij het midden. Lagere waarden voelen lineairder en ruwer.",
-
 	"opt_behavior_invert_desc": "Keert verticaal richten om: muis omhoog kijkt omlaag, muis omlaag kijkt omhoog.",
 	"opt_behavior_lock_desc": "Vangt de cursor wanneer je op het spel klikt, zodat muisbeweging het richten bestuurt in plaats van de paginacursor. Druk op Esc om los te laten.",
 	"opt_behavior_toggle_desc": "Sneltoets om padmonk tijdens het spelen aan of uit te zetten.",
 	"opt_behavior_help_desc": "Sneltoets om de besturingsoverlay in het spel te openen.",
-
 	"opt_support_title": "Steun padmonk",
 	"opt_support_subtitle": "Help de extensie gratis, open source en actief onderhouden te houden.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -117,25 +109,23 @@
 	"opt_footer_web": "Website ↗",
 	"opt_footer_bug": "Bug melden ↗",
 	"opt_language_label": "Taal",
-
 	"popup_state_armed": "actief",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Ingeschakeld",
 	"popup_toggle_invert_label": "Y omkeren",
 	"popup_toggle_invert_hint": "Verticaal richten omdraaien",
-	"popup_toggle_lock_label": "Richtvergrendeling",
+	"popup_toggle_lock_label": "Richtslot",
 	"popup_toggle_lock_hint": "Klik op spel om muis te vangen",
 	"popup_aim_tuning": "Richtafstelling",
 	"popup_reset": "Resetten",
 	"popup_reset_confirm": "Richtafstellingswaarden terugzetten naar standaard?",
-	"popup_advanced": "Geavanceerd",
+	"popup_advanced": "Opties",
 	"popup_test_pad": "Pad testen",
 	"popup_report_bug": "Bug melden",
 	"popup_hint_toggle": "schakelt in het spel.",
 	"popup_hint_help": "bewerkt koppelingen.",
 	"popup_sponsor": "Sponsoren",
 	"popup_coffee": "Koffie trakteren",
-
 	"hud_on": "AAN",
 	"hud_off": "UIT",
 	"hud_toggle": "schakelen",
@@ -143,7 +133,6 @@
 	"hud_release_lock": "richtvergrendeling loslaten",
 	"hud_click_lock": "klik op spel om richten te vergrendelen",
 	"hud_unmapped": "Niet-toegewezen besturingen — koppelingen openen",
-
 	"overlay_unmapped_banner": "Sommige besturingen zijn niet toegewezen — open Toetsen configureren om ze toe te wijzen",
 	"overlay_title": "padmonk-koppelingen",
 	"overlay_online": "Virtuele Xbox-pad online",
@@ -171,6 +160,5 @@
 	"overlay_view": "Weergave",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Menu",
-
 	"lang_name_nl": "Nederlands"
 }

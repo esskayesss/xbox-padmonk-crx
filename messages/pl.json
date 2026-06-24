@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"input_mouse_left": "Lewy przycisk",
 	"input_mouse_middle": "Środkowy przycisk",
 	"input_mouse_right": "Prawy przycisk",
@@ -19,12 +18,10 @@
 	"input_alt_left": "L-Alt",
 	"input_alt_right": "P-Alt",
 	"input_backquote": "` (tylda)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Ruch — lewy drążek",
 	"group_right_stick": "Celowanie — prawy drążek",
 	"group_face": "Przyciski akcji",
@@ -33,7 +30,6 @@
 	"group_menu": "Menu",
 	"group_dpad": "Pad kierunkowy",
 	"group_right_stick_info": "Sterowany ruchem myszy. Dostosuj czułość / wygładzanie poniżej.",
-
 	"action_stick_up": "Góra",
 	"action_stick_down": "Dół",
 	"action_stick_left": "Lewo",
@@ -55,7 +51,6 @@
 	"action_dpad_down": "Dół",
 	"action_dpad_left": "Lewo",
 	"action_dpad_right": "Prawo",
-
 	"aim_sensitivity_label": "Szybkość rozglądania",
 	"aim_sensitivity_hint": "Domyślnie = 80%",
 	"aim_smoothing_label": "Wygładzanie",
@@ -65,7 +60,6 @@
 	"aim_curve_label": "Wzmocnienie precyzji",
 	"aim_curve_hint": "0 = liniowo, + wzmacnia mikrocelowanie",
 	"aim_value_aria": "Wartość {label}",
-
 	"opt_aim_sensitivity_label": "Czułość myszy",
 	"opt_aim_sensitivity_desc": "Wyższe wartości obracają szybciej przy mniejszym ruchu myszy. Niższe dają stabilniejsze celowanie i wymagają większego ruchu myszy.",
 	"opt_aim_smoothing_label": "Wygładzanie celowania",
@@ -74,12 +68,10 @@
 	"opt_aim_deadzone_desc": "Pomaga małym ruchom myszy działać mimo martwych stref drążka w grze. Zwiększ, jeśli wolne celowanie się zacina; zmniejsz, jeśli celowanie jest nerwowe.",
 	"opt_aim_curve_label": "Krzywa reakcji celowania",
 	"opt_aim_curve_desc": "Zmienia, jak ruch myszy przechodzi w sygnał drążka. Wyższe wartości poprawiają mikrocelowanie przy środku. Niższe są bardziej liniowe i surowe.",
-
 	"opt_behavior_invert_desc": "Odwraca celowanie w pionie: mysz w górę patrzy w dół, mysz w dół patrzy w górę.",
 	"opt_behavior_lock_desc": "Przechwytuje kursor po kliknięciu gry, aby ruch myszy sterował celowaniem zamiast przesuwać kursor strony. Naciśnij Esc, aby zwolnić.",
 	"opt_behavior_toggle_desc": "Skrót klawiszowy do włączania i wyłączania padmonk podczas gry.",
 	"opt_behavior_help_desc": "Skrót klawiszowy do otwierania nakładki sterowania w grze.",
-
 	"opt_support_title": "Wesprzyj padmonk",
 	"opt_support_subtitle": "Pomóż utrzymać rozszerzenie bezpłatnym, otwartoźródłowym i aktywnie rozwijanym.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -117,25 +109,23 @@
 	"opt_footer_web": "Strona internetowa ↗",
 	"opt_footer_bug": "Zgłoś błąd ↗",
 	"opt_language_label": "Język",
-
 	"popup_state_armed": "aktywny",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Włączony",
 	"popup_toggle_invert_label": "Odwróć Y",
 	"popup_toggle_invert_hint": "Odwróć celowanie w pionie",
-	"popup_toggle_lock_label": "Blokada celowania",
+	"popup_toggle_lock_label": "Blokada",
 	"popup_toggle_lock_hint": "Kliknij grę, aby przechwycić mysz",
 	"popup_aim_tuning": "Strojenie celowania",
 	"popup_reset": "Resetuj",
 	"popup_reset_confirm": "Przywrócić wartości strojenia celowania do domyślnych?",
-	"popup_advanced": "Zaawansowane",
+	"popup_advanced": "Opcje",
 	"popup_test_pad": "Test pada",
 	"popup_report_bug": "Zgłoś błąd",
 	"popup_hint_toggle": "przełącza w grze.",
 	"popup_hint_help": "edytuje przypisania.",
 	"popup_sponsor": "Sponsoruj",
 	"popup_coffee": "Postaw kawę",
-
 	"hud_on": "WŁ",
 	"hud_off": "WYŁ",
 	"hud_toggle": "przełącz",
@@ -143,7 +133,6 @@
 	"hud_release_lock": "zwolnij blokadę celowania",
 	"hud_click_lock": "kliknij grę, aby zablokować celowanie",
 	"hud_unmapped": "Nieprzypisane kontrolki — otwórz przypisania",
-
 	"overlay_unmapped_banner": "Niektóre kontrolki nie są przypisane — otwórz „Konfiguruj klawisze”, aby je przypisać",
 	"overlay_title": "Przypisania padmonk",
 	"overlay_online": "Wirtualny pad Xbox online",
@@ -171,6 +160,5 @@
 	"overlay_view": "Widok",
 	"overlay_guide": "Przewodnik",
 	"overlay_menu": "Menu",
-
 	"lang_name_pl": "Polski"
 }

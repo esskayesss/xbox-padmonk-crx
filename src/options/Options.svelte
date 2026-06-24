@@ -283,7 +283,7 @@
 				{m.opt_support_subtitle({}, { locale: config.locale })}
 			</div>
 		</div>
-		<div class="flex flex-wrap gap-2">
+		<div class="flex gap-2">
 			<a
 				href={GITHUB_SPONSORS_URL}
 				target="_blank"
