@@ -303,14 +303,32 @@
 		</div>
 	</section>
 
-	<h1 class="text-pad-accent m-0 mb-1 flex items-center gap-2 text-xl">
-		🎮 {m.opt_title({}, { locale: config.locale })}
-		<span
-			class="text-pad-accent text-xs transition-opacity duration-200"
-			class:opacity-0={!saved}
-			class:opacity-100={saved}>{m.opt_saved({}, { locale: config.locale })}</span
-		>
-	</h1>
+	<div class="mb-1 flex items-start justify-between gap-4">
+		<h1 class="text-pad-accent m-0 flex items-center gap-2 text-xl">
+			🎮 {m.opt_title({}, { locale: config.locale })}
+			<span
+				class="text-pad-accent text-xs transition-opacity duration-200"
+				class:opacity-0={!saved}
+				class:opacity-100={saved}>{m.opt_saved({}, { locale: config.locale })}</span
+			>
+		</h1>
+		<div class="flex shrink-0 items-center gap-2">
+			<label id="options-language-label" for="options-language" class="text-pad-muted text-xs">
+				{m.opt_language_label({}, { locale: config.locale })}
+			</label>
+			<select
+				id="options-language"
+				aria-labelledby="options-language-label"
+				class="pad-number rounded-sm px-2 py-1 text-sm"
+				value={config.locale}
+				onchange={(e) => setLocale(e.currentTarget.value as Locale)}
+			>
+				{#each locales as code (code)}
+					<option value={code}>{localeName(code)}</option>
+				{/each}
+			</select>
+		</div>
+	</div>
 	<p class="text-pad-muted mb-2">
 		{m.opt_intro_before_add({}, { locale: config.locale })}
 		<b class="text-pad-accent">{m.opt_add({}, { locale: config.locale })}</b>
@@ -567,29 +585,6 @@
 					? m.opt_capture_combo({}, { locale: config.locale })
 					: helpLabel}
 			</button>
-		</div>
-
-		<div>
-			<label
-				id="options-language-label"
-				for="options-language"
-				class="text-pad-text/85 block font-semibold"
-			>
-				{m.opt_language_label({}, { locale: config.locale })}
-			</label>
-		</div>
-		<div>
-			<select
-				id="options-language"
-				aria-labelledby="options-language-label"
-				class="pad-number rounded-sm px-2 py-1 text-sm"
-				value={config.locale}
-				onchange={(e) => setLocale(e.currentTarget.value as Locale)}
-			>
-				{#each locales as code (code)}
-					<option value={code}>{localeName(code)}</option>
-				{/each}
-			</select>
 		</div>
 	</div>
 
