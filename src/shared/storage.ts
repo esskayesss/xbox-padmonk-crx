@@ -14,17 +14,39 @@
 // well-formed Config (clamped numerics, recovered bindings, derived combos).
 
 import { DEFAULT_CONFIG, normalizeConfig } from '../core/config';
+import { resolveUiLocale } from '../core/i18n';
 import type { Config } from '../core/types';
 
 const KEY = 'config';
 const SYNC_DEBOUNCE_MS = 400;
 
+/**
+ * Detect the browser UI language and resolve it to a supported locale for
+ * first-run seeding. Guarded: chrome.i18n is absent in the MAIN-world content
+ * script and in vitest, so any failure falls back to the base locale.
+ */
+function detectUiLocale(): Config['locale'] {
+	try {
+		const ui = chrome?.i18n?.getUILanguage?.() ?? '';
+		return resolveUiLocale(ui);
+	} catch {
+		return resolveUiLocale('');
+	}
+}
+
 /** Promise-wrapped chrome.storage.<area>.get(KEY). Resolves the raw value. */
 function rawGet(area: chrome.storage.StorageArea): Promise<unknown> {
 	return new Promise((resolve) => {
 		try {
-			area.get(KEY, (res) => resolve(res ? res[KEY] : undefined));
-		} catch {
+			area.get(KEY, (res) => {
+				// A failed read (quota/permission) is distinct from "nothing stored";
+				// surface it so a real failure isn't silently read as defaults.
+				const err = chrome.runtime?.lastError;
+				if (err) console.warn('padmonk: storage read failed:', err.message);
+				resolve(res ? res[KEY] : undefined);
+			});
+		} catch (e) {
+			console.warn('padmonk: storage read threw:', e);
 			resolve(undefined);
 		}
 	});
@@ -34,8 +56,14 @@ function rawGet(area: chrome.storage.StorageArea): Promise<unknown> {
 function rawSet(area: chrome.storage.StorageArea, value: Config): Promise<void> {
 	return new Promise((resolve) => {
 		try {
-			area.set({ [KEY]: value }, () => resolve());
-		} catch {
+			area.set({ [KEY]: value }, () => {
+				// Don't let a quota/permission write failure pass as success silently.
+				const err = chrome.runtime?.lastError;
+				if (err) console.warn('padmonk: storage write failed:', err.message);
+				resolve();
+			});
+		} catch (e) {
+			console.warn('padmonk: storage write threw:', e);
 			resolve();
 		}
 	});
@@ -61,7 +89,13 @@ export async function readConfig(): Promise<Config> {
 		return normalized;
 	}
 
-	return normalizeConfig(DEFAULT_CONFIG);
+	// True first run: nothing stored in either area. Seed the locale from the
+	// browser UI language (detection is a one-time seeding concern, NOT part of
+	// DEFAULT_CONFIG's shape) and persist it so it's stable. A later manual
+	// override in Options wins because it writes local, which this branch skips.
+	const seeded = normalizeConfig({ ...DEFAULT_CONFIG, locale: detectUiLocale() });
+	await rawSet(chrome.storage.local, seeded);
+	return seeded;
 }
 
 let syncTimer: ReturnType<typeof setTimeout> | null = null;

@@ -44,6 +44,39 @@ export function coerceLocale(value: unknown): Locale {
 	return typeof value === 'string' && isLocale(value) ? value : baseLocale;
 }
 
+/**
+ * Resolve a browser UI-language tag (e.g. from chrome.i18n.getUILanguage())
+ * to a supported locale. Unlike coerceLocale (a strict storage coercer), this
+ * does BCP-47 primary-subtag fallback so region tags map sensibly:
+ *   - exact match first ("pt-BR" -> "pt-BR")
+ *   - else primary subtag ("en-US" -> "en")
+ *   - else the single shipped regional variant of that language
+ *     ("zh-TW"/"zh" -> "zh-CN", "pt-PT"/"pt" -> "pt-BR") when exactly one exists
+ *   - else baseLocale
+ * Case-insensitive on the region ("PT-br" still resolves). The regional-variant
+ * fallback is derived from the shipped `locales` set, not hardcoded, so it stays
+ * correct as locales are added/removed. Used only for first-run locale seeding;
+ * coerceLocale stays the storage path and is unchanged.
+ */
+export function resolveUiLocale(raw: string): Locale {
+	if (typeof raw !== 'string' || raw.length === 0) return baseLocale;
+	if (isLocale(raw)) return raw;
+	// Try a canonical-cased exact match (e.g. "pt-br" -> "pt-BR").
+	const lower = raw.toLowerCase();
+	for (const loc of locales) {
+		if (loc.toLowerCase() === lower) return loc;
+	}
+	// Primary subtag fallback ("en-US" -> "en").
+	const primary = lower.split('-')[0];
+	if (isLocale(primary)) return primary;
+	// Region-family fallback: if the language ships exactly one regional variant
+	// (e.g. only "zh-CN" for "zh", only "pt-BR" for "pt"), prefer it over English
+	// for any region tag of that language ("zh-TW" -> "zh-CN", "pt-PT" -> "pt-BR").
+	const family = locales.filter((loc) => loc.toLowerCase().split('-')[0] === primary);
+	if (family.length === 1) return family[0];
+	return baseLocale;
+}
+
 /** The language's own display name, e.g. "English" for `en`. */
 export function localeName(locale: Locale): string {
 	return t(`lang_name_${locale}` as MessageKey, locale);
