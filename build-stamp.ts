@@ -6,15 +6,15 @@
 import { execSync } from 'node:child_process';
 
 function chromeVersionFromEnv(): string | null {
-	const raw = process.env.PADM0NK_VERSION;
+	const raw = process.env.PADMONK_VERSION ?? process.env.PADM0NK_VERSION;
 	if (!raw) return null;
 	if (!/^\d+\.\d+\.\d+(?:\.\d+)?$/.test(raw)) {
-		throw new Error('PADM0NK_VERSION must be a Chrome extension version like 1.2.3');
+		throw new Error('PADMONK_VERSION must be a Chrome extension version like 1.2.3');
 	}
 	return raw;
 }
 
-/** Semantic version (also the manifest `version`). Release builds set PADM0NK_VERSION from git tag. */
+/** Semantic version (also the manifest `version`). Release builds set PADMONK_VERSION from git tag. */
 export const VERSION = chromeVersionFromEnv() ?? '1.0.0';
 
 function sh(cmd: string): string {
