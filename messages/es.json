@@ -87,7 +87,7 @@
 	"opt_title": "Configuración de padmonk",
 	"opt_saved": "guardado ✓",
 	"opt_intro_before_add": "Reasigna cada control. Haz clic en",
-	"opt_intro_between": "en una fila y pulsa la tecla / botón del ratón que quieras asignar. Haz clic en el",
+	"opt_intro_between": "una fila y pulsa la tecla o el botón del ratón que quieras asignar. Haz clic en el icono",
 	"opt_intro_after_unbind": "de un chip para desasignar. Los cambios se aplican al instante — solo recarga la pestaña de xCloud.",
 	"opt_unmapped_warning": "Algunos controles están sin asignar — asigna cada acción abajo para una cobertura completa.",
 	"opt_conflict_reassigned": "{input} reasignado desde {control}",
@@ -138,7 +138,7 @@
 
 	"hud_on": "ON",
 	"hud_off": "OFF",
-	"hud_toggle": "activar",
+	"hud_toggle": "alternar",
 	"hud_binds": "asignaciones",
 	"hud_release_lock": "liberar bloqueo de apuntado",
 	"hud_click_lock": "haz clic en el juego para bloquear el apuntado",

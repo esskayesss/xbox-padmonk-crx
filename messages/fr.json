@@ -87,7 +87,7 @@
 	"opt_title": "Configuration de padmonk",
 	"opt_saved": "enregistré ✓",
 	"opt_intro_before_add": "Réassignez chaque commande. Cliquez sur",
-	"opt_intro_between": "sur une ligne, puis appuyez sur la touche / le bouton de souris à associer. Cliquez sur le",
+	"opt_intro_between": "une ligne, puis appuyez sur la touche ou le bouton de souris à associer. Cliquez sur l’icône",
 	"opt_intro_after_unbind": "d’une puce pour dissocier. Les changements s’appliquent en direct — rechargez simplement l’onglet xCloud.",
 	"opt_unmapped_warning": "Certaines commandes ne sont pas assignées — associez chaque action ci-dessous pour une couverture complète.",
 	"opt_conflict_reassigned": "{input} réassigné depuis {control}",
@@ -138,7 +138,7 @@
 
 	"hud_on": "ON",
 	"hud_off": "OFF",
-	"hud_toggle": "activer",
+	"hud_toggle": "basculer",
 	"hud_binds": "assignations",
 	"hud_release_lock": "libérer le verrou de visée",
 	"hud_click_lock": "cliquez sur le jeu pour verrouiller la visée",

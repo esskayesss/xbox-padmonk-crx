@@ -87,7 +87,7 @@
 	"opt_title": "Configurazione di padmonk",
 	"opt_saved": "salvato ✓",
 	"opt_intro_before_add": "Rimappa ogni comando. Clicca su",
-	"opt_intro_between": "su una riga, poi premi il tasto / pulsante del mouse da assegnare. Clicca sul",
+	"opt_intro_between": "una riga, poi premi il tasto o il pulsante del mouse da assegnare. Clicca sull’icona",
 	"opt_intro_after_unbind": "di un chip per annullare l’assegnazione. Le modifiche si applicano in tempo reale — basta ricaricare la scheda di xCloud.",
 	"opt_unmapped_warning": "Alcuni comandi non sono assegnati — assegna ogni azione qui sotto per una copertura completa.",
 	"opt_conflict_reassigned": "{input} riassegnato da {control}",
