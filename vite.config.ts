@@ -2,6 +2,7 @@ import { defineConfig } from 'vite';
 import { crx } from '@crxjs/vite-plugin';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
+import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import manifest from './manifest.config';
 import { BUILD_STAMP } from './build-stamp';
 
@@ -10,7 +11,18 @@ export default defineConfig({
 		// compile-time constant injected into the runtime (see src/content/inject.ts)
 		__BUILD_STAMP__: JSON.stringify(BUILD_STAMP),
 	},
-	plugins: [crx({ manifest }), svelte(), tailwindcss()],
+	plugins: [
+		paraglideVitePlugin({
+			project: './project.inlang',
+			outdir: './src/paraglide',
+			// Locale is always passed explicitly (config.locale) at every call site,
+			// so Paraglide's own detection never runs — baseLocale is a safe stub.
+			strategy: ['baseLocale'],
+		}),
+		crx({ manifest }),
+		svelte(),
+		tailwindcss(),
+	],
 	build: {
 		outDir: 'dist',
 		emptyOutDir: true,

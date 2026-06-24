@@ -2,12 +2,14 @@
 
 import { AIM_LIMITS } from './aim-settings';
 import { buildDefaultBindings } from './controller-actions';
+import { baseLocale, coerceLocale } from './i18n';
 import { clamp } from './math';
 import type { Action, Bindings, Combo, Config } from './types';
 
 /** Built once; bindings derived from the controller-actions registry. */
 export const DEFAULT_CONFIG: Config = {
 	enabled: true,
+	locale: baseLocale,
 	sensitivity: 0.0144,
 	smoothing: 0.12,
 	aimMin: 0.12,
@@ -96,6 +98,7 @@ export function normalizeConfig(raw: unknown): Config {
 
 	return {
 		enabled: bool(src.enabled, DEFAULT_CONFIG.enabled),
+		locale: coerceLocale(src.locale),
 		sensitivity: num(
 			src.sensitivity,
 			DEFAULT_CONFIG.sensitivity,
