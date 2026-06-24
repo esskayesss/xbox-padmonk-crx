@@ -10,12 +10,13 @@
 	} from '../core/aim-settings';
 	import { DEFAULT_CONFIG } from '../core/config';
 	import { comboLabel } from '../core/combos';
+	import { m, t as translate } from '../core/i18n';
 	import { readConfig, writeConfig, onConfigChanged } from '../shared/storage';
 	import type { Config } from '../core/types';
 
 	const TOGGLES = [
-		{ key: 'invertY', label: 'Invert Y', hint: 'Flip vertical aim' },
-		{ key: 'lockPointerOnClick', label: 'Aim lock', hint: 'Click game to capture mouse' },
+		{ key: 'invertY', label: 'popup_toggle_invert_label', hint: 'popup_toggle_invert_hint' },
+		{ key: 'lockPointerOnClick', label: 'popup_toggle_lock_label', hint: 'popup_toggle_lock_hint' },
 	] as const;
 
 	const GITHUB_SPONSORS_URL =
@@ -27,9 +28,13 @@
 
 	let config = $state<Config>(structuredClone(DEFAULT_CONFIG));
 	let saveTimer: ReturnType<typeof setTimeout> | null = null;
-	const toggleLabel = $derived(comboLabel(config.toggleCombo));
-	const helpLabel = $derived(comboLabel(config.helpCombo));
-	const stateLabel = $derived(config.enabled ? 'armed' : 'offline');
+	const toggleLabel = $derived(comboLabel(config.toggleCombo, config.locale));
+	const helpLabel = $derived(comboLabel(config.helpCombo, config.locale));
+	const stateLabel = $derived(
+		config.enabled
+			? m.popup_state_armed({}, { locale: config.locale })
+			: m.popup_state_offline({}, { locale: config.locale }),
+	);
 
 	onMount(() => {
 		void readConfig().then((c) => (config = c));
@@ -60,7 +65,7 @@
 	}
 
 	function resetSliders(): void {
-		if (!window.confirm('Reset aim tuning values to defaults?')) return;
+		if (!window.confirm(m.popup_reset_confirm({}, { locale: config.locale }))) return;
 		config = {
 			...config,
 			sensitivity: DEFAULT_CONFIG.sensitivity,
@@ -101,7 +106,9 @@
 			<label
 				class="pad-surface flex cursor-pointer flex-col items-center justify-center gap-1 rounded-sm border p-2 text-center"
 			>
-				<span class="text-pad-text text-xs font-semibold leading-tight">Enabled</span>
+				<span class="text-pad-text text-xs font-semibold leading-tight"
+					>{m.popup_enabled({}, { locale: config.locale })}</span
+				>
 				<input
 					type="checkbox"
 					class="accent-pad-accent"
@@ -113,7 +120,9 @@
 				<label
 					class="pad-surface flex cursor-pointer flex-col items-center justify-center gap-1 rounded-sm border p-2 text-center"
 				>
-					<span class="text-pad-text text-xs font-semibold leading-tight">{t.label}</span>
+					<span class="text-pad-text text-xs font-semibold leading-tight"
+						>{translate(t.label, config.locale)}</span
+					>
 					<input
 						type="checkbox"
 						class="accent-pad-accent"
@@ -128,13 +137,15 @@
 	<section class="grid gap-2 pt-2">
 		<section class="pad-surface grid gap-3 rounded-md border p-3">
 			<div class="flex items-center justify-between">
-				<h2 class="text-pad-accent text-xs font-semibold tracking-widest uppercase">Aim tuning</h2>
+				<h2 class="text-pad-accent text-xs font-semibold tracking-widest uppercase">
+					{m.popup_aim_tuning({}, { locale: config.locale })}
+				</h2>
 				<button
 					type="button"
 					class="text-pad-muted hover:text-pad-accent cursor-pointer text-2xs uppercase tracking-widest"
 					onclick={resetSliders}
 				>
-					Reset
+					{m.popup_reset({}, { locale: config.locale })}
 				</button>
 			</div>
 			{#each AIM_CONTROLS as s (s.key)}
@@ -146,14 +157,19 @@
 								for={`popup-${s.key}-range`}
 								class="block text-xs font-semibold"
 							>
-								{s.label}
+								{translate(s.label, config.locale)}
 							</label>
-							<span class="text-pad-muted text-2xs uppercase tracking-wide">{s.hint}</span>
+							<span class="text-pad-muted text-2xs uppercase tracking-wide"
+								>{translate(s.hint, config.locale)}</span
+							>
 						</span>
 						<input
 							type="number"
 							class="pad-number w-16 rounded-sm px-1.5 py-0.5 text-right font-mono text-xs"
-							aria-label={`${s.label} value`}
+							aria-label={m.aim_value_aria(
+								{ label: translate(s.label, config.locale) },
+								{ locale: config.locale },
+							)}
 							min={s.min}
 							max={s.max}
 							step={s.step}
@@ -184,27 +200,29 @@
 				class="bg-pad-chip text-pad-text border-pad-border hover:border-pad-accent cursor-pointer rounded-sm border px-2 py-2 text-xs font-semibold"
 				onclick={openOptions}
 			>
-				Advanced
+				{m.popup_advanced({}, { locale: config.locale })}
 			</button>
 			<button
 				type="button"
 				class="bg-pad-chip text-pad-text border-pad-border hover:border-pad-accent cursor-pointer rounded-sm border px-2 py-2 text-xs font-semibold"
 				onclick={() => chrome.tabs?.create?.({ url: 'https://hardwaretester.com/gamepad' })}
 			>
-				Test pad
+				{m.popup_test_pad({}, { locale: config.locale })}
 			</button>
 			<button
 				type="button"
 				class="bg-pad-chip text-pad-text border-pad-border hover:border-pad-accent cursor-pointer rounded-sm border px-2 py-2 text-xs font-semibold"
 				onclick={() => openUrl(BUG_REPORT_URL)}
 			>
-				Report bug
+				{m.popup_report_bug({}, { locale: config.locale })}
 			</button>
 		</div>
 
 		<p class="text-pad-muted text-xs leading-snug">
-			<b class="text-pad-accent">{toggleLabel}</b> toggles in-game.
-			<b class="text-pad-accent">{helpLabel}</b> edits binds.
+			<b class="text-pad-accent">{toggleLabel}</b>
+			{m.popup_hint_toggle({}, { locale: config.locale })}
+			<b class="text-pad-accent">{helpLabel}</b>
+			{m.popup_hint_help({}, { locale: config.locale })}
 		</p>
 
 		<div class="space-y-1.5">
@@ -214,14 +232,14 @@
 					class="bg-pad-sponsor text-pad-sponsor-soft hover:bg-pad-sponsor-strong border-pad-sponsor/70 cursor-pointer rounded-sm border px-2 py-2 text-xs font-black tracking-wide uppercase"
 					onclick={() => openUrl(GITHUB_SPONSORS_URL)}
 				>
-					❤ Sponsor
+					❤ {m.popup_sponsor({}, { locale: config.locale })}
 				</button>
 				<button
 					type="button"
 					class="border-pad-coffee-border bg-pad-coffee text-pad-coffee-text hover:bg-pad-coffee-hover cursor-pointer rounded-sm border px-2 py-2 text-xs font-black tracking-wide uppercase"
 					onclick={() => openUrl(BUY_ME_COFFEE_URL)}
 				>
-					☕ Buy a coffee
+					☕ {m.popup_coffee({}, { locale: config.locale })}
 				</button>
 			</div>
 		</div>

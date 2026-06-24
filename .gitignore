@@ -8,3 +8,6 @@ dist/
 
 # local scratch: junk, screenshots, legacy reference (retired runtime)
 .local/
+
+# Paraglide compiler output — regenerated from messages/ via `npm run i18n`
+src/paraglide/

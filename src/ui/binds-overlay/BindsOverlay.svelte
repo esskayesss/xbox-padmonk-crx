@@ -12,16 +12,22 @@
 	// from `bindings` (prettyInput join " / ", else "UNMAPPED"). The right-stick
 	// row is a static INFO row ("Mouse move"). System chips show label + binding.
 	//
+	// Row labels are i18n message keys, resolved against the active `locale`
+	// prop (delivered from inject.ts via config.locale).
+	//
 	// Colors come from theme tokens (text-pad-*/bg-pad-*); gradients, glows,
 	// aspect-ratio, and absolute positioning use inline var(--color-pad-*)/rgba
 	// matched to the legacy CSS — no raw hex.
 	import { prettyInput } from '../../core/labels';
 	import { comboLabel } from '../../core/combos';
 	import { actionEq, allBindsConfigured } from '../../core/controller-actions';
+	import { m, t } from '../../core/i18n';
 	import type { Action, Bindings, Combo } from '../../core/types';
+	import type { Locale, MessageKey } from '../../core/i18n';
 
 	interface Props {
 		open: boolean;
+		locale: Locale;
 		bindings: Bindings;
 		bindIconBase: string;
 		controllerUrl: string;
@@ -34,6 +40,7 @@
 	}
 	let {
 		open,
+		locale,
 		bindings,
 		bindIconBase,
 		controllerUrl,
@@ -46,35 +53,54 @@
 	}: Props = $props();
 
 	/** A rail/system row: either a bound action or a static INFO value. */
-	type Row = { icon: string; label: string; action?: Action; value?: string; dpad?: boolean };
+	type Row = {
+		icon: string;
+		labelKey: MessageKey;
+		action?: Action;
+		valueKey?: MessageKey;
+		dpad?: boolean;
+	};
 
 	const leftRows: Row[] = [
-		{ icon: 'left-trigger.svg', label: 'LT', action: { t: 'b', i: 6 } },
-		{ icon: 'left-bumper.svg', label: 'LB', action: { t: 'b', i: 4 } },
-		{ icon: 'left-stick.svg', label: 'Left stick', value: 'WASD' },
-		{ icon: 'left-stick-press.svg', label: 'L3', action: { t: 'b', i: 10 } },
-		{ icon: 'dpad-up.svg', label: 'D-pad up', action: { t: 'b', i: 12 }, dpad: true },
-		{ icon: 'dpad-down.svg', label: 'D-pad down', action: { t: 'b', i: 13 }, dpad: true },
-		{ icon: 'dpad-left.svg', label: 'D-pad left', action: { t: 'b', i: 14 }, dpad: true },
-		{ icon: 'dpad-right.svg', label: 'D-pad right', action: { t: 'b', i: 15 }, dpad: true },
+		{ icon: 'left-trigger.svg', labelKey: 'action_btn_lt', action: { t: 'b', i: 6 } },
+		{ icon: 'left-bumper.svg', labelKey: 'action_btn_lb', action: { t: 'b', i: 4 } },
+		{
+			icon: 'left-stick.svg',
+			labelKey: 'overlay_left_stick',
+			valueKey: 'overlay_left_stick_value',
+		},
+		{ icon: 'left-stick-press.svg', labelKey: 'overlay_l3', action: { t: 'b', i: 10 } },
+		{ icon: 'dpad-up.svg', labelKey: 'overlay_dpad_up', action: { t: 'b', i: 12 }, dpad: true },
+		{ icon: 'dpad-down.svg', labelKey: 'overlay_dpad_down', action: { t: 'b', i: 13 }, dpad: true },
+		{ icon: 'dpad-left.svg', labelKey: 'overlay_dpad_left', action: { t: 'b', i: 14 }, dpad: true },
+		{
+			icon: 'dpad-right.svg',
+			labelKey: 'overlay_dpad_right',
+			action: { t: 'b', i: 15 },
+			dpad: true,
+		},
 	];
 
 	const rightRows: Row[] = [
-		{ icon: 'right-trigger.svg', label: 'RT', action: { t: 'b', i: 7 } },
-		{ icon: 'right-bumper.svg', label: 'RB', action: { t: 'b', i: 5 } },
-		{ icon: 'right-stick.svg', label: 'Right stick', value: 'Mouse move' },
-		{ icon: 'right-stick-press.svg', label: 'R3', action: { t: 'b', i: 11 } },
-		{ icon: 'a.svg', label: 'A', action: { t: 'b', i: 0 } },
-		{ icon: 'b.svg', label: 'B', action: { t: 'b', i: 1 } },
-		{ icon: 'x.svg', label: 'X', action: { t: 'b', i: 2 } },
-		{ icon: 'y.svg', label: 'Y', action: { t: 'b', i: 3 } },
+		{ icon: 'right-trigger.svg', labelKey: 'action_btn_rt', action: { t: 'b', i: 7 } },
+		{ icon: 'right-bumper.svg', labelKey: 'action_btn_rb', action: { t: 'b', i: 5 } },
+		{
+			icon: 'right-stick.svg',
+			labelKey: 'overlay_right_stick',
+			valueKey: 'overlay_right_stick_value',
+		},
+		{ icon: 'right-stick-press.svg', labelKey: 'overlay_r3', action: { t: 'b', i: 11 } },
+		{ icon: 'a.svg', labelKey: 'action_btn_a', action: { t: 'b', i: 0 } },
+		{ icon: 'b.svg', labelKey: 'action_btn_b', action: { t: 'b', i: 1 } },
+		{ icon: 'x.svg', labelKey: 'action_btn_x', action: { t: 'b', i: 2 } },
+		{ icon: 'y.svg', labelKey: 'action_btn_y', action: { t: 'b', i: 3 } },
 	];
 
 	// System buttons docked at the bottom of the center controller card.
 	const systemChips: Row[] = [
-		{ icon: 'view.svg', label: 'View', action: { t: 'b', i: 8 } },
-		{ icon: 'guide.svg', label: 'Guide', action: { t: 'b', i: 16 } },
-		{ icon: 'menu.svg', label: 'Menu', action: { t: 'b', i: 9 } },
+		{ icon: 'view.svg', labelKey: 'overlay_view', action: { t: 'b', i: 8 } },
+		{ icon: 'guide.svg', labelKey: 'overlay_guide', action: { t: 'b', i: 16 } },
+		{ icon: 'menu.svg', labelKey: 'overlay_menu', action: { t: 'b', i: 9 } },
 	];
 
 	/** Action equality — button by index, axis by (axis, direction). */
@@ -99,19 +125,19 @@
 						class="bg-pad-chip border-pad-border inline-flex max-w-full items-center rounded-sm border px-1.5 py-0.5"
 					>
 						<span class="text-pad-key truncate font-semibold {compact ? 'text-2xs' : 'text-xs'}"
-							>{prettyInput(id)}</span
+							>{prettyInput(id, locale)}</span
 						>
 					</span>
 				{/each}
 			</div>
 		{:else}
 			<span class="text-pad-muted mt-1 block {compact ? 'text-2xs' : 'text-xs'} tracking-wide"
-				>UNMAPPED</span
+				>{m.overlay_unmapped({}, { locale })}</span
 			>
 		{/if}
 	{:else}
 		<span class="text-pad-text block truncate {compact ? 'text-xs' : 'text-sm'} leading-tight">
-			{row.value ?? 'UNMAPPED'}
+			{row.valueKey ? t(row.valueKey, locale) : m.overlay_unmapped({}, { locale })}
 		</span>
 	{/if}
 {/snippet}
@@ -143,7 +169,7 @@
 			onmouseupcapture={stop}
 			role="dialog"
 			aria-modal="true"
-			aria-label="padmonk binds"
+			aria-label={m.overlay_title({}, { locale })}
 			tabindex="-1"
 		>
 			{#if !bindsComplete}
@@ -151,7 +177,7 @@
 					class="bg-pad-danger text-pad-bg -mx-5 -mt-5 mb-4 px-5 py-2 text-center text-sm font-semibold tracking-wide uppercase"
 					role="alert"
 				>
-					Some controls are unmapped — open Configure keybinds to map them
+					{m.overlay_unmapped_banner({}, { locale })}
 				</div>
 			{/if}
 			<!-- Header: brand orb + title/subtitle | shortcut legends -->
@@ -174,13 +200,13 @@
 						{/if}
 					</span>
 					<div>
-						<div class="text-2xl tracking-wide uppercase">padmonk binds</div>
+						<div class="text-2xl tracking-wide uppercase">{m.overlay_title({}, { locale })}</div>
 						<div
 							class="mt-0.5 text-sm uppercase"
 							class:text-pad-accent={enabled}
 							class:text-pad-muted={!enabled}
 						>
-							{enabled ? 'Virtual Xbox pad online' : 'padmonk disabled'}
+							{enabled ? m.overlay_online({}, { locale }) : m.overlay_disabled({}, { locale })}
 						</div>
 					</div>
 				</div>
@@ -188,12 +214,18 @@
 				<div class="flex items-stretch gap-2.5 max-binds:flex-1">
 					<div class="grid min-w-64 grid-cols-2 gap-2.5 max-binds:min-w-0 max-binds:flex-1">
 						<div class="pad-surface rounded-sm border px-3 py-2">
-							<span class="text-pad-muted block text-xs uppercase">Toggle</span>
-							<span class="text-pad-text block text-sm">{comboLabel(toggleCombo)}</span>
+							<span class="text-pad-muted block text-xs uppercase"
+								>{m.overlay_toggle({}, { locale })}</span
+							>
+							<span class="text-pad-text block text-sm">{comboLabel(toggleCombo, locale)}</span>
 						</div>
 						<div class="pad-surface rounded-sm border px-3 py-2">
-							<span class="text-pad-muted block text-xs uppercase">Close</span>
-							<span class="text-pad-text block text-sm">{comboLabel(helpCombo)} / Esc</span>
+							<span class="text-pad-muted block text-xs uppercase"
+								>{m.overlay_close({}, { locale })}</span
+							>
+							<span class="text-pad-text block text-sm"
+								>{m.overlay_close_value({ combo: comboLabel(helpCombo, locale) }, { locale })}</span
+							>
 						</div>
 					</div>
 					<button
@@ -201,7 +233,7 @@
 						class="bg-pad-white text-pad-ink hover:bg-pad-key flex cursor-pointer flex-col items-start rounded-sm px-3 py-2"
 						onclick={onConfigure}
 					>
-						<span class="text-sm">Configure keybinds</span>
+						<span class="text-sm">{m.overlay_configure({}, { locale })}</span>
 						<span class="mt-1 text-lg leading-none" aria-hidden="true">↗</span>
 					</button>
 				</div>
@@ -214,15 +246,15 @@
 					<div
 						class="text-pad-accent mb-0.5 text-xs tracking-widest uppercase max-binds:col-span-full"
 					>
-						Left side
+						{m.overlay_left_side({}, { locale })}
 					</div>
-					{#each leftRows as row (row.label)}
+					{#each leftRows as row (row.labelKey)}
 						<div class="pad-surface flex min-h-11 items-center gap-2 rounded-sm border px-2 py-2">
 							<div class="grid size-9 shrink-0 place-items-center">
 								{#if bindIconBase}
 									<img
 										src={bindIconBase + row.icon}
-										alt={row.label}
+										alt={t(row.labelKey, locale)}
 										class="pad-icon-glow max-h-7 max-w-7 object-contain"
 									/>
 								{:else}
@@ -231,7 +263,7 @@
 							</div>
 							<div class="min-w-0">
 								<span class="text-pad-muted block text-2xs tracking-widest uppercase">
-									{row.label}
+									{t(row.labelKey, locale)}
 								</span>
 								{@render bindEditor(row)}
 							</div>
@@ -245,12 +277,12 @@
 				>
 					<div
 						class="pad-padmap-bg relative aspect-controller w-full overflow-visible rounded-md"
-						aria-label="Xbox controller"
+						aria-label={m.overlay_controller_aria({}, { locale })}
 					>
 						{#if controllerUrl}
 							<img
 								src={controllerUrl}
-								alt="Xbox controller"
+								alt={m.overlay_controller_aria({}, { locale })}
 								class="pad-art-glow absolute inset-0 h-full w-full object-contain"
 							/>
 						{/if}
@@ -262,14 +294,14 @@
 						<div
 							class="pad-strip-bg border-pad-accent/20 flex justify-center gap-2 rounded-md border p-2 backdrop-blur-sm"
 						>
-							{#each systemChips as chip (chip.label)}
+							{#each systemChips as chip (chip.labelKey)}
 								<div
 									class="pad-surface flex w-full min-w-24 items-center gap-1 rounded-sm border px-2 py-1.5"
 								>
 									{#if bindIconBase}
 										<img
 											src={bindIconBase + chip.icon}
-											alt={chip.label}
+											alt={t(chip.labelKey, locale)}
 											class="pad-icon-glow size-8 shrink-0 object-contain"
 										/>
 									{:else}
@@ -277,7 +309,7 @@
 									{/if}
 									<div class="min-w-0">
 										<span class="text-pad-muted block text-2xs tracking-widest uppercase">
-											{chip.label}
+											{t(chip.labelKey, locale)}
 										</span>
 										{@render bindEditor(chip, true)}
 									</div>
@@ -289,9 +321,11 @@
 						<div
 							class="pad-aim-bg border-pad-accent/20 flex items-center justify-between gap-3 rounded-sm border px-3 py-2.5"
 						>
-							<span class="text-pad-accent text-xs uppercase">Right stick aim</span>
+							<span class="text-pad-accent text-xs uppercase"
+								>{m.overlay_aim_title({}, { locale })}</span
+							>
 							<span class="text-pad-text text-right text-sm"
-								>Mouse movement while pointer locked</span
+								>{m.overlay_aim_desc({}, { locale })}</span
 							>
 						</div>
 					</div>
@@ -302,15 +336,15 @@
 					<div
 						class="text-pad-accent mb-0.5 text-right text-xs tracking-widest uppercase max-binds:col-span-full"
 					>
-						Right side
+						{m.overlay_right_side({}, { locale })}
 					</div>
-					{#each rightRows as row (row.label)}
+					{#each rightRows as row (row.labelKey)}
 						<div class="pad-surface flex min-h-11 items-center gap-2 rounded-sm border px-2 py-2">
 							<div class="grid size-9 shrink-0 place-items-center">
 								{#if bindIconBase}
 									<img
 										src={bindIconBase + row.icon}
-										alt={row.label}
+										alt={t(row.labelKey, locale)}
 										class="pad-icon-glow max-h-7 max-w-7 object-contain"
 									/>
 								{:else}
@@ -319,7 +353,7 @@
 							</div>
 							<div class="min-w-0">
 								<span class="text-pad-muted block text-2xs tracking-widest uppercase">
-									{row.label}
+									{t(row.labelKey, locale)}
 								</span>
 								{@render bindEditor(row)}
 							</div>

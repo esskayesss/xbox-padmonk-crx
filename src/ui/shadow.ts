@@ -45,6 +45,7 @@ import { createPropsBox } from './reactive-props.svelte';
 import Hud from './hud/Hud.svelte';
 import BindsOverlay from './binds-overlay/BindsOverlay.svelte';
 import type { Bindings, Combo } from '../core/types';
+import type { Locale } from '../core/i18n';
 // Compiled Tailwind + theme tokens as a string (CSP-safe shadow injection).
 import compiledCss from './styles/theme.css?inline';
 
@@ -72,6 +73,8 @@ export interface MountHandle<P> {
 
 export type HudProps = {
 	iconUrl: string;
+	/** Active UI language. */
+	locale: Locale;
 	toggleCombo: Combo;
 	helpCombo: Combo;
 	enabled: boolean;
@@ -83,6 +86,8 @@ export type HudProps = {
 
 export type OverlayProps = {
 	open: boolean;
+	/** Active UI language. */
+	locale: Locale;
 	bindings: Bindings;
 	bindIconBase: string;
 	/** Recolored Xbox controller art (center pad-map). */

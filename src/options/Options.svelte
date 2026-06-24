@@ -19,10 +19,11 @@
 	import { DEFAULT_CONFIG, normalizeConfig } from '../core/config';
 	import { comboFromEvent, comboLabel } from '../core/combos';
 	import { prettyInput } from '../core/labels';
+	import { m, t as translate, locales, localeName } from '../core/i18n';
 	import { readConfig, writeConfig, onConfigChanged } from '../shared/storage';
 	import type { Action, Config } from '../core/types';
+	import type { Locale } from '../core/i18n';
 
-	const groups = groupsForOptions();
 	const GITHUB_SPONSORS_URL =
 		'https://redirects.esskayesss.dev/sponsor-github?utm_source=padmonk-ext&utm_medium=options&utm_campaign=support';
 	const BUY_ME_COFFEE_URL =
@@ -34,36 +35,13 @@
 	const WEBSITE_URL =
 		'https://redirects.esskayesss.dev/padmonk-web?utm_source=padmonk-ext&utm_medium=options&utm_campaign=docs';
 
-	const OPTIONS_AIM_COPY = {
-		sensitivity: {
-			label: 'Mouse sensitivity',
-			description:
-				'Higher values turn faster with less mouse movement. Lower values give steadier aim and require larger mouse movement.',
-		},
-		smoothing: {
-			label: 'Aim smoothing',
-			description:
-				'Higher values soften sudden mouse movement for smoother tracking, but feel heavier. Lower values feel sharper and more immediate.',
-		},
-		aimMin: {
-			label: 'Anti-deadzone',
-			description:
-				'Helps small mouse movements register against in-game stick deadzones. Raise if slow aim feels stuck; lower if aim feels twitchy.',
-		},
-		aimCurve: {
-			label: 'Aim response curve',
-			description:
-				'Changes how mouse movement ramps into stick output. Higher values improve micro-aim near center. Lower values feel more linear and raw.',
-		},
-	} satisfies Record<(typeof AIM_CONTROLS)[number]['key'], { label: string; description: string }>;
-
-	const BEHAVIOR_COPY = {
-		invertY: 'Reverses vertical aim: mouse up looks down, mouse down looks up.',
-		lockPointerOnClick:
-			'Captures the cursor when you click the game so mouse movement controls aim instead of moving the page cursor. Press Esc to release.',
-		toggleCombo: 'Hotkey for turning padmonk on or off while in game.',
-		helpCombo: 'Hotkey for opening the in-game controls overlay.',
-	} as const;
+	// Per-aim-control long-form copy (options page) as i18n message keys.
+	const OPT_AIM_COPY = {
+		sensitivity: { label: 'opt_aim_sensitivity_label', desc: 'opt_aim_sensitivity_desc' },
+		smoothing: { label: 'opt_aim_smoothing_label', desc: 'opt_aim_smoothing_desc' },
+		aimMin: { label: 'opt_aim_deadzone_label', desc: 'opt_aim_deadzone_desc' },
+		aimCurve: { label: 'opt_aim_curve_label', desc: 'opt_aim_curve_desc' },
+	} satisfies Record<(typeof AIM_CONTROLS)[number]['key'], { label: string; desc: string }>;
 
 	/** Resolve a bind-icon asset URL for the options (extension) page. */
 	function iconUrl(icon: string): string {
@@ -76,6 +54,9 @@
 
 	let config = $state<Config>(structuredClone(DEFAULT_CONFIG));
 
+	// Options sections, resolved to the active locale (recomputes on language change).
+	const groups = $derived(groupsForOptions(config.locale));
+
 	// Capture state: which row (binding) or combo button is awaiting input.
 	type Capturing =
 		| { kind: 'binding'; action: Action; id: string }
@@ -87,8 +68,8 @@
 	let saved = $state(false);
 	let conflictNotice = $state<string | null>(null);
 
-	const toggleLabel = $derived(comboLabel(config.toggleCombo));
-	const helpLabel = $derived(comboLabel(config.helpCombo));
+	const toggleLabel = $derived(comboLabel(config.toggleCombo, config.locale));
+	const helpLabel = $derived(comboLabel(config.helpCombo, config.locale));
 	const bindsComplete = $derived(allBindsConfigured(config.bindings));
 
 	let savedTimer: ReturnType<typeof setTimeout> | null = null;
@@ -108,7 +89,7 @@
 				if (actionEq(action, item.action)) return `${g.title} · ${item.label}`;
 			}
 		}
-		return 'another control';
+		return m.opt_control_fallback({}, { locale: config.locale });
 	}
 
 	function flashSaved(): void {
@@ -147,7 +128,12 @@
 		const existing = config.bindings[inputId];
 		// Tier-4 conflict warning: surface silent reassignment to the user.
 		if (existing && !actionEq(existing, capturing.action)) {
-			showConflict(`Reassigned ${prettyInput(inputId)} from ${controlLabelFor(existing)}`);
+			showConflict(
+				m.opt_conflict_reassigned(
+					{ input: prettyInput(inputId, config.locale), control: controlLabelFor(existing) },
+					{ locale: config.locale },
+				),
+			);
 		}
 		config.bindings[inputId] = { ...capturing.action };
 		capturing = null;
@@ -219,6 +205,10 @@
 		config[key] = value;
 		save();
 	}
+	function setLocale(value: Locale): void {
+		config.locale = value;
+		save();
+	}
 
 	// ---- import / export ----
 	function exportToBox(): void {
@@ -229,7 +219,12 @@
 			config = normalizeConfig(JSON.parse(jsonText));
 			save();
 		} catch (err) {
-			alert('Invalid JSON: ' + (err instanceof Error ? err.message : String(err)));
+			alert(
+				m.opt_invalid_json(
+					{ error: err instanceof Error ? err.message : String(err) },
+					{ locale: config.locale },
+				),
+			);
 		}
 	}
 	function downloadProfile(): void {
@@ -252,7 +247,12 @@
 				config = normalizeConfig(JSON.parse(String(reader.result)));
 				save();
 			} catch (err) {
-				alert('Invalid profile file: ' + (err instanceof Error ? err.message : String(err)));
+				alert(
+					m.opt_invalid_file(
+						{ error: err instanceof Error ? err.message : String(err) },
+						{ locale: config.locale },
+					),
+				);
 			}
 		};
 		reader.readAsText(file);
@@ -260,7 +260,7 @@
 	}
 
 	function resetAll(): void {
-		if (!window.confirm('Reset all bindings and settings to defaults?')) return;
+		if (!window.confirm(m.opt_reset_all_confirm({}, { locale: config.locale }))) return;
 		config = normalizeConfig(structuredClone(DEFAULT_CONFIG));
 		save();
 	}
@@ -276,19 +276,21 @@
 		class="bg-pad-sponsor text-pad-sponsor-soft border-pad-sponsor-strong mb-4 flex flex-col gap-3 rounded-md border px-4 py-3 shadow-pad-hud sm:flex-row sm:items-center sm:justify-between"
 	>
 		<div>
-			<div class="text-sm font-black tracking-wide uppercase">❤ Support padmonk</div>
+			<div class="text-sm font-black tracking-wide uppercase">
+				❤ {m.opt_support_title({}, { locale: config.locale })}
+			</div>
 			<div class="text-pad-sponsor-soft/85 text-xs">
-				Help keep the extension free, open source, and actively maintained.
+				{m.opt_support_subtitle({}, { locale: config.locale })}
 			</div>
 		</div>
-		<div class="flex flex-wrap gap-2">
+		<div class="flex gap-2">
 			<a
 				href={GITHUB_SPONSORS_URL}
 				target="_blank"
 				rel="noreferrer"
 				class="bg-pad-sponsor-soft text-pad-sponsor-strong rounded-sm px-3 py-1 text-xs font-black uppercase hover:brightness-95"
 			>
-				GitHub Sponsors
+				{m.opt_support_github_sponsors({}, { locale: config.locale })}
 			</a>
 			<a
 				href={BUY_ME_COFFEE_URL}
@@ -296,23 +298,43 @@
 				rel="noreferrer"
 				class="border-pad-coffee-border bg-pad-coffee text-pad-coffee-text hover:bg-pad-coffee-hover rounded-sm border px-3 py-1 text-xs font-black uppercase"
 			>
-				Buy Me a Coffee
+				{m.opt_support_coffee({}, { locale: config.locale })}
 			</a>
 		</div>
 	</section>
 
-	<h1 class="text-pad-accent m-0 mb-1 flex items-center gap-2 text-xl">
-		🎮 padmonk Configuration
-		<span
-			class="text-pad-accent text-xs transition-opacity duration-200"
-			class:opacity-0={!saved}
-			class:opacity-100={saved}>saved ✓</span
-		>
-	</h1>
+	<div class="mb-1 flex items-start justify-between gap-4">
+		<h1 class="text-pad-accent m-0 flex items-center gap-2 text-xl">
+			🎮 {m.opt_title({}, { locale: config.locale })}
+			<span
+				class="text-pad-accent text-xs transition-opacity duration-200"
+				class:opacity-0={!saved}
+				class:opacity-100={saved}>{m.opt_saved({}, { locale: config.locale })}</span
+			>
+		</h1>
+		<div class="flex shrink-0 items-center gap-2">
+			<label id="options-language-label" for="options-language" class="text-pad-muted text-xs">
+				{m.opt_language_label({}, { locale: config.locale })}
+			</label>
+			<select
+				id="options-language"
+				aria-labelledby="options-language-label"
+				class="pad-number rounded-sm px-2 py-1 text-sm"
+				value={config.locale}
+				onchange={(e) => setLocale(e.currentTarget.value as Locale)}
+			>
+				{#each locales as code (code)}
+					<option value={code}>{localeName(code)}</option>
+				{/each}
+			</select>
+		</div>
+	</div>
 	<p class="text-pad-muted mb-2">
-		Remap every control. Click <b class="text-pad-accent">＋ Add</b> on a row, then press the key /
-		mouse button you want to bind. Click a chip's <b class="text-pad-danger">×</b> to unbind. Changes
-		apply live — just reload the xCloud tab.
+		{m.opt_intro_before_add({}, { locale: config.locale })}
+		<b class="text-pad-accent">{m.opt_add({}, { locale: config.locale })}</b>
+		{m.opt_intro_between({}, { locale: config.locale })}
+		<b class="text-pad-danger">×</b>
+		{m.opt_intro_after_unbind({}, { locale: config.locale })}
 	</p>
 
 	<!-- Coverage warning: one or more controller actions have no input bound. -->
@@ -321,7 +343,7 @@
 			role="alert"
 			class="bg-pad-danger text-pad-bg mb-2 rounded-md px-3 py-2 text-sm font-semibold"
 		>
-			⚠ Some controls are unmapped — bind every action below for full coverage.
+			⚠ {m.opt_unmapped_warning({}, { locale: config.locale })}
 		</div>
 	{/if}
 
@@ -365,10 +387,12 @@
 								<span
 									class="bg-pad-chip border-pad-border inline-flex items-center rounded-md border px-2 py-0.5 text-sm"
 								>
-									<b class="text-pad-key font-semibold">{prettyInput(id)}</b>
+									<b class="text-pad-key font-semibold">{prettyInput(id, config.locale)}</b>
 								</span>
 							{/each}
-							<span class="text-pad-muted text-2xs uppercase tracking-wide">fixed</span>
+							<span class="text-pad-muted text-2xs uppercase tracking-wide"
+								>{m.opt_fixed({}, { locale: config.locale })}</span
+							>
 						</div>
 					{:else}
 						<div class="flex flex-wrap items-center gap-1.5">
@@ -376,12 +400,15 @@
 								<span
 									class="bg-pad-chip border-pad-border inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-sm"
 								>
-									<b class="text-pad-key font-semibold">{prettyInput(id)}</b>
+									<b class="text-pad-key font-semibold">{prettyInput(id, config.locale)}</b>
 									<button
 										type="button"
 										class="chip-x text-pad-danger cursor-pointer font-bold"
-										title="Unbind"
-										aria-label="Unbind {prettyInput(id)}"
+										title={m.opt_unbind({}, { locale: config.locale })}
+										aria-label={m.opt_unbind_aria(
+											{ input: prettyInput(id, config.locale) },
+											{ locale: config.locale },
+										)}
 										onclick={() => unbind(id)}>×</button
 									>
 								</span>
@@ -401,8 +428,8 @@
 										: startCapture({ kind: 'binding', action: item.action, id: item.id })}
 							>
 								{isCapturing(capturing, 'binding', item.id)
-									? 'press input… (Esc cancels)'
-									: '＋ Add'}
+									? m.opt_capture_input({}, { locale: config.locale })
+									: m.opt_add({}, { locale: config.locale })}
 							</button>
 						</div>
 					{/if}
@@ -415,11 +442,10 @@
 	<h2
 		class="text-pad-muted border-pad-chip mt-7 mb-2.5 border-b pb-1.5 text-sm font-normal tracking-widest uppercase"
 	>
-		Mouse &amp; aim behavior
+		{m.opt_behavior_section({}, { locale: config.locale })}
 	</h2>
 	<p class="text-pad-muted mb-4 max-w-3xl text-sm leading-6">
-		Tune how mouse movement becomes virtual right-stick aim. These settings affect controller output
-		only; they cannot bypass the game's built-in turn-speed limits.
+		{m.opt_behavior_intro({}, { locale: config.locale })}
 	</p>
 	<div class="grid grid-cols-aim-field items-center gap-x-6 gap-y-3">
 		{#each AIM_CONTROLS as s (s.key)}
@@ -429,10 +455,10 @@
 					for={`options-${s.key}-range`}
 					class="text-pad-text/85 block font-semibold"
 				>
-					{OPTIONS_AIM_COPY[s.key].label}
+					{translate(OPT_AIM_COPY[s.key].label, config.locale)}
 				</label>
 				<p class="text-pad-muted mt-1 text-xs leading-snug">
-					{OPTIONS_AIM_COPY[s.key].description}
+					{translate(OPT_AIM_COPY[s.key].desc, config.locale)}
 				</p>
 			</div>
 			<div class="flex items-center gap-3">
@@ -452,7 +478,10 @@
 				<input
 					type="number"
 					class="pad-number w-20 shrink-0 rounded-sm px-2 py-1 text-right font-mono text-sm"
-					aria-label={`${s.label} value`}
+					aria-label={m.aim_value_aria(
+						{ label: translate(OPT_AIM_COPY[s.key].label, config.locale) },
+						{ locale: config.locale },
+					)}
 					min={s.min}
 					max={s.max}
 					step={s.step}
@@ -468,9 +497,11 @@
 				for="options-invertY"
 				class="text-pad-text/85 block font-semibold"
 			>
-				Invert Y axis
+				{m.opt_invert_label({}, { locale: config.locale })}
 			</label>
-			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.invertY}</p>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">
+				{m.opt_behavior_invert_desc({}, { locale: config.locale })}
+			</p>
 		</div>
 		<div>
 			<input
@@ -488,9 +519,11 @@
 				for="options-lockPointer"
 				class="text-pad-text/85 block font-semibold"
 			>
-				Click to lock mouse aim
+				{m.opt_lock_label({}, { locale: config.locale })}
 			</label>
-			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.lockPointerOnClick}</p>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">
+				{m.opt_behavior_lock_desc({}, { locale: config.locale })}
+			</p>
 		</div>
 		<div>
 			<input
@@ -503,8 +536,12 @@
 		</div>
 
 		<div>
-			<div class="text-pad-text/85 font-semibold">Enable/disable hotkey</div>
-			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.toggleCombo}</p>
+			<div class="text-pad-text/85 font-semibold">
+				{m.opt_toggle_label({}, { locale: config.locale })}
+			</div>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">
+				{m.opt_behavior_toggle_desc({}, { locale: config.locale })}
+			</p>
 		</div>
 		<div>
 			<button
@@ -518,13 +555,19 @@
 				onclick={() =>
 					isCapturing(capturing, 'toggle') ? cancelCapture() : startCapture({ kind: 'toggle' })}
 			>
-				{isCapturing(capturing, 'toggle') ? 'press combo… (Esc cancels)' : toggleLabel}
+				{isCapturing(capturing, 'toggle')
+					? m.opt_capture_combo({}, { locale: config.locale })
+					: toggleLabel}
 			</button>
 		</div>
 
 		<div>
-			<div class="text-pad-text/85 font-semibold">Show binds overlay hotkey</div>
-			<p class="text-pad-muted mt-1 text-xs leading-snug">{BEHAVIOR_COPY.helpCombo}</p>
+			<div class="text-pad-text/85 font-semibold">
+				{m.opt_help_label({}, { locale: config.locale })}
+			</div>
+			<p class="text-pad-muted mt-1 text-xs leading-snug">
+				{m.opt_behavior_help_desc({}, { locale: config.locale })}
+			</p>
 		</div>
 		<div>
 			<button
@@ -538,14 +581,18 @@
 				onclick={() =>
 					isCapturing(capturing, 'help') ? cancelCapture() : startCapture({ kind: 'help' })}
 			>
-				{isCapturing(capturing, 'help') ? 'press combo… (Esc cancels)' : helpLabel}
+				{isCapturing(capturing, 'help')
+					? m.opt_capture_combo({}, { locale: config.locale })
+					: helpLabel}
 			</button>
 		</div>
 	</div>
 
 	<!-- Import / Export -->
 	<details class="mt-3.5">
-		<summary class="text-pad-muted cursor-pointer">Import / Export profile</summary>
+		<summary class="text-pad-muted cursor-pointer"
+			>{m.opt_importexport({}, { locale: config.locale })}</summary
+		>
 		<textarea
 			class="bg-pad-bg-3 text-pad-text/80 border-pad-border mt-2 h-36 w-full rounded-md border p-2.5 font-mono text-xs leading-relaxed"
 			spellcheck="false"
@@ -557,28 +604,28 @@
 				class="bg-pad-chip text-pad-text border-pad-border cursor-pointer rounded-md border px-3.5 py-2 text-sm hover:brightness-125"
 				onclick={exportToBox}
 			>
-				Copy current → box
+				{m.opt_copy_to_box({}, { locale: config.locale })}
 			</button>
 			<button
 				type="button"
 				class="bg-pad-chip text-pad-text border-pad-border cursor-pointer rounded-md border px-3.5 py-2 text-sm hover:brightness-125"
 				onclick={importFromBox}
 			>
-				Apply from box
+				{m.opt_apply_from_box({}, { locale: config.locale })}
 			</button>
 			<button
 				type="button"
 				class="bg-pad-chip text-pad-text border-pad-border cursor-pointer rounded-md border px-3.5 py-2 text-sm hover:brightness-125"
 				onclick={downloadProfile}
 			>
-				Download profile (.json)
+				{m.opt_download({}, { locale: config.locale })}
 			</button>
 			<button
 				type="button"
 				class="bg-pad-chip text-pad-text border-pad-border cursor-pointer rounded-md border px-3.5 py-2 text-sm hover:brightness-125"
 				onclick={() => fileInput.click()}
 			>
-				Upload profile
+				{m.opt_upload({}, { locale: config.locale })}
 			</button>
 			<input
 				bind:this={fileInput}
@@ -597,7 +644,7 @@
 			class="text-pad-danger cursor-pointer rounded-md border border-pad-danger-border bg-transparent px-3.5 py-2 text-sm hover:brightness-125"
 			onclick={resetAll}
 		>
-			Reset everything to defaults
+			{m.opt_reset_all({}, { locale: config.locale })}
 		</button>
 	</div>
 
@@ -610,10 +657,10 @@
 			rel="noreferrer"
 			class="text-pad-accent hover:underline"
 		>
-			GitHub repository ↗
+			{m.opt_footer_repo({}, { locale: config.locale })}
 		</a>
 		<a href={WEBSITE_URL} target="_blank" rel="noreferrer" class="text-pad-accent hover:underline">
-			Website ↗
+			{m.opt_footer_web({}, { locale: config.locale })}
 		</a>
 		<a
 			href={BUG_REPORT_URL}
@@ -621,7 +668,7 @@
 			rel="noreferrer"
 			class="text-pad-accent hover:underline"
 		>
-			Report a bug ↗
+			{m.opt_footer_bug({}, { locale: config.locale })}
 		</a>
 	</footer>
 </div>

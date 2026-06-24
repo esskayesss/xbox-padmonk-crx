@@ -99,6 +99,7 @@ function main(): void {
 
 	const hudProps = (): HudProps => ({
 		iconUrl,
+		locale: config.locale,
 		toggleCombo: config.toggleCombo,
 		helpCombo: config.helpCombo,
 		enabled: config.enabled,
@@ -107,6 +108,7 @@ function main(): void {
 	});
 	const overlayProps = (): OverlayProps => ({
 		open: overlayOpen,
+		locale: config.locale,
 		bindings: config.bindings,
 		bindIconBase,
 		controllerUrl,

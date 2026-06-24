@@ -5,16 +5,20 @@
 	"type": "module",
 	"description": "Keyboard & Mouse for xCloud — Xbox controller emulation via the Gamepad API.",
 	"scripts": {
+		"i18n": "paraglide-js compile --project ./project.inlang --outdir ./src/paraglide",
 		"dev": "vite",
 		"build": "vite build",
-		"typecheck": "svelte-check --tsconfig ./tsconfig.json && tsc --noEmit -p tsconfig.json",
+		"prebuild": "npm run i18n",
+		"typecheck": "npm run i18n && svelte-check --tsconfig ./tsconfig.json && tsc --noEmit -p tsconfig.json",
 		"test": "vitest run",
+		"pretest": "npm run i18n",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"zip": "npm run build && node scripts/zip.mjs"
 	},
 	"devDependencies": {
 		"@crxjs/vite-plugin": "^2.5.0",
+		"@inlang/paraglide-js": "^2.20.1",
 		"@sveltejs/vite-plugin-svelte": "^7.1.2",
 		"@tailwindcss/vite": "^4.1.11",
 		"@types/chrome": "^0.0.328",

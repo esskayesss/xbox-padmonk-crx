@@ -5,6 +5,8 @@
 //   - "Mouse0".."Mouse4" (Left / Middle / Right / 4 / 5)
 //   - "WheelUp" / "WheelDown"
 
+import type { Locale } from '../paraglide/runtime.js';
+
 /** Press a virtual gamepad button by index. */
 export interface ButtonAction {
 	t: 'b';
@@ -39,6 +41,8 @@ export interface Combo {
 /** Full persisted configuration. */
 export interface Config {
 	enabled: boolean;
+	/** Active UI language. Threaded to every i18n call site as an explicit option. */
+	locale: Locale;
 	/** Mouse pixels -> right-stick deflection. */
 	sensitivity: number;
 	/** Right-stick smoothing: 0 = instant/jittery, ->1 = smooth/laggy. */
@@ -94,9 +98,9 @@ export interface GamepadState {
 export interface ControllerAction {
 	/** Stable key, e.g. "btn.a", "stick.left.up". */
 	id: string;
-	/** Human label, e.g. "A", "Up". */
+	/** i18n message key for the human label, e.g. "action_btn_a", "action_stick_up". */
 	label: string;
-	/** Group title; matches the legacy options GROUPS titles. */
+	/** Group identity — a stable i18n message key (see GROUP_TITLES). */
 	group: string;
 	/** The action produced when a bound input is held. */
 	action: Action;
@@ -108,10 +112,11 @@ export interface ControllerAction {
 
 /** An options-page group: a titled section of controller actions. */
 export interface ControllerGroup {
+	/** Resolved, display-ready section title (already localized). */
 	title: string;
 	/** True when this group's inputs are display-only (not user-rebindable). */
 	fixed?: boolean;
-	/** Optional descriptive text (e.g. the mouse-driven right stick). */
+	/** Optional resolved descriptive text (e.g. the mouse-driven right stick). */
 	info?: string;
 	items: ControllerAction[];
 }

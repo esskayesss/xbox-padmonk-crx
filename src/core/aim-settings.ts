@@ -8,7 +8,9 @@ export type AimSettingKey = 'sensitivity' | 'smoothing' | 'aimMin' | 'aimCurve';
 
 export type AimSettingControl = {
 	key: AimSettingKey;
+	/** i18n message key for the short control label (popup). */
 	label: string;
+	/** i18n message key for the short control hint (popup). */
 	hint: string;
 	min: number;
 	max: number;
@@ -38,8 +40,8 @@ const snap = (v: number, c: AimSettingControl): number => {
 export const AIM_CONTROLS: readonly AimSettingControl[] = [
 	{
 		key: 'sensitivity',
-		label: 'Look speed',
-		hint: 'Default = 80%',
+		label: 'aim_sensitivity_label',
+		hint: 'aim_sensitivity_hint',
 		min: 10,
 		max: 280,
 		step: 5,
@@ -53,8 +55,8 @@ export const AIM_CONTROLS: readonly AimSettingControl[] = [
 	},
 	{
 		key: 'smoothing',
-		label: 'Smoothing',
-		hint: '0 = sharp, 95 = floaty',
+		label: 'aim_smoothing_label',
+		hint: 'aim_smoothing_hint',
 		min: 0,
 		max: 95,
 		step: 1,
@@ -66,8 +68,8 @@ export const AIM_CONTROLS: readonly AimSettingControl[] = [
 	},
 	{
 		key: 'aimMin',
-		label: 'Deadzone lift',
-		hint: 'Raise if slow aim feels dead',
+		label: 'aim_deadzone_label',
+		hint: 'aim_deadzone_hint',
 		min: 0,
 		max: 50,
 		step: 1,
@@ -79,8 +81,8 @@ export const AIM_CONTROLS: readonly AimSettingControl[] = [
 	},
 	{
 		key: 'aimCurve',
-		label: 'Fine aim boost',
-		hint: '0 = linear, + boosts micro aim',
+		label: 'aim_curve_label',
+		hint: 'aim_curve_hint',
 		min: -100,
 		max: 75,
 		step: 5,
