@@ -6,30 +6,36 @@
 //   - the binds overlay
 //   - the README bindings table
 //
-// Group titles match the legacy options.js GROUPS titles byte-for-byte so the
-// options UI renders identically. Icon filenames map to assets/bind-icons/.
+// Group titles and action labels are i18n message KEYS (stable identities that
+// double as translation keys). groupsForOptions() resolves them to display text
+// in the requested locale; the raw keys stay constant so grouping / fixed-set
+// logic never drifts when a heading is translated.
 
 import { BUTTON } from './constants';
+import { baseLocale, t, type Locale, type MessageKey } from './i18n';
 import type { Action, Bindings, ControllerAction, ControllerGroup } from './types';
 
-/** Group titles, in render order. The Aim group is mouse-driven (no items). */
+/** Group identities (message keys), in render order. The Aim group is mouse-driven. */
 export const GROUP_TITLES = {
-	leftStick: 'Movement — Left Stick',
-	rightStick: 'Aim — Right Stick',
-	face: 'Face Buttons',
-	bumpersTriggers: 'Bumpers & Triggers',
-	stickClicks: 'Stick Clicks',
-	menu: 'Menu',
-	dpad: 'D-Pad',
+	leftStick: 'group_left_stick',
+	rightStick: 'group_right_stick',
+	face: 'group_face',
+	bumpersTriggers: 'group_bumpers_triggers',
+	stickClicks: 'group_stick_clicks',
+	menu: 'group_menu',
+	dpad: 'group_dpad',
 } as const;
 
-/** Info groups that carry descriptive text but no remappable items. */ export const INFO_GROUPS: ReadonlyArray<{
+/** Info groups that carry descriptive text but no remappable items. */
+export const INFO_GROUPS: ReadonlyArray<{
+	/** Group identity (message key). */
 	title: string;
+	/** Info text message key. */
 	info: string;
 }> = [
 	{
 		title: GROUP_TITLES.rightStick,
-		info: 'Driven by mouse movement. Tune sensitivity / smoothing below.',
+		info: 'group_right_stick_info',
 	},
 ];
 
@@ -58,7 +64,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	// Movement — Left Stick
 	{
 		id: 'stick.left.up',
-		label: 'Up',
+		label: 'action_stick_up',
 		group: GROUP_TITLES.leftStick,
 		action: { t: 'a', a: 1, v: -1 },
 		icon: 'left-stick-up.svg',
@@ -66,7 +72,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'stick.left.down',
-		label: 'Down',
+		label: 'action_stick_down',
 		group: GROUP_TITLES.leftStick,
 		action: { t: 'a', a: 1, v: 1 },
 		icon: 'left-stick-down.svg',
@@ -74,7 +80,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'stick.left.left',
-		label: 'Left',
+		label: 'action_stick_left',
 		group: GROUP_TITLES.leftStick,
 		action: { t: 'a', a: 0, v: -1 },
 		icon: 'left-stick-left.svg',
@@ -82,7 +88,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'stick.left.right',
-		label: 'Right',
+		label: 'action_stick_right',
 		group: GROUP_TITLES.leftStick,
 		action: { t: 'a', a: 0, v: 1 },
 		icon: 'left-stick-right.svg',
@@ -92,7 +98,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	// Face Buttons
 	{
 		id: 'btn.a',
-		label: 'A',
+		label: 'action_btn_a',
 		group: GROUP_TITLES.face,
 		action: { t: 'b', i: BUTTON.A },
 		icon: 'a.svg',
@@ -100,7 +106,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.b',
-		label: 'B',
+		label: 'action_btn_b',
 		group: GROUP_TITLES.face,
 		action: { t: 'b', i: BUTTON.B },
 		icon: 'b.svg',
@@ -108,7 +114,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.x',
-		label: 'X',
+		label: 'action_btn_x',
 		group: GROUP_TITLES.face,
 		action: { t: 'b', i: BUTTON.X },
 		icon: 'x.svg',
@@ -116,7 +122,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.y',
-		label: 'Y',
+		label: 'action_btn_y',
 		group: GROUP_TITLES.face,
 		action: { t: 'b', i: BUTTON.Y },
 		icon: 'y.svg',
@@ -126,7 +132,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	// Bumpers & Triggers
 	{
 		id: 'btn.lb',
-		label: 'LB',
+		label: 'action_btn_lb',
 		group: GROUP_TITLES.bumpersTriggers,
 		action: { t: 'b', i: BUTTON.LB },
 		icon: 'left-bumper.svg',
@@ -134,7 +140,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.rb',
-		label: 'RB',
+		label: 'action_btn_rb',
 		group: GROUP_TITLES.bumpersTriggers,
 		action: { t: 'b', i: BUTTON.RB },
 		icon: 'right-bumper.svg',
@@ -142,7 +148,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.lt',
-		label: 'LT',
+		label: 'action_btn_lt',
 		group: GROUP_TITLES.bumpersTriggers,
 		action: { t: 'b', i: BUTTON.LT },
 		icon: 'left-trigger.svg',
@@ -150,7 +156,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.rt',
-		label: 'RT',
+		label: 'action_btn_rt',
 		group: GROUP_TITLES.bumpersTriggers,
 		action: { t: 'b', i: BUTTON.RT },
 		icon: 'right-trigger.svg',
@@ -160,7 +166,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	// Stick Clicks
 	{
 		id: 'btn.l3',
-		label: 'L3 (left stick)',
+		label: 'action_btn_l3',
 		group: GROUP_TITLES.stickClicks,
 		action: { t: 'b', i: BUTTON.L3 },
 		icon: 'left-stick-press.svg',
@@ -168,7 +174,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.r3',
-		label: 'R3 (right stick)',
+		label: 'action_btn_r3',
 		group: GROUP_TITLES.stickClicks,
 		action: { t: 'b', i: BUTTON.R3 },
 		icon: 'right-stick-press.svg',
@@ -178,7 +184,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	// Menu
 	{
 		id: 'btn.view',
-		label: 'View / Back',
+		label: 'action_btn_view',
 		group: GROUP_TITLES.menu,
 		action: { t: 'b', i: BUTTON.View },
 		icon: 'view.svg',
@@ -186,7 +192,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.menu',
-		label: 'Menu / Start',
+		label: 'action_btn_menu',
 		group: GROUP_TITLES.menu,
 		action: { t: 'b', i: BUTTON.Menu },
 		icon: 'menu.svg',
@@ -194,7 +200,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'btn.guide',
-		label: 'Guide / Xbox',
+		label: 'action_btn_guide',
 		group: GROUP_TITLES.menu,
 		action: { t: 'b', i: BUTTON.Guide },
 		icon: 'guide.svg',
@@ -204,7 +210,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	// D-Pad
 	{
 		id: 'dpad.up',
-		label: 'Up',
+		label: 'action_dpad_up',
 		group: GROUP_TITLES.dpad,
 		action: { t: 'b', i: BUTTON.DpadUp },
 		icon: 'dpad-up.svg',
@@ -212,7 +218,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'dpad.down',
-		label: 'Down',
+		label: 'action_dpad_down',
 		group: GROUP_TITLES.dpad,
 		action: { t: 'b', i: BUTTON.DpadDown },
 		icon: 'dpad-down.svg',
@@ -220,7 +226,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'dpad.left',
-		label: 'Left',
+		label: 'action_dpad_left',
 		group: GROUP_TITLES.dpad,
 		action: { t: 'b', i: BUTTON.DpadLeft },
 		icon: 'dpad-left.svg',
@@ -228,7 +234,7 @@ export const CONTROLLER_ACTIONS: readonly ControllerAction[] = [
 	},
 	{
 		id: 'dpad.right',
-		label: 'Right',
+		label: 'action_dpad_right',
 		group: GROUP_TITLES.dpad,
 		action: { t: 'b', i: BUTTON.DpadRight },
 		icon: 'dpad-right.svg',
@@ -265,17 +271,24 @@ export function buildDefaultBindings(): Bindings {
 
 /**
  * Build the options-page groups: titled sections in render order, info groups
- * interleaved at their declared position. Items come from the registry.
+ * interleaved at their declared position. Titles, info text and item labels are
+ * resolved to the requested locale (default = base locale). The raw message
+ * keys remain the grouping identity, so resolution never affects structure.
  */
-export function groupsForOptions(): ControllerGroup[] {
+export function groupsForOptions(locale: Locale = baseLocale): ControllerGroup[] {
 	const infoByTitle = new Map(INFO_GROUPS.map((g) => [g.title, g.info]));
 	const order = Object.values(GROUP_TITLES);
 	const groups: ControllerGroup[] = [];
-	for (const title of order) {
-		const items = CONTROLLER_ACTIONS.filter((a) => a.group === title);
-		const info = infoByTitle.get(title);
-		if (items.length === 0 && info === undefined) continue;
-		const fixed = FIXED_GROUP_TITLES.has(title);
+	for (const key of order) {
+		const items = CONTROLLER_ACTIONS.filter((a) => a.group === key).map((a) => ({
+			...a,
+			label: t(a.label as MessageKey, locale),
+		}));
+		const infoKey = infoByTitle.get(key);
+		if (items.length === 0 && infoKey === undefined) continue;
+		const title = t(key as MessageKey, locale);
+		const fixed = FIXED_GROUP_TITLES.has(key);
+		const info = infoKey === undefined ? undefined : t(infoKey as MessageKey, locale);
 		groups.push(info === undefined ? { title, fixed, items } : { title, fixed, info, items });
 	}
 	return groups;

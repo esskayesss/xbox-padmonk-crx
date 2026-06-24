@@ -5,10 +5,13 @@
 	//
 	// Colors come ONLY from theme tokens (text-pad-*, bg-pad-*) — no inline hex.
 	import { comboLabel } from '../../core/combos';
+	import { m } from '../../core/i18n';
 	import type { Combo } from '../../core/types';
+	import type { Locale } from '../../core/i18n';
 
 	interface Props {
 		iconUrl: string;
+		locale: Locale;
 		toggleCombo: Combo;
 		helpCombo: Combo;
 		enabled: boolean;
@@ -16,7 +19,7 @@
 		/** False when one or more controller actions have no input bound. */
 		bindsComplete: boolean;
 	}
-	let { iconUrl, toggleCombo, helpCombo, enabled, inGame, bindsComplete }: Props = $props();
+	let { iconUrl, locale, toggleCombo, helpCombo, enabled, inGame, bindsComplete }: Props = $props();
 
 	// Second line of defense (see shadow.ts CLICK-SAFETY): swallow on the dock.
 	const stop = (e: Event) => e.stopPropagation();
@@ -56,23 +59,27 @@
 				class:text-pad-accent={enabled}
 				class:text-pad-muted={!enabled}
 			>
-				{enabled ? 'ON' : 'OFF'}
+				{enabled ? m.hud_on({}, { locale }) : m.hud_off({}, { locale })}
 			</div>
 		</div>
 
 		<div class="grid min-w-0 gap-0.5">
 			<div class="flex items-center gap-1.5">
-				<b class="text-pad-accent text-xs font-semibold">{comboLabel(toggleCombo)}</b>
-				<span class="text-pad-text min-w-0 flex-1 truncate text-xs">toggle</span>
+				<b class="text-pad-accent text-xs font-semibold">{comboLabel(toggleCombo, locale)}</b>
+				<span class="text-pad-text min-w-0 flex-1 truncate text-xs"
+					>{m.hud_toggle({}, { locale })}</span
+				>
 			</div>
 			<div class="flex items-center gap-1.5">
-				<b class="text-pad-accent text-xs font-semibold">{comboLabel(helpCombo)}</b>
-				<span class="text-pad-text min-w-0 flex-1 truncate text-xs">binds</span>
+				<b class="text-pad-accent text-xs font-semibold">{comboLabel(helpCombo, locale)}</b>
+				<span class="text-pad-text min-w-0 flex-1 truncate text-xs"
+					>{m.hud_binds({}, { locale })}</span
+				>
 			</div>
 			<div class="flex items-center gap-1.5">
 				<b class="text-pad-muted text-xs font-semibold">Esc</b>
 				<span class="text-pad-muted min-w-0 flex-1 truncate text-xs">
-					{enabled ? 'release aim lock' : 'click game to lock aim'}
+					{enabled ? m.hud_release_lock({}, { locale }) : m.hud_click_lock({}, { locale })}
 				</span>
 			</div>
 		</div>
@@ -83,7 +90,7 @@
 			class="bg-pad-danger -mx-1.5 -mb-1.5 px-2 py-1 text-center text-2xs font-semibold tracking-widest text-pad-bg uppercase"
 			role="alert"
 		>
-			Unmapped controls — open binds
+			{m.hud_unmapped({}, { locale })}
 		</div>
 	{/if}
 </div>

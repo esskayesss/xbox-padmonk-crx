@@ -1,5 +1,6 @@
 // Keyboard combo helpers, ported from the legacy options.js / inject.js.
 
+import { baseLocale, m, type Locale } from './i18n';
 import { prettyInput } from './labels';
 import type { Combo } from './types';
 
@@ -19,13 +20,13 @@ export function comboFromEvent(e: KeyboardEvent): Combo {
 }
 
 /** Render a combo as "Ctrl+Alt+Shift+Meta+Key" in that fixed order. */
-export function comboLabel(combo: Combo): string {
+export function comboLabel(combo: Combo, locale: Locale = baseLocale): string {
 	const parts: string[] = [];
-	if (combo.ctrl) parts.push('Ctrl');
-	if (combo.alt) parts.push('Alt');
-	if (combo.shift) parts.push('Shift');
-	if (combo.meta) parts.push('Meta');
-	parts.push(prettyInput(combo.code));
+	if (combo.ctrl) parts.push(m.combo_ctrl({}, { locale }));
+	if (combo.alt) parts.push(m.combo_alt({}, { locale }));
+	if (combo.shift) parts.push(m.combo_shift({}, { locale }));
+	if (combo.meta) parts.push(m.combo_meta({}, { locale }));
+	parts.push(prettyInput(combo.code, locale));
 	return parts.join('+');
 }
 
