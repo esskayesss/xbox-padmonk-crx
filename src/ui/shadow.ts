@@ -78,7 +78,7 @@ export type HudProps = {
 	toggleCombo: Combo;
 	helpCombo: Combo;
 	enabled: boolean;
-	/** True on an active game session (xbox.com /play/launch/...) — fades the HUD. */
+	/** True on an active game session (/play/launch/... or play.xbox.com /stream/...) — fades the HUD. */
 	inGame: boolean;
 	/** False when one or more controller actions have no input bound. */
 	bindsComplete: boolean;

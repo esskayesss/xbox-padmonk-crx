@@ -33,6 +33,7 @@ import {
 } from '../ui/shadow';
 import { installInputCapture, type CaptureController } from './input-capture';
 import { installNavGuard, shouldArmNavGuard } from './nav-guard';
+import { isActiveGamePath } from './page-match';
 
 declare global {
 	interface Window {
@@ -93,9 +94,10 @@ function main(): void {
 	let overlay: MountHandle<OverlayProps> | null = null;
 	let mountedFontUrl = '';
 
-	// Active game session: xbox.com launches a title at /<locale>/play/launch/...
-	// Used to fade the HUD only during play, not on the dashboard or test sites.
-	const isInGame = (): boolean => /\/play\/launch\//.test(location.pathname);
+	// Active game session: legacy xbox.com uses /<locale>/play/launch/...;
+	// the new play.xbox.com experience uses /stream/<product-id>/<slug>.
+	// Used to fade the HUD only during play, not on dashboards or test sites.
+	const isInGame = (): boolean => isActiveGamePath(location.pathname);
 
 	const hudProps = (): HudProps => ({
 		iconUrl,
@@ -143,9 +145,9 @@ function main(): void {
 	if (document.body) mountUi();
 	else document.addEventListener('DOMContentLoaded', mountUi, { once: true });
 
-	// Fade the HUD only on an active game session. xbox.com routes client-side, so
-	// poll the URL and refresh when we enter/leave /play/launch/... (a full reload
-	// isn't guaranteed). 1s latency is plenty for a passive opacity change.
+	// Fade the HUD only on an active game session. Xbox routes client-side, so poll
+	// the URL and refresh when we enter/leave /play/launch/... or /stream/...
+	// (a full reload isn't guaranteed). 1s latency is plenty for a passive opacity change.
 	let lastHref = location.href;
 	setInterval(() => {
 		if (location.href === lastHref) return;

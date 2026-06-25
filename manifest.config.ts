@@ -2,9 +2,12 @@ import { defineManifest } from '@crxjs/vite-plugin';
 import { VERSION, VERSION_NAME } from './build-stamp';
 
 // Match patterns mirrored from the legacy manifest.json content_scripts.
+// play.xbox.com is the new Xbox Cloud Gaming experience; match the whole host
+// so the extension is already injected before the SPA routes into /stream/...
 const MATCHES = [
 	'https://www.xbox.com/*/play*',
 	'https://www.xbox.com/play*',
+	'https://play.xbox.com/*',
 	'https://www.gamepad-tester.com/*',
 	'https://gamepad-tester.com/*',
 	'https://hardwaretester.com/gamepad*',
@@ -13,6 +16,7 @@ const MATCHES = [
 // Host patterns for web-accessible resources (mirrors legacy WAR matches).
 const WAR_MATCHES = [
 	'https://www.xbox.com/*',
+	'https://play.xbox.com/*',
 	'https://www.gamepad-tester.com/*',
 	'https://gamepad-tester.com/*',
 	'https://hardwaretester.com/*',
