@@ -101,6 +101,25 @@ Surfaces: `https://www.xbox.com/*/play*`, `https://play.xbox.com/stream/*`.
 - [ ] Locale switch in Global settings re-localizes the in-game overlay/HUD live.
 - [ ] Multi-tab: two game tabs resolve/switch profiles independently.
 
+## Deferred refactors (whole-feature audit, post-QA — pure maintainability, no behavior change)
+
+Surfaced by the birdseye review; intentionally NOT done pre-QA to avoid risk on
+untested chrome-wiring. Safe follow-ups:
+
+- **Type the `__padmonk` message protocol** — ~9 bare string-literal kinds matched
+  independently in bridge/inject/SW/popup; extract `src/content/messages.ts` with a
+  discriminated union + kind constants. Highest silent-drift risk.
+- **Per-profile field octet helper** — `{bindings,sensitivity,smoothing,aimMin,
+  aimCurve,invertY,lockPointerOnClick}` is hand-enumerated ~11× (normalizeProfileFields,
+  defaultProfile, createProfile, updateProfile, projectProfileConfig, migrateLegacyConfig,
+  BundleProfile, profilesToBundle, draftToConfig, applyConfigToDraft, saveProfile).
+  Add a `PROFILE_FIELDS` tuple + `pickProfileFields` + a shared `configInputFrom`
+  projector (collapses draftToConfig/applyConfigToDraft into projectProfileConfig).
+- **Extract `ImportExportPanel.svelte`** from SettingsPage (~940 lines) — the single+
+  bundle import/export slab is cohesive and independent of the staged-save engine.
+- **Unify Profile construction** — defaultProfile ≈ createProfile('Default');
+  migrateLegacyConfig inlines a full build instead of reusing createProfile.
+
 ## Known low-priority items deferred (from audits, not blockers)
 
 - toggle==help combo equality not warned (validateBindPlan).
