@@ -435,16 +435,18 @@
 			);
 		}
 	}
-	function downloadProfile(): void {
-		const blob = new Blob([JSON.stringify(configToProfile(draftToConfig()), null, 2)], {
-			type: 'application/json',
-		});
+	/** Serialize `data` to pretty JSON and trigger a browser download. */
+	function downloadJson(filename: string, data: unknown): void {
+		const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;
-		a.download = 'padmonk-profile.json';
+		a.download = filename;
 		a.click();
 		URL.revokeObjectURL(url);
+	}
+	function downloadProfile(): void {
+		downloadJson('padmonk-profile.json', configToProfile(draftToConfig()));
 	}
 	function onUpload(e: Event): void {
 		const file = (e.target as HTMLInputElement).files?.[0];
@@ -469,15 +471,7 @@
 	// ---- bundle import / export (operate on the WHOLE store) ----
 	/** Download every profile + globals + mappings as one padmonk bundle file. */
 	function downloadBundle(): void {
-		const blob = new Blob([JSON.stringify(profilesToBundle($state.snapshot(pstate)), null, 2)], {
-			type: 'application/json',
-		});
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = 'padmonk-profiles.json';
-		a.click();
-		URL.revokeObjectURL(url);
+		downloadJson('padmonk-profiles.json', profilesToBundle($state.snapshot(pstate)));
 	}
 
 	/**

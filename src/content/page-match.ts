@@ -1,5 +1,7 @@
 // URL/path helpers for Xbox Cloud Gaming surfaces.
 
+import { prettifySlug } from '../core/labels';
+
 /**
  * True on an active game stream route. Used only to fade the HUD during play,
  * not on dashboards or tester pages.
@@ -47,15 +49,6 @@ export function gameRefFromPath(pathname: string): GameRef | null {
 
 	const slug = pickable(after) ? after : pickable(before) ? before : '';
 	return { productId, slug };
-}
-
-/** Prettify a hyphen-slug into a Title-Case label ("forza-horizon-5" -> "Forza Horizon 5"). */
-function prettifySlug(slug: string): string {
-	return slug
-		.split('-')
-		.filter((w) => w.length > 0)
-		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-		.join(' ');
 }
 
 /**

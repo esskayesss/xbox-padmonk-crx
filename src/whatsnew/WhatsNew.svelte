@@ -47,6 +47,20 @@
 	});
 
 	function dismiss(): void {
+		try {
+			if (chrome?.tabs?.getCurrent) {
+				void chrome.tabs
+					.getCurrent()
+					.then((tab) => {
+						if (tab?.id != null) chrome.tabs.remove(tab.id);
+						else window.close();
+					})
+					.catch(() => window.close());
+				return;
+			}
+		} catch {
+			/* chrome.tabs unavailable */
+		}
 		window.close();
 	}
 </script>
@@ -90,7 +104,7 @@
 					rel="noreferrer"
 					class="bg-pad-accent text-pad-ink hover:bg-pad-key rounded-sm px-3 py-2 text-center text-sm font-black tracking-wide uppercase"
 				>
-					{m.whatsnew_rate({}, { locale })}
+					{m.whatsnew_rate({}, { locale })} ★
 				</a>
 				<div class="grid grid-cols-2 gap-2">
 					<a
@@ -99,7 +113,7 @@
 						rel="noreferrer"
 						class="bg-pad-sponsor text-pad-sponsor-soft hover:bg-pad-sponsor-strong border-pad-sponsor/70 rounded-sm border px-3 py-2 text-center text-xs font-black tracking-wide uppercase"
 					>
-						{m.whatsnew_sponsor({}, { locale })}
+						{m.whatsnew_sponsor({}, { locale })} ❤
 					</a>
 					<a
 						href={COFFEE_URL}
@@ -107,7 +121,7 @@
 						rel="noreferrer"
 						class="border-pad-coffee-border bg-pad-coffee text-pad-coffee-text hover:bg-pad-coffee-hover rounded-sm border px-3 py-2 text-center text-xs font-black tracking-wide uppercase"
 					>
-						{m.whatsnew_coffee({}, { locale })}
+						{m.whatsnew_coffee({}, { locale })} ☕
 					</a>
 				</div>
 			</div>

@@ -206,9 +206,9 @@
 	"opt_bundle_invalid": "Could not import: {error}",
 	"whatsnew_title": "What's new in padmonk",
 	"whatsnew_changes_heading": "What's new",
-	"whatsnew_rate": "Rate padmonk ★",
+	"whatsnew_rate": "Rate padmonk",
 	"whatsnew_rate_blurb": "Enjoying padmonk? An honest review helps a ton.",
-	"whatsnew_sponsor": "Sponsor ❤",
-	"whatsnew_coffee": "Buy me a coffee ☕",
+	"whatsnew_sponsor": "Sponsor",
+	"whatsnew_coffee": "Buy me a coffee",
 	"whatsnew_dismiss": "Got it"
 }

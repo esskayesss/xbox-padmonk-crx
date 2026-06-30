@@ -9,6 +9,7 @@
 	// the global default; it is disabled when the row has no override.
 	import { onMount } from 'svelte';
 	import { m } from '../core/i18n';
+	import { prettifySlug } from '../core/labels';
 	import {
 		clearGameDefault,
 		normalizeProfilesState,
@@ -35,21 +36,13 @@
 		Object.entries(pstate.seenGames)
 			.map(([productId, game]) => ({
 				productId,
-				name: game.name.trim() || prettifySlug(game.slug),
+				// name floor: captured name -> prettified slug -> productId (never blank).
+				name: game.name.trim() || prettifySlug(game.slug) || productId,
 				lastSeen: game.lastSeen,
 				profileId: pstate.gameDefaults[productId] ?? GLOBAL_SENTINEL,
 			}))
 			.sort((a, b) => b.lastSeen - a.lastSeen),
 	);
-
-	/** Prettify a hyphen-slug into a Title-Case label ("forza-horizon-5" -> "Forza Horizon 5"). */
-	function prettifySlug(slug: string): string {
-		return slug
-			.split('-')
-			.filter((w) => w.length > 0)
-			.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-			.join(' ');
-	}
 
 	/** Apply a <select> change: a profile id sets the default; the sentinel clears it. */
 	function onChange(productId: string, value: string): void {

@@ -134,6 +134,45 @@ describe('bundleFromImport — marker gating', () => {
 	});
 });
 
+describe('bundleFromImport — global-shortcut collision stripping', () => {
+	it('strips bindings on the toggle/help combo code, keeps the rest', () => {
+		const state = bundleFromImport({
+			kind: 'padmonk-bundle',
+			version: 1,
+			profiles: [
+				{
+					id: 'pa',
+					name: 'FPS',
+					bindings: {
+						F7: { t: 'b', i: 0 }, // collides with toggle code -> stripped
+						F10: { t: 'b', i: 1 }, // collides with help code -> stripped
+						KeyW: { t: 'a', a: 1, v: -1 }, // unrelated -> survives
+					},
+					sensitivity: 80,
+					smoothing: 12,
+					aimMin: 12,
+					aimCurve: 25,
+					invertY: false,
+					lockPointerOnClick: false,
+				},
+			],
+			globalDefaultProfileId: 'pa',
+			gameDefaults: {},
+			seenGames: {},
+			globals: {
+				enabled: true,
+				locale: 'en',
+				toggleCombo: { code: 'F7', ctrl: false, alt: false, shift: false, meta: false },
+				helpCombo: { code: 'F10', ctrl: false, alt: false, shift: false, meta: false },
+			},
+		});
+		const p = state.profiles[0];
+		expect(p.bindings.F7).toBeUndefined();
+		expect(p.bindings.F10).toBeUndefined();
+		expect(p.bindings.KeyW).toEqual({ t: 'a', a: 1, v: -1 });
+	});
+});
+
 describe('bundleFromImport — garbage safety', () => {
 	it('a marked-but-partial bundle yields a valid normalized state without throwing', () => {
 		const state = bundleFromImport({ kind: 'padmonk-bundle', version: 1 });

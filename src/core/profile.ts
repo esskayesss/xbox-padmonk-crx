@@ -45,15 +45,35 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 export function configToProfile(config: Config): ProfileExport {
 	const profile = { ...config, version: PROFILE_VERSION } as ProfileExport;
 	for (const key of AIM_KEYS) {
-		const c = aimControlFor(key);
-		const display = c.toDisplay(config[key]);
-		profile[key] = Number(display.toFixed(c.dp));
+		profile[key] = encodeAim(key, config[key]);
 	}
 	return profile;
 }
 
+/**
+ * Decode the 4 aim fields of a record IN PLACE: a present+finite display value
+ * is converted back to its raw mapper constant; a missing / NaN field is deleted
+ * so the downstream normalizer fills the default. Shared by the single-profile
+ * (`profileToConfig`) and bundle (`bundleFromImport`) decode paths.
+ */
+function decodeAimFields(record: Record<string, unknown>): void {
+	for (const key of AIM_KEYS) {
+		const value = record[key];
+		if (typeof value === 'number' && Number.isFinite(value)) {
+			record[key] = aimControlFor(key).toConfig(value);
+		} else {
+			delete record[key];
+		}
+	}
+}
+
 /** Convert an imported profile (v2 display-encoded OR legacy raw) -> internal config. */
 export function profileToConfig(raw: unknown): Config {
+	// A profiles bundle is the wrong importer — surface an error instead of
+	// silently returning a DEFAULT config (the bundle path is `bundleFromImport`).
+	if (isRecord(raw) && raw.kind === 'padmonk-bundle') {
+		throw new Error('This is a profiles bundle — use Import profiles');
+	}
 	if (
 		isRecord(raw) &&
 		typeof raw.version === 'number' &&
@@ -63,15 +83,7 @@ export function profileToConfig(raw: unknown): Config {
 		// v2 display-encoded profile: convert present+finite aim fields back to raw.
 		const { version: _version, ...rest } = raw;
 		const converted: Record<string, unknown> = { ...rest };
-		for (const key of AIM_KEYS) {
-			const value = converted[key];
-			if (typeof value === 'number' && Number.isFinite(value)) {
-				converted[key] = aimControlFor(key).toConfig(value);
-			} else {
-				// Missing / NaN -> omit so normalizeConfig fills the default.
-				delete converted[key];
-			}
-		}
+		decodeAimFields(converted);
 		return normalizeConfig(converted);
 	}
 	// Legacy / unmarked / garbage: EXACT current behavior.
@@ -199,22 +211,30 @@ export function bundleFromImport(raw: unknown): ProfilesState {
 	const profiles = rawProfiles.map((p) => {
 		const src = isRecord(p) ? p : {};
 		const converted: Record<string, unknown> = { ...src };
-		for (const key of AIM_KEYS) {
-			const value = converted[key];
-			if (typeof value === 'number' && Number.isFinite(value)) {
-				converted[key] = aimControlFor(key).toConfig(value);
-			} else {
-				// Missing / NaN -> omit so normalizeProfilesState fills the default.
-				delete converted[key];
-			}
-		}
+		decodeAimFields(converted);
 		return converted;
 	});
-	return normalizeProfilesState({
+	const state = normalizeProfilesState({
 		profiles,
 		globals: raw.globals,
 		globalDefaultProfileId: raw.globalDefaultProfileId,
 		gameDefaults: raw.gameDefaults,
 		seenGames: raw.seenGames,
 	});
+
+	// Strip global-shortcut collisions an import must not smuggle in: any binding
+	// on the toggle/help combo code is exactly what the editor hard-blocks. Drop
+	// those, then re-normalize so every store invariant still holds.
+	const toggleCode = state.globals.toggleCombo.code;
+	const helpCode = state.globals.helpCombo.code;
+	const sanitized = {
+		...state,
+		profiles: state.profiles.map((p) => {
+			const bindings = { ...p.bindings };
+			delete bindings[toggleCode];
+			delete bindings[helpCode];
+			return { ...p, bindings };
+		}),
+	};
+	return normalizeProfilesState(sanitized);
 }

@@ -114,11 +114,15 @@
 		</button>
 	</nav>
 
-	{#if page === 'mapping'}
-		<MappingPage />
-	{:else}
+	<!-- Both pages stay MOUNTED; only visibility toggles. This preserves
+	     SettingsPage's unsaved draft across tab switches (unmounting would silently
+	     discard it — the beforeunload guard only fires on real unload). -->
+	<div class:hidden={page !== 'settings'}>
 		<SettingsPage />
-	{/if}
+	</div>
+	<div class:hidden={page !== 'mapping'}>
+		<MappingPage />
+	</div>
 
 	<footer
 		class="border-pad-border text-pad-muted mt-10 flex flex-wrap items-center gap-4 border-t pt-4 text-xs"

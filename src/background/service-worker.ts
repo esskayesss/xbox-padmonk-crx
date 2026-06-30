@@ -77,15 +77,15 @@ chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
 		try {
 			const current = chrome.runtime.getManifest().version;
 			if (reason === 'install') {
-				await chrome.storage?.local?.set({ [LAST_WHATS_NEW_KEY]: current });
+				await chrome.storage.local.set({ [LAST_WHATS_NEW_KEY]: current });
 				return;
 			}
 			if (reason === 'update') {
-				const stored = await chrome.storage?.local?.get(LAST_WHATS_NEW_KEY);
+				const stored = await chrome.storage.local.get(LAST_WHATS_NEW_KEY);
 				const last = stored?.[LAST_WHATS_NEW_KEY];
 				if (isMeaningful(previousVersion, current) && current !== last) {
-					await chrome.tabs?.create?.({ url: chrome.runtime.getURL(WHATS_NEW_PATH) });
-					await chrome.storage?.local?.set({ [LAST_WHATS_NEW_KEY]: current });
+					await chrome.tabs.create({ url: chrome.runtime.getURL(WHATS_NEW_PATH) });
+					await chrome.storage.local.set({ [LAST_WHATS_NEW_KEY]: current });
 				}
 			}
 		} catch {

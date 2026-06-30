@@ -37,3 +37,12 @@ export function prettyInput(id: string, locale: Locale = baseLocale): string {
 	if (id.startsWith('Digit')) return id.slice(5);
 	return id;
 }
+
+/** Prettify a hyphen-slug into a Title-Case label ("forza-horizon-5" -> "Forza Horizon 5"). */
+export function prettifySlug(slug: string): string {
+	return slug
+		.split('-')
+		.filter((w) => w.length > 0)
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+		.join(' ');
+}
