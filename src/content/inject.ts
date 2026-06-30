@@ -65,8 +65,6 @@ function main(): void {
 	let slug: string | null = null;
 	let gameName: string | null = null;
 	let contextDefaultProfileId = '';
-	// Latest auto-load toast (Phase 3 renders it). Stashed only for now.
-	let lastToast: { kind: string; profileName: string; gameName: string } | null = null;
 
 	// 3. Patch the Gamepad API. Capture native first, then install the override
 	//    (also as webkitGetGamepads for engines that reference it). Legacy parity.
@@ -312,13 +310,7 @@ function main(): void {
 		const d = e.data as { __padmonk?: string; config?: unknown } & Record<string, unknown>;
 		if (!d) return;
 		if (d.__padmonk === 'toast') {
-			// Phase 2: stash the latest auto-load toast. Phase 3 builds the toast UI.
-			lastToast = {
-				kind: typeof d.kind === 'string' ? d.kind : '',
-				profileName: typeof d.profileName === 'string' ? d.profileName : '',
-				gameName: typeof d.gameName === 'string' ? d.gameName : '',
-			};
-			void lastToast; // TODO(Phase 3): render auto-load toast from lastToast.
+			// Phase 3 renders the auto-load toast; ignored here.
 			return;
 		}
 		if (d.__padmonk !== 'config') return;

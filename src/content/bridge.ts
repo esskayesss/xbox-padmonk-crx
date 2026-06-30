@@ -98,6 +98,28 @@ let slug: string | null = null;
 // churn (document.title may settle late; we accept the first real name we see).
 const upsertedGames = new Set<string>();
 
+// Serialize resolveAndPost: init, the 1s nav poll, and onProfilesChanged can all
+// fire concurrently. Each run reads/writes module-scoped resolution state and
+// awaits storage — left unguarded, two runs interleave and tear the TabProfile /
+// seen-games writes. Chain them so only one runs at a time (errors swallowed so a
+// single failure can't wedge the chain).
+let resolveChain: Promise<void> = Promise.resolve();
+function scheduleResolve(isNavigation: boolean): void {
+	resolveChain = resolveChain.then(() => resolveAndPost(isNavigation)).catch(() => {});
+}
+
+// The empty per-tab context block — the shape posted before (or absent) a
+// resolution. Deduped here so the `lastPayload` seed and `post()` share one
+// literal; `postResolved()` overrides every field with computed values.
+const EMPTY_CONTEXT = {
+	profiles: [] as { id: string; name: string }[],
+	activeProfileId: '',
+	productId: null as string | null,
+	slug: null as string | null,
+	gameName: null as string | null,
+	contextDefaultProfileId: '',
+};
+
 // The last full payload we posted — replayed verbatim when MAIN sends `hello`
 // (handshake below). Seeded with assets + safe defaults so a `hello` that lands
 // before the first resolution still gets the asset URLs.
@@ -105,12 +127,7 @@ let lastPayload: BridgePayload = {
 	__padmonk: 'config',
 	config: {},
 	...assetUrls(),
-	profiles: [],
-	activeProfileId: '',
-	productId: null,
-	slug: null,
-	gameName: null,
-	contextDefaultProfileId: '',
+	...EMPTY_CONTEXT,
 };
 
 /**
@@ -123,12 +140,7 @@ function post(config: Config | Record<string, never>): void {
 		__padmonk: 'config',
 		config,
 		...assetUrls(),
-		profiles: [],
-		activeProfileId: '',
-		productId: null,
-		slug: null,
-		gameName: null,
-		contextDefaultProfileId: '',
+		...EMPTY_CONTEXT,
 	};
 	window.postMessage(lastPayload, '*');
 }
@@ -191,44 +203,65 @@ function persistDurable(next: ProfilesState): void {
  * persists the resolved TabProfile to storage.session, captures the game name
  * into the durable seen-games registry, and posts the resolved payload to MAIN.
  *
- * `reason` distinguishes the call site so the auto-load toast only fires when we
- * NAVIGATE into a new game (not on initial load or a store edit).
+ * `isNavigation` distinguishes a nav from init/store so the auto-load toast only
+ * fires when we NAVIGATE into a new game (not on initial load or a store edit).
  */
-async function resolveAndPost(reason: 'init' | 'nav' | 'store'): Promise<void> {
+async function resolveAndPost(isNavigation: boolean): Promise<void> {
 	const ref = gameRefFromPath(location.pathname);
 	const nextProductId = ref?.productId ?? null;
-	const enteredNewGame = reason === 'nav' && nextProductId != null && nextProductId !== productId;
-	productId = nextProductId;
-	slug = ref?.slug ?? null;
+	const nextSlug = ref?.slug ?? null;
+	const enteredNewGame = isNavigation && nextProductId != null && nextProductId !== productId;
 
-	pstate = await readProfilesState();
+	const fresh = await readProfilesState();
 
 	// This tab's session override only counts when it was written for THIS game
 	// context; a navigation to a different game discards a stale override.
 	const tab = tabId != null ? await readTabProfile(tabId) : null;
-	const override = tab && tab.productId === productId ? tab.profileId : null;
-	activeProfileId = resolveProfileId(pstate, productId, override);
+	const override = tab && tab.productId === nextProductId ? tab.profileId : null;
+	const resolvedId = resolveProfileId(fresh, nextProductId, override);
+
+	// Publish the freshly-resolved context to module scope. Everything below this
+	// point uses the LOCALS (nextProductId/nextSlug/resolvedId), not the module
+	// vars, so a concurrent set-active-profile can't tear this run's writes.
+	pstate = fresh;
+	productId = nextProductId;
+	slug = nextSlug;
+	activeProfileId = resolvedId;
 
 	// Persist the resolved record so the popup/service worker can read this tab's
 	// active profile (no-op when tabId is null / session area is unavailable).
 	if (tabId != null) {
-		await writeTabProfile(tabId, { productId, slug, profileId: activeProfileId });
+		await writeTabProfile(tabId, {
+			productId: nextProductId,
+			slug: nextSlug,
+			profileId: resolvedId,
+		});
 	}
 
 	// Seen-games (durable label registry). Capture the human name once per game
 	// per load; only write when it actually differs from what we already stored.
-	if (productId && !upsertedGames.has(productId)) {
-		const name = gameNameFromTitle(document.title, slug ?? '');
+	if (nextProductId && !upsertedGames.has(nextProductId)) {
+		// Display name may be a slug fallback; titleName is '' unless a REAL document
+		// title was captured (empty slug ⇒ boilerplate/empty titles return '').
+		const name = gameNameFromTitle(document.title, nextSlug ?? '');
+		const titleName = gameNameFromTitle(document.title, '');
 		if (name) {
-			upsertedGames.add(productId);
-			if (name !== pstate.seenGames[productId]?.name) {
-				pstate = upsertSeenGame(pstate, productId, {
+			// Merge onto the FRESHEST state, not the possibly-stale module pstate: a
+			// concurrent durable save (save-as-default / set-enabled) may have landed.
+			// upsertSeenGame only touches seenGames, so merging preserves that save.
+			const freshNow = await readProfilesState();
+			if (name !== freshNow.seenGames[nextProductId]?.name) {
+				const merged = upsertSeenGame(freshNow, nextProductId, {
 					name,
-					slug: slug ?? '',
+					slug: nextSlug ?? '',
 					lastSeen: Date.now(),
 				});
-				await writeProfilesState(pstate);
+				pstate = merged;
+				await writeProfilesState(merged);
 			}
+			// Only LOCK once a real title settled; a slug-fallback entry stays retryable
+			// so the durable name upgrades when the document title finally arrives.
+			if (titleName !== '') upsertedGames.add(nextProductId);
 		}
 	}
 
@@ -236,9 +269,9 @@ async function resolveAndPost(reason: 'init' | 'nav' | 'store'): Promise<void> {
 
 	// Auto-load toast: only when we just entered a game whose resolved profile
 	// came from a per-game default. Best-effort; Phase 3 renders the toast UI.
-	if (enteredNewGame && productId && pstate.gameDefaults[productId] === activeProfileId) {
-		const profileName = pstate.profiles.find((p) => p.id === activeProfileId)?.name ?? '';
-		const gameName = pstate.seenGames[productId]?.name ?? gameNameFromTitle('', slug ?? '');
+	if (enteredNewGame && pstate.gameDefaults[nextProductId] === resolvedId) {
+		const profileName = pstate.profiles.find((p) => p.id === resolvedId)?.name ?? '';
+		const gameName = pstate.seenGames[nextProductId]?.name ?? gameNameFromTitle('', nextSlug ?? '');
 		postToast(profileName, gameName);
 	}
 }
@@ -338,8 +371,8 @@ async function acquireTabId(): Promise<void> {
 // Initial load: learn our tabId first (so the resolved TabProfile can be keyed),
 // then resolve + post. Either branch still resolves so MAIN gets a config.
 void acquireTabId().then(
-	() => void resolveAndPost('init'),
-	() => void resolveAndPost('init'),
+	() => scheduleResolve(false),
+	() => scheduleResolve(false),
 );
 
 // Navigation watch: Xbox is an SPA and the bridge loads once. Poll the pathname
@@ -348,9 +381,9 @@ let lastPath = location.pathname;
 setInterval(() => {
 	if (location.pathname === lastPath) return;
 	lastPath = location.pathname;
-	void resolveAndPost('nav');
+	scheduleResolve(true);
 }, 1000);
 
 // Store-change watch: any Options/popup edit re-resolves this tab and re-posts.
 // resolveAndPost reads fresh state itself, so we ignore the callback's argument.
-onProfilesChanged(() => void resolveAndPost('store'));
+onProfilesChanged(() => scheduleResolve(false));
