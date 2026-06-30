@@ -105,16 +105,11 @@ export type OverlayProps = {
 	/** Open the advanced settings page (keybinds are configured there, not here). */
 	onConfigure: () => void;
 	// --- Phase 3 data threading (overlay renders the dropselect/save) -----------
-	// Required now that BindsOverlay.svelte consumes them. productId/slug stay
-	// optional — the overlay does not destructure them (kept as forward seams).
+	// Required now that BindsOverlay.svelte consumes them.
 	/** All profiles as {id,name} for the overlay dropselect. */
 	profiles: { id: string; name: string }[];
 	/** The profile id this tab currently resolves to. */
 	activeProfileId: string;
-	/** The product id of the game in this tab, or null off a game. */
-	productId?: string | null;
-	/** The (localized, label-only) slug of the game in this tab, or null. */
-	slug?: string | null;
 	/** The captured human name for the current game, or null. */
 	gameName: string | null;
 	/** The current default profile id for THIS context (game default or global). */

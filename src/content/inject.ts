@@ -63,8 +63,6 @@ function main(): void {
 	// save-as-default, toast). Defaulted so Phase-1 mounting still type-checks.
 	let profiles: { id: string; name: string }[] = [];
 	let activeProfileId = '';
-	let productId: string | null = null;
-	let slug: string | null = null;
 	let gameName: string | null = null;
 	let contextDefaultProfileId = '';
 
@@ -139,8 +137,6 @@ function main(): void {
 		onConfigure: openOptions,
 		profiles,
 		activeProfileId,
-		productId,
-		slug,
 		gameName,
 		contextDefaultProfileId,
 		onSelectProfile,
@@ -152,10 +148,15 @@ function main(): void {
 		locale: config.locale,
 	});
 
-	function mountUi(): void {
+	function mountUi(freshToast = false): void {
 		hud = mountHud({ ...hudProps(), fontUrl });
 		overlay = mountOverlay({ ...overlayProps(), fontUrl });
-		toastUi = mountToast({ ...toastProps(), fontUrl });
+		// On a font-remount, the freshly-mounted Toast would otherwise see the still
+		// non-null module `toast` and replay it. Seed it null so a stale toast does
+		// not re-flash; the next real toast message updates it normally.
+		toastUi = mountToast(
+			freshToast ? { toast: null, locale: config.locale, fontUrl } : { ...toastProps(), fontUrl },
+		);
 		mountedFontUrl = fontUrl;
 	}
 	function refreshUi(): void {
@@ -166,7 +167,7 @@ function main(): void {
 			hud.destroy();
 			overlay.destroy();
 			toastUi.destroy();
-			mountUi();
+			mountUi(true);
 			return;
 		}
 		hud.update(hudProps());
@@ -176,7 +177,7 @@ function main(): void {
 	}
 
 	if (document.body) mountUi();
-	else document.addEventListener('DOMContentLoaded', mountUi, { once: true });
+	else document.addEventListener('DOMContentLoaded', () => mountUi(), { once: true });
 
 	// Fade the HUD only on an active game session. Xbox routes client-side, so poll
 	// the URL and refresh when we enter/leave /play/launch/... or /stream/...
@@ -344,8 +345,6 @@ function main(): void {
 			profiles = d.profiles as { id: string; name: string }[];
 		}
 		if (typeof d.activeProfileId === 'string') activeProfileId = d.activeProfileId;
-		productId = typeof d.productId === 'string' ? d.productId : null;
-		slug = typeof d.slug === 'string' ? d.slug : null;
 		gameName = typeof d.gameName === 'string' ? d.gameName : null;
 		if (typeof d.contextDefaultProfileId === 'string') {
 			contextDefaultProfileId = d.contextDefaultProfileId;

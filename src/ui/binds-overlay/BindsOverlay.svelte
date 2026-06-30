@@ -249,7 +249,7 @@
 								onSaveAsDefault();
 							}}
 						>
-							<span aria-hidden="true">💾</span>
+							<span class="text-pad-accent" aria-hidden="true">★</span>
 						</button>
 					{/if}
 					<span class="text-pad-muted text-xs whitespace-nowrap max-binds:whitespace-normal">
