@@ -122,6 +122,7 @@
 	"opt_footer_bug": "Relatar um bug ↗",
 	"opt_language_label": "Idioma",
 
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "ativo",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Ativado",

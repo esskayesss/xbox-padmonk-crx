@@ -122,6 +122,7 @@
 	"opt_footer_bug": "Nahlásit chybu ↗",
 	"opt_language_label": "Jazyk",
 
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "připraveno",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Zapnuto",

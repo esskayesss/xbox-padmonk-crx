@@ -122,6 +122,7 @@
 	"opt_footer_bug": "报告问题 ↗",
 	"opt_language_label": "语言",
 
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "已就绪",
 	"popup_state_offline": "离线",
 	"popup_enabled": "已启用",

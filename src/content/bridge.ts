@@ -14,8 +14,13 @@
 //   "Bahnschrift", "Segoe UI", system-ui, sans-serif
 // See assets/fonts/README.md.
 
-import { normalizeConfig } from '../core/config';
-import { onConfigChanged, readConfig, writeConfig } from '../shared/storage';
+import {
+	onProfilesChanged,
+	readProfilesState,
+	writeProfilesState,
+} from '../shared/profiles-storage';
+import { projectProfileConfig, resolveProfileId } from '../core/profiles';
+import type { ProfilesState } from '../core/profiles';
 import type { Action, Config } from '../core/types';
 
 interface BridgePayload {
@@ -70,13 +75,37 @@ function isAction(v: unknown): v is Action {
 	return false;
 }
 
-function currentConfig(): Config {
-	return normalizeConfig(lastConfig);
+// Latest durable state + the profile id this tab currently resolves to. Per-tab
+// resolution (tabId + storage.session) is Phase 2; for now every tab resolves
+// the GLOBAL DEFAULT via resolveProfileId(state, null, null).
+let pstate: ProfilesState | null = null;
+let activeProfileId = '';
+
+/** Project the active profile to a Config and post it to MAIN. */
+function postState(state: ProfilesState): void {
+	activeProfileId = resolveProfileId(state, null, null);
+	post(projectProfileConfig(state, activeProfileId));
 }
 
-function persist(config: Config): void {
-	post(config);
-	void writeConfig(config);
+/** Replace the active profile's fields immutably (bumps updatedAt). */
+function patchActiveProfile(
+	state: ProfilesState,
+	patch: Partial<ProfilesState['profiles'][number]>,
+): ProfilesState {
+	const now = Date.now();
+	return {
+		...state,
+		profiles: state.profiles.map((p) =>
+			p.id === activeProfileId ? { ...p, ...patch, updatedAt: now } : p,
+		),
+	};
+}
+
+/** Persist a new state, re-project + post, and keep module state in sync. */
+function persistState(next: ProfilesState): void {
+	pstate = next;
+	postState(next);
+	void writeProfilesState(next);
 }
 
 window.addEventListener('message', (e) => {
@@ -101,29 +130,43 @@ window.addEventListener('message', (e) => {
 		return;
 	}
 	if (d.__padmonk === 'set-enabled' && typeof d.enabled === 'boolean') {
-		persist({ ...currentConfig(), enabled: d.enabled });
+		if (!pstate) return;
+		persistState({ ...pstate, globals: { ...pstate.globals, enabled: d.enabled } });
 		return;
 	}
 	if (d.__padmonk === 'bind' && typeof d.inputId === 'string' && isAction(d.action)) {
-		const config = currentConfig();
-		persist({ ...config, bindings: { ...config.bindings, [d.inputId]: { ...d.action } } });
+		if (!pstate) return;
+		const active = pstate.profiles.find((p) => p.id === activeProfileId) ?? pstate.profiles[0];
+		persistState(
+			patchActiveProfile(pstate, {
+				bindings: { ...active.bindings, [d.inputId]: { ...d.action } },
+			}),
+		);
 		return;
 	}
 	if (d.__padmonk === 'unbind' && typeof d.inputId === 'string') {
-		const config = currentConfig();
-		const bindings = { ...config.bindings };
+		if (!pstate) return;
+		const active = pstate.profiles.find((p) => p.id === activeProfileId) ?? pstate.profiles[0];
+		const bindings = { ...active.bindings };
 		delete bindings[d.inputId];
-		persist({ ...config, bindings });
+		persistState(patchActiveProfile(pstate, { bindings }));
 	}
 });
 
-// Initial load. readConfig handles local-first → sync-fallback (+ migrate) and
-// always returns a normalized Config. On any failure keep the empty config so
-// MAIN still has the asset URLs and renders with safe defaults.
-readConfig()
-	.then((config) => post(config))
+// Initial load. readProfilesState handles local-first → sync-fallback (+ migrate)
+// and always returns a normalized ProfilesState. On any failure keep the empty
+// config so MAIN still has the asset URLs and renders with safe defaults.
+readProfilesState()
+	.then((state) => {
+		pstate = state;
+		postState(state);
+	})
 	.catch(() => post({}));
 
-// Relay live config changes (popup/options write local; sync may also change).
-// We re-post the full payload so MAIN's asset URLs stay fresh too.
-onConfigChanged((config) => post(config));
+// Relay live state changes (popup/options write local; sync may also change).
+// We re-post the full payload so MAIN's asset URLs stay fresh too. Per-tab
+// resolution via tabId + storage.session is Phase 2.
+onProfilesChanged((state) => {
+	pstate = state;
+	postState(state);
+});

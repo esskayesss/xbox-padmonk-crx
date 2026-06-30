@@ -113,6 +113,7 @@
 	"opt_footer_web": "Sitio web ↗",
 	"opt_footer_bug": "Reportar un error ↗",
 	"opt_language_label": "Idioma",
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "activo",
 	"popup_state_offline": "desconectado",
 	"popup_enabled": "Activado",

@@ -122,6 +122,7 @@
 	"opt_footer_bug": "バグを報告 ↗",
 	"opt_language_label": "言語",
 
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "稼働中",
 	"popup_state_offline": "オフライン",
 	"popup_enabled": "有効",

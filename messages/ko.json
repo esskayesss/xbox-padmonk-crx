@@ -122,6 +122,7 @@
 	"opt_footer_bug": "버그 신고 ↗",
 	"opt_language_label": "언어",
 
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "준비됨",
 	"popup_state_offline": "오프라인",
 	"popup_enabled": "활성화됨",

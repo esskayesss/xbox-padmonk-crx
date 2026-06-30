@@ -6,8 +6,10 @@
 	// prettyInput. Capture flow ports the legacy startCapture/commitCapture, minus
 	// the dead commitCapture toggle branch (toggle/help are combos only).
 	//
-	// Persistence flows through src/shared/storage.ts. Tier-4 additions: file
-	// import/export and a remap-conflict warning when an input is reassigned.
+	// Persistence flows through the profiles store. Behavior-equivalent to the
+	// legacy config path: the display Config is PROJECTED from the active profile
+	// (resolved to the global default for now — staged saves + per-profile UI are
+	// Phase 7), and save() splits it back into globals + the active profile.
 	import { onMount } from 'svelte';
 	import {
 		AIM_CONTROLS,
@@ -18,10 +20,20 @@
 	import { actionEq, groupsForOptions, allBindsConfigured } from '../core/controller-actions';
 	import { DEFAULT_CONFIG, normalizeConfig } from '../core/config';
 	import { configToProfile, profileToConfig } from '../core/profile';
+	import {
+		normalizeProfilesState,
+		projectProfileConfig,
+		resolveProfileId,
+		type ProfilesState,
+	} from '../core/profiles';
 	import { comboFromEvent, comboLabel } from '../core/combos';
 	import { prettyInput } from '../core/labels';
 	import { m, t as translate, locales, localeName } from '../core/i18n';
-	import { readConfig, writeConfig, onConfigChanged } from '../shared/storage';
+	import {
+		onProfilesChanged,
+		readProfilesState,
+		writeProfilesState,
+	} from '../shared/profiles-storage';
 	import type { Action, Config } from '../core/types';
 	import type { Locale } from '../core/i18n';
 
@@ -54,6 +66,9 @@
 	}
 
 	let config = $state<Config>(structuredClone(DEFAULT_CONFIG));
+	// Latest durable state + the profile this page edits (global default for now).
+	let pstate: ProfilesState = normalizeProfilesState(undefined);
+	let activeProfileId = '';
 
 	// Options sections, resolved to the active locale (recomputes on language change).
 	const groups = $derived(groupsForOptions(config.locale));
@@ -106,7 +121,37 @@
 	}
 
 	function save(): void {
-		void writeConfig($state.snapshot(config));
+		const snap = $state.snapshot(config);
+		const id = activeProfileId || resolveProfileId(pstate, null, null);
+		activeProfileId = id;
+		const now = Date.now();
+		const next: ProfilesState = {
+			...pstate,
+			globals: {
+				...pstate.globals,
+				enabled: snap.enabled,
+				locale: snap.locale,
+				toggleCombo: snap.toggleCombo,
+				helpCombo: snap.helpCombo,
+			},
+			profiles: pstate.profiles.map((p) =>
+				p.id === id
+					? {
+							...p,
+							bindings: snap.bindings,
+							sensitivity: snap.sensitivity,
+							smoothing: snap.smoothing,
+							aimMin: snap.aimMin,
+							aimCurve: snap.aimCurve,
+							invertY: snap.invertY,
+							lockPointerOnClick: snap.lockPointerOnClick,
+							updatedAt: now,
+						}
+					: p,
+			),
+		};
+		pstate = next;
+		void writeProfilesState(next);
 		flashSaved();
 	}
 
@@ -160,8 +205,16 @@
 
 	// Global capture-phase listeners while a capture is active.
 	onMount(() => {
-		void readConfig().then((c) => (config = c));
-		const unsub = onConfigChanged((c) => (config = c));
+		void readProfilesState().then((s) => {
+			pstate = s;
+			activeProfileId = resolveProfileId(s, null, null);
+			config = projectProfileConfig(s, activeProfileId);
+		});
+		const unsub = onProfilesChanged((s) => {
+			pstate = s;
+			if (!activeProfileId) activeProfileId = resolveProfileId(s, null, null);
+			config = projectProfileConfig(s, activeProfileId);
+		});
 
 		const onKey = (e: KeyboardEvent): void => {
 			if (!capturing) return;

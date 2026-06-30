@@ -113,6 +113,7 @@
 	"opt_footer_web": "Веб-сайт ↗",
 	"opt_footer_bug": "Сообщить об ошибке ↗",
 	"opt_language_label": "Язык",
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "активно",
 	"popup_state_offline": "офлайн",
 	"popup_enabled": "Включено",

@@ -1,6 +1,9 @@
 <script lang="ts">
-	// Popup command deck: quick power state + aim tuning. Persists through
-	// shared/storage.ts; external edits live-refresh through onConfigChanged.
+	// Popup command deck: quick power state + aim tuning. Persists through the
+	// profiles store; external edits live-refresh through onProfilesChanged. The
+	// display Config is PROJECTED from the active profile so every existing
+	// `config.xxx` binding renders unchanged. Tab-awareness is wired but degrades
+	// to the global default until Phase 2 populates storage.session.
 	import { onMount } from 'svelte';
 	import {
 		AIM_CONTROLS,
@@ -8,11 +11,21 @@
 		aimDisplayFill,
 		aimDisplayValue,
 	} from '../core/aim-settings';
-	import { DEFAULT_CONFIG } from '../core/config';
 	import { comboLabel } from '../core/combos';
+	import { DEFAULT_CONFIG } from '../core/config';
 	import { m, t as translate } from '../core/i18n';
-	import { readConfig, writeConfig, onConfigChanged } from '../shared/storage';
-	import type { Config } from '../core/types';
+	import {
+		normalizeProfilesState,
+		projectProfileConfig,
+		resolveProfileId,
+		type ProfilesState,
+	} from '../core/profiles';
+	import {
+		onProfilesChanged,
+		readProfilesState,
+		readTabProfile,
+		writeProfilesState,
+	} from '../shared/profiles-storage';
 
 	const TOGGLES = [
 		{ key: 'invertY', label: 'popup_toggle_invert_label', hint: 'popup_toggle_invert_hint' },
@@ -26,8 +39,18 @@
 	const BUG_REPORT_URL =
 		'https://redirects.esskayesss.dev/padmonk-issues?utm_source=padmonk-ext&utm_medium=popup&utm_campaign=bug-report&skip';
 
-	let config = $state<Config>(structuredClone(DEFAULT_CONFIG));
+	let pstate = $state<ProfilesState>(normalizeProfilesState(undefined));
+	let activeProfileId = $state<string>('');
 	let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+	// The display Config, projected from the active profile + globals. Every
+	// existing `config.xxx` template binding reads from this unchanged.
+	const config = $derived(
+		projectProfileConfig(pstate, activeProfileId || resolveProfileId(pstate, null, null)),
+	);
+	const activeProfileName = $derived(
+		(pstate.profiles.find((p) => p.id === activeProfileId) ?? pstate.profiles[0]).name,
+	);
 	const toggleLabel = $derived(comboLabel(config.toggleCombo, config.locale));
 	const helpLabel = $derived(comboLabel(config.helpCombo, config.locale));
 	const stateLabel = $derived(
@@ -37,43 +60,77 @@
 	);
 
 	onMount(() => {
-		void readConfig().then((c) => (config = c));
-		const unsub = onConfigChanged((c) => (config = c));
+		void (async () => {
+			const state = await readProfilesState();
+			pstate = state;
+			// Resolve this tab's profile: prefer storage.session, else global default.
+			let id = resolveProfileId(state, null, null);
+			try {
+				const tabs = await chrome.tabs?.query?.({ active: true, currentWindow: true });
+				const tabId = tabs?.[0]?.id;
+				if (tabId != null) {
+					const tab = await readTabProfile(tabId);
+					if (tab?.profileId) id = tab.profileId;
+				}
+			} catch {
+				/* chrome.tabs unavailable — keep the global default */
+			}
+			activeProfileId = id;
+		})();
+		const unsub = onProfilesChanged((s) => (pstate = s));
 		return () => {
 			unsub();
 			if (saveTimer) clearTimeout(saveTimer);
 		};
 	});
 
-	function save(): void {
-		void writeConfig($state.snapshot(config));
+	/** Persist the whole state immediately. */
+	function persist(): void {
+		void writeProfilesState($state.snapshot(pstate));
+	}
+
+	/** Patch the active profile's per-profile fields (bumps updatedAt). */
+	function patchActiveProfile(patch: Partial<ProfilesState['profiles'][number]>): void {
+		const now = Date.now();
+		pstate = {
+			...pstate,
+			profiles: pstate.profiles.map((p) =>
+				p.id === activeProfileId ? { ...p, ...patch, updatedAt: now } : p,
+			),
+		};
 	}
 
 	function queueSave(): void {
 		if (saveTimer) clearTimeout(saveTimer);
-		saveTimer = setTimeout(save, 80);
+		saveTimer = setTimeout(persist, 80);
 	}
 
+	// Aim sliders are PER-PROFILE; keep the 80ms debounce idiom.
 	function setNumber(key: (typeof AIM_CONTROLS)[number]['key'], raw: string): void {
-		config[key] = aimConfigValue(key, raw);
+		patchActiveProfile({ [key]: aimConfigValue(key, raw) });
 		queueSave();
 	}
 
+	// `enabled` is GLOBAL; invertY/lockPointerOnClick are PER-PROFILE. Both save
+	// immediately (clamped/boolean — always safe).
 	function setBool(key: 'enabled' | 'invertY' | 'lockPointerOnClick', value: boolean): void {
-		config[key] = value;
-		save();
+		if (key === 'enabled') {
+			pstate = { ...pstate, globals: { ...pstate.globals, enabled: value } };
+		} else {
+			patchActiveProfile({ [key]: value });
+		}
+		persist();
 	}
 
 	function resetSliders(): void {
 		if (!window.confirm(m.popup_reset_confirm({}, { locale: config.locale }))) return;
-		config = {
-			...config,
+		patchActiveProfile({
 			sensitivity: DEFAULT_CONFIG.sensitivity,
 			smoothing: DEFAULT_CONFIG.smoothing,
 			aimMin: DEFAULT_CONFIG.aimMin,
 			aimCurve: DEFAULT_CONFIG.aimCurve,
-		};
-		save();
+		});
+		persist();
 	}
 
 	function openOptions(): void {
@@ -90,7 +147,12 @@
 >
 	<section class="pad-panel-bg border-pad-accent/40 rounded-md border p-3">
 		<header class="flex items-center justify-between gap-2">
-			<div class="text-xl font-semibold tracking-wide uppercase">padmonk</div>
+			<div>
+				<div class="text-xl font-semibold tracking-wide uppercase">padmonk</div>
+				<div class="text-pad-muted text-2xs tracking-wide">
+					{m.popup_tuning({ name: activeProfileName }, { locale: config.locale })}
+				</div>
+			</div>
 			<span
 				class="rounded-sm border px-2 py-0.5 text-2xs tracking-widest uppercase"
 				class:border-pad-accent={config.enabled}
@@ -188,7 +250,7 @@
 						step={s.step}
 						value={aimDisplayValue(config, s.key)}
 						oninput={(e) => setNumber(s.key, e.currentTarget.value)}
-						onchange={save}
+						onchange={persist}
 					/>
 				</div>
 			{/each}

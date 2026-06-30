@@ -122,6 +122,7 @@
 	"opt_footer_bug": "Rapportera ett fel ↗",
 	"opt_language_label": "Språk",
 
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "aktiverad",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Aktiverad",

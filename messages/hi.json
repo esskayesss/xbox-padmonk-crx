@@ -113,6 +113,7 @@
 	"opt_footer_web": "वेबसाइट ↗",
 	"opt_footer_bug": "बग रिपोर्ट करें ↗",
 	"opt_language_label": "भाषा",
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "सक्रिय",
 	"popup_state_offline": "ऑफ़लाइन",
 	"popup_enabled": "चालू",

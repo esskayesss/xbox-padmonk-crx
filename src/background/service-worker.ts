@@ -1,5 +1,8 @@
-import { normalizeConfig } from '../core/config';
-import { readConfig } from '../shared/storage';
+import {
+	onProfilesChanged,
+	readProfilesState,
+	setSessionAccessLevel,
+} from '../shared/profiles-storage';
 
 const COLORED_ICON = {
 	16: 'icons/icon-16.png',
@@ -21,25 +24,28 @@ async function setActionIcon(enabled: boolean): Promise<void> {
 }
 
 async function updateActionIconFromStorage(): Promise<void> {
-	const config = await readConfig();
-	await setActionIcon(config.enabled);
+	const state = await readProfilesState();
+	await setActionIcon(state.globals.enabled);
 }
 
+// Grant content scripts (untrusted contexts) the ability to write
+// chrome.storage.session, then sync the toolbar icon. Run on initial SW
+// evaluation and on both lifecycle events so the access level survives a
+// worker restart. (What's-new onInstalled gating is Phase 5.)
+void setSessionAccessLevel();
 void updateActionIconFromStorage();
 
 chrome.runtime.onInstalled.addListener(() => {
+	void setSessionAccessLevel();
 	void updateActionIconFromStorage();
 });
 
 chrome.runtime.onStartup.addListener(() => {
+	void setSessionAccessLevel();
 	void updateActionIconFromStorage();
 });
 
-chrome.storage.onChanged.addListener((changes, area) => {
-	if ((area === 'local' || area === 'sync') && changes.config) {
-		void setActionIcon(normalizeConfig(changes.config.newValue).enabled);
-	}
-});
+onProfilesChanged((state) => void setActionIcon(state.globals.enabled));
 
 // Open the advanced settings page on request (the binds overlay links here).
 // openOptionsPage isn't exposed to content scripts, so the bridge relays here.

@@ -113,6 +113,7 @@
 	"opt_footer_web": "Website ↗",
 	"opt_footer_bug": "Bug melden ↗",
 	"opt_language_label": "Taal",
+	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "actief",
 	"popup_state_offline": "offline",
 	"popup_enabled": "Ingeschakeld",
