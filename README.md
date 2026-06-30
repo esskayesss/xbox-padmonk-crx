@@ -13,7 +13,7 @@ This repo is for players, tinkerers, and contributors who want xCloud controls t
 - Maps keyboard, mouse buttons, and wheel input to Xbox controls.
 - Runs entirely in browser page context through Gamepad API injection.
 - Keeps settings local with live updates to open xCloud and tester tabs.
-- Ships advanced remapping, sensitivity, smoothing, aim curve, invert-Y, profile import/export, and reset.
+- Ships named control profiles with per-game defaults, plus advanced remapping, sensitivity, smoothing, aim curve, invert-Y, profile/bundle import/export, and reset.
 
 ## Install from source
 
@@ -103,6 +103,16 @@ In-game, raise look sensitivity and disable aim deadzone when the game allows it
 
 Open the extension popup, then Advanced remapping, to change bindings or the toggle/show-binds combos. Multiple inputs per Xbox control are supported, and remapping warns when an input is already bound elsewhere.
 
+## Profiles and per-game defaults
+
+padmonk keeps your tuning in **named profiles** — each profile is a full loadout: its own bindings plus sensitivity, smoothing, aim curve, invert-Y, and lock-pointer settings. Create as many as you like (one per game, per genre, or per mood) and switch between them without re-tuning.
+
+- **Per-game defaults**: assign a default profile to a game and padmonk auto-loads it whenever you open that game, with a toast confirming the switch. Each tab resolves its own profile independently.
+- **In-overlay switching**: change the active profile straight from the in-game binds overlay, and use "save as default for this game" to pin the current profile to the game you're in.
+- **Mapping page**: Advanced Settings is two pages — Settings (binds + tuning, with staged saves) and Mapping, a game → profile table where you set or reset each game's default.
+- **Conflict-safe rebinding**: every control is rebindable, including the left stick (WASD). Reusing an input already bound in the same profile asks you to confirm, and a collision with a global toggle/show-binds shortcut is blocked outright.
+- **Import/export**: export a single profile or a full multi-profile bundle, and import bundles to move your whole setup between machines.
+
 ## Why browser-only
 
 padmonk patches `navigator.getGamepads()` in the page MAIN world at `document_start`. xCloud asks the browser for gamepads, the browser answers with the padmonk virtual Xbox pad, and input state comes from keyboard and mouse events.
@@ -131,7 +141,7 @@ padmonk is TypeScript end to end, built with Vite + [`@crxjs/vite-plugin`](https
 
 Current build is hackable, playable, and intentionally small. Expect xCloud changes to occasionally break injection or input assumptions. If that happens, open an issue with browser, OS, game, tester result, console errors, and whether your toggle/show-binds combos respond.
 
-Recent quality-of-life work: corrected diagonal left-stick speed (radial clamp so diagonals are no longer ~41% faster than cardinals), a self-hosted bundled UI font (no CDN hotlink — see [`assets/fonts/README.md`](assets/fonts/README.md)), profile import/export to file, and remap conflict warnings.
+Recent quality-of-life work: named control profiles with per-game defaults (auto-loaded per game, switchable from the overlay), conflict-safe rebinding of every control, corrected diagonal left-stick speed (radial clamp so diagonals are no longer ~41% faster than cardinals), a self-hosted bundled UI font (no CDN hotlink — see [`assets/fonts/README.md`](assets/fonts/README.md)), and profile/bundle import/export to file.
 
 `pi-coding-agent` helped develop current application state and this repo refresh on behalf of esskayesss: icon rollout, README cleanup, keybind overlay investigation, the TypeScript/Svelte rebuild, and ongoing maintenance support. Specific shoutout to **gpt-5.5** for tireless grep, patient refactors, and enough controller slander to make aim assist file a complaint. Blame humans for taste; credit robots for stamina.
 

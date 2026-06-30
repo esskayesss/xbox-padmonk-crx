@@ -28,6 +28,22 @@ preserved (with the diagonal-speed fix below as the one intentional divergence).
   host page (and dodge page CSP for inline styles).
 - Self-hosted, bundled UI font path (`fontUrl` wired bridge → MAIN world) with a
   graceful fallback stack.
+- Multiple named control profiles: each profile carries its own bindings plus
+  sensitivity, smoothing, aim min/curve, invert-Y, and lock-pointer settings.
+- Per-game default profiles: padmonk auto-loads the right profile for each game,
+  keyed by MS Store product id.
+- In-overlay profile switcher with a "save as default for this game" action and
+  an auto-load toast when a game's default profile is applied.
+- Game → profile mapping table in the options page, with reset to the global
+  default per game.
+- Two-page Advanced Settings (Settings + Mapping) with staged saves (binds, aim,
+  and globals are drafted and saved explicitly).
+- Conflict-safe rebinding: every control is rebindable (including the left stick /
+  WASD); reusing an input already bound in the same profile asks to confirm, and a
+  collision with a global shortcut is hard-blocked.
+- Multi-profile import/export bundles (export all / import all) alongside the
+  existing single-profile export.
+- What's-new page shown on meaningful (minor/major) version updates.
 
 ### Changed
 
@@ -42,6 +58,14 @@ preserved (with the diagonal-speed fix below as the one intentional divergence).
   as an unpacked extension rather than the repo root.
 - Packaging moved from `scripts/pack.sh` to `npm run zip` (builds, then zips the
   `dist/` output to `padmonk-<version>.zip`).
+- Storage source-of-truth moved from the flat `config` key to a `profiles` store;
+  an existing `config` install auto-migrates into a "Default" profile on first
+  read, after which the legacy `config` key is removed.
+- Per-tab profile resolution via `chrome.storage.session`, so each tab resolves
+  its profile independently.
+- Popup is now tab-aware.
+- Overlay renamed to "padmonk Controls"; the old "Configure" entry is now
+  "Advanced".
 
 ### Fixed
 
@@ -57,6 +81,8 @@ preserved (with the diagonal-speed fix below as the one intentional divergence).
 - Reduced per-frame allocation in the gamepad snapshot path by reusing cached
   buffers instead of allocating a new `Gamepad`, button wrappers, and axes array on
   every `getGamepads()` call.
+- Left-stick directions (WASD) are now rebindable; they were previously locked by
+  a fixed-group guard.
 
 ## [1.0.0]
 
