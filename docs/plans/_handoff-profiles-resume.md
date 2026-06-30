@@ -5,9 +5,9 @@ Coordinator pattern: drive subagents, parallelize disjoint files, commit at each
 checkpoint, run code-review + elegance-auditor subagents after every phase and
 fix their concerns before moving on.
 
-## Status: Phases 1–5 shipped + audited + cleaned. **242 tests green, typecheck 0
+## Status: Phases 1–5 shipped + audited + cleaned. \*\*242 tests green, typecheck 0
 
-build emits whatsnew.** 13 commits on feature/profiles (see `git log main..HEAD`).
+build emits whatsnew.\*\* 13 commits on feature/profiles (see `git log main..HEAD`).
 NOT merged to main. NOT released.
 
 ## What exists now (trust, but verify before editing)
@@ -70,7 +70,7 @@ Concrete tasks:
    & zh-CN.json missing `lang_name_en` (1 key short — predates this work).
 4. **CHANGELOG.md + README.md**: document the profiles feature (use the `changelog`
    skill if desired). Bump version if releasing (zip/release derives from tag).
-5. **Manual QA**: load unpacked dist on <www.xbox.com/*/play>*and play.xbox.com/stream/*
+5. **Manual QA**: load unpacked dist on <www.xbox.com/*/play>*and play.xbox.com/stream/\*
    — verify profile switch from overlay, save-as-default + toast, popup "Tuning:" line,
    mapping page, migration from a legacy `config` install, what's-new on a minor bump.
 6. Final full audit pass + merge decision.
