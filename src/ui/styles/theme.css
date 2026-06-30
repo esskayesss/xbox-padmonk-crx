@@ -95,6 +95,19 @@
  * here, referencing palette tokens above.
  */
 @layer components {
+	/* Thin scrollbar utility (Firefox + WebKit) for horizontally-scrollable rails
+	 * such as the profile tab strip. */
+	.pad-thin-scrollbar {
+		scrollbar-width: thin;
+	}
+	.pad-thin-scrollbar::-webkit-scrollbar {
+		height: 0.375rem;
+	}
+	.pad-thin-scrollbar::-webkit-scrollbar-thumb {
+		border-radius: 999px;
+		background: var(--color-pad-border);
+	}
+
 	/* Modal backdrop: dim + blur the page behind the binds overlay. */
 	.pad-backdrop {
 		background: color-mix(in srgb, black 52%, transparent);
