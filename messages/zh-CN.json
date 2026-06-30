@@ -1,10 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: 适用于 Xbox Cloud Gaming 的鼠标和键盘",
 	"ext_description": "用鼠标和键盘畅玩 Xbox Cloud Gaming。本地调整瞄准和按键绑定，无需驱动程序，无遥测。",
 	"action_title": "padmonk",
-
 	"input_mouse_left": "左键单击",
 	"input_mouse_middle": "中键单击",
 	"input_mouse_right": "右键单击",
@@ -23,12 +21,10 @@
 	"input_alt_left": "左 Alt",
 	"input_alt_right": "右 Alt",
 	"input_backquote": "`（波浪号）",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "移动 — 左摇杆",
 	"group_right_stick": "瞄准 — 右摇杆",
 	"group_face": "功能按键",
@@ -37,7 +33,6 @@
 	"group_menu": "菜单",
 	"group_dpad": "方向键",
 	"group_right_stick_info": "由鼠标移动驱动。可在下方调节灵敏度 / 平滑度。",
-
 	"action_stick_up": "上",
 	"action_stick_down": "下",
 	"action_stick_left": "左",
@@ -59,7 +54,6 @@
 	"action_dpad_down": "下",
 	"action_dpad_left": "左",
 	"action_dpad_right": "右",
-
 	"aim_sensitivity_label": "视角速度",
 	"aim_sensitivity_hint": "默认 = 80%",
 	"aim_smoothing_label": "平滑度",
@@ -69,7 +63,6 @@
 	"aim_curve_label": "微瞄增强",
 	"aim_curve_hint": "0 = 线性，+ 增强微瞄",
 	"aim_value_aria": "{label} 数值",
-
 	"opt_aim_sensitivity_label": "鼠标灵敏度",
 	"opt_aim_sensitivity_desc": "数值越高，转向越快、所需鼠标移动越少。数值越低，瞄准越稳，需要更大的鼠标移动。",
 	"opt_aim_smoothing_label": "瞄准平滑",
@@ -78,12 +71,10 @@
 	"opt_aim_deadzone_desc": "帮助微小的鼠标移动越过游戏内摇杆死区。若慢速瞄准发卡可调高；若瞄准发抖可调低。",
 	"opt_aim_curve_label": "瞄准响应曲线",
 	"opt_aim_curve_desc": "改变鼠标移动转化为摇杆输出的方式。数值越高，越能改善中心附近的微瞄。数值越低，手感越线性、越原始。",
-
 	"opt_behavior_invert_desc": "反转垂直瞄准：鼠标上移看向下，鼠标下移看向上。",
 	"opt_behavior_lock_desc": "当你点击游戏时捕获光标，使鼠标移动控制瞄准，而非移动页面光标。按 Esc 释放。",
 	"opt_behavior_toggle_desc": "在游戏中开启或关闭 padmonk 的快捷键。",
 	"opt_behavior_help_desc": "打开游戏内操作叠加层的快捷键。",
-
 	"opt_support_title": "支持 padmonk",
 	"opt_support_subtitle": "帮助保持此扩展免费、开源并持续维护。",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -121,7 +112,6 @@
 	"opt_footer_web": "网站 ↗",
 	"opt_footer_bug": "报告问题 ↗",
 	"opt_language_label": "语言",
-
 	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "已就绪",
 	"popup_state_offline": "离线",
@@ -140,7 +130,6 @@
 	"popup_hint_help": "编辑绑定。",
 	"popup_sponsor": "赞助",
 	"popup_coffee": "请我喝杯咖啡",
-
 	"hud_on": "开",
 	"hud_off": "关",
 	"hud_toggle": "切换",
@@ -148,7 +137,6 @@
 	"hud_release_lock": "释放瞄准锁定",
 	"hud_click_lock": "点击游戏以锁定瞄准",
 	"hud_unmapped": "未映射控制项——打开绑定",
-
 	"overlay_unmapped_banner": "部分控制项尚未映射——打开“配置按键”进行映射",
 	"overlay_title": "padmonk 绑定",
 	"overlay_online": "虚拟 Xbox 手柄已在线",
@@ -176,6 +164,11 @@
 	"overlay_view": "视图",
 	"overlay_guide": "指南",
 	"overlay_menu": "菜单",
-
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_zh-CN": "简体中文"
 }

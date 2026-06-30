@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: миша та клавіатура для Xbox Cloud Gaming",
 	"ext_description": "Грайте в Xbox Cloud Gaming з мишею та клавіатурою. Налаштуйте приціл і клавіші локально, без драйверів і телеметрії.",
 	"action_title": "padmonk",
@@ -165,5 +164,11 @@
 	"overlay_view": "Перегляд",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Меню",
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_uk": "Українська"
 }

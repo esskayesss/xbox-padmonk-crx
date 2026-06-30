@@ -1,10 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: myš a klávesnice pro Xbox Cloud Gaming",
 	"ext_description": "Hrajte Xbox Cloud Gaming s myší a klávesnicí. Upravte míření a klávesy lokálně, bez ovladačů a telemetrie.",
 	"action_title": "padmonk",
-
 	"input_mouse_left": "Levé tlačítko",
 	"input_mouse_middle": "Prostřední tlačítko",
 	"input_mouse_right": "Pravé tlačítko",
@@ -23,12 +21,10 @@
 	"input_alt_left": "L-Alt",
 	"input_alt_right": "P-Alt",
 	"input_backquote": "` (vlnovka)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Pohyb — levá páčka",
 	"group_right_stick": "Míření — pravá páčka",
 	"group_face": "Akční tlačítka",
@@ -37,7 +33,6 @@
 	"group_menu": "Nabídka",
 	"group_dpad": "Směrový kříž",
 	"group_right_stick_info": "Řízeno pohybem myši. Citlivost / vyhlazování nastavte níže.",
-
 	"action_stick_up": "Nahoru",
 	"action_stick_down": "Dolů",
 	"action_stick_left": "Vlevo",
@@ -59,7 +54,6 @@
 	"action_dpad_down": "Dolů",
 	"action_dpad_left": "Vlevo",
 	"action_dpad_right": "Vpravo",
-
 	"aim_sensitivity_label": "Rychlost rozhlížení",
 	"aim_sensitivity_hint": "Výchozí = 80 %",
 	"aim_smoothing_label": "Vyhlazování",
@@ -69,7 +63,6 @@
 	"aim_curve_label": "Jemné zesílení míření",
 	"aim_curve_hint": "0 = lineárně, + zesiluje mikromíření",
 	"aim_value_aria": "Hodnota {label}",
-
 	"opt_aim_sensitivity_label": "Citlivost myši",
 	"opt_aim_sensitivity_desc": "Vyšší hodnoty otáčejí rychleji s menším pohybem myši. Nižší dávají stabilnější míření a vyžadují větší pohyb myši.",
 	"opt_aim_smoothing_label": "Vyhlazování míření",
@@ -78,12 +71,10 @@
 	"opt_aim_deadzone_desc": "Pomáhá malým pohybům myši reagovat navzdory herním mrtvým zónám páčky. Zvyšte, pokud se pomalé míření zasekává; snižte, pokud míření poskakuje.",
 	"opt_aim_curve_label": "Křivka odezvy míření",
 	"opt_aim_curve_desc": "Mění, jak pohyb myši přechází do výstupu páčky. Vyšší hodnoty zlepšují mikromíření u středu. Nižší jsou lineárnější a syrovější.",
-
 	"opt_behavior_invert_desc": "Obrací svislé míření: myš nahoru se dívá dolů, myš dolů se dívá nahoru.",
 	"opt_behavior_lock_desc": "Zachytí kurzor při kliknutí na hru, aby pohyb myši ovládal míření místo posouvání kurzoru stránky. Uvolníte stiskem Esc.",
 	"opt_behavior_toggle_desc": "Klávesová zkratka pro zapnutí či vypnutí padmonk během hry.",
 	"opt_behavior_help_desc": "Klávesová zkratka pro otevření herního překryvu ovládání.",
-
 	"opt_support_title": "Podpořit padmonk",
 	"opt_support_subtitle": "Pomozte udržet rozšíření zdarma, s otevřeným kódem a aktivně udržované.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -121,7 +112,6 @@
 	"opt_footer_web": "Webová stránka ↗",
 	"opt_footer_bug": "Nahlásit chybu ↗",
 	"opt_language_label": "Jazyk",
-
 	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "připraveno",
 	"popup_state_offline": "offline",
@@ -140,7 +130,6 @@
 	"popup_hint_help": "upravuje přiřazení.",
 	"popup_sponsor": "Sponzorovat",
 	"popup_coffee": "Koupit kávu",
-
 	"hud_on": "ZAP",
 	"hud_off": "VYP",
 	"hud_toggle": "přepnout",
@@ -148,7 +137,6 @@
 	"hud_release_lock": "uvolnit zámek míření",
 	"hud_click_lock": "klikněte na hru pro zamknutí míření",
 	"hud_unmapped": "Nepřiřazené prvky — otevřít přiřazení",
-
 	"overlay_unmapped_banner": "Některé prvky nejsou přiřazeny — otevřete „Konfigurovat klávesy“ pro jejich přiřazení",
 	"overlay_title": "Přiřazení padmonk",
 	"overlay_online": "Virtuální ovladač Xbox online",
@@ -176,6 +164,11 @@
 	"overlay_view": "Zobrazit",
 	"overlay_guide": "Průvodce",
 	"overlay_menu": "Nabídka",
-
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_cs": "Čeština"
 }

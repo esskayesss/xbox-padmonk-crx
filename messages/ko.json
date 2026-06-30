@@ -1,10 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: Xbox Cloud Gaming용 마우스 및 키보드",
 	"ext_description": "Xbox Cloud Gaming을 마우스와 키보드로 플레이하세요. 조준과 키 바인딩을 로컬에서 조정. 드라이버와 텔레메트리 없음.",
 	"action_title": "padmonk",
-
 	"input_mouse_left": "왼쪽 클릭",
 	"input_mouse_middle": "가운데 클릭",
 	"input_mouse_right": "오른쪽 클릭",
@@ -23,12 +21,10 @@
 	"input_alt_left": "왼쪽 Alt",
 	"input_alt_right": "오른쪽 Alt",
 	"input_backquote": "`（틸드）",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "이동 — 왼쪽 스틱",
 	"group_right_stick": "조준 — 오른쪽 스틱",
 	"group_face": "페이스 버튼",
@@ -37,7 +33,6 @@
 	"group_menu": "메뉴",
 	"group_dpad": "방향 패드",
 	"group_right_stick_info": "마우스 움직임으로 작동합니다. 아래에서 감도 / 스무딩을 조정하세요.",
-
 	"action_stick_up": "위",
 	"action_stick_down": "아래",
 	"action_stick_left": "왼쪽",
@@ -59,7 +54,6 @@
 	"action_dpad_down": "아래",
 	"action_dpad_left": "왼쪽",
 	"action_dpad_right": "오른쪽",
-
 	"aim_sensitivity_label": "시점 속도",
 	"aim_sensitivity_hint": "기본값 = 80%",
 	"aim_smoothing_label": "스무딩",
@@ -69,7 +63,6 @@
 	"aim_curve_label": "정밀 조준 강화",
 	"aim_curve_hint": "0 = 선형, + 는 미세 조준 강화",
 	"aim_value_aria": "{label} 값",
-
 	"opt_aim_sensitivity_label": "마우스 감도",
 	"opt_aim_sensitivity_desc": "값이 높을수록 적은 마우스 움직임으로 더 빠르게 회전합니다. 값이 낮을수록 조준이 안정되며 더 큰 마우스 움직임이 필요합니다.",
 	"opt_aim_smoothing_label": "조준 스무딩",
@@ -78,12 +71,10 @@
 	"opt_aim_deadzone_desc": "작은 마우스 움직임이 게임 내 스틱 데드존을 넘어 인식되도록 돕습니다. 느린 조준이 걸리면 높이고, 조준이 떨리면 낮추세요.",
 	"opt_aim_curve_label": "조준 반응 곡선",
 	"opt_aim_curve_desc": "마우스 움직임이 스틱 출력으로 전환되는 방식을 바꿉니다. 값이 높을수록 중앙 부근의 미세 조준이 향상됩니다. 값이 낮을수록 더 선형적이고 직접적으로 느껴집니다.",
-
 	"opt_behavior_invert_desc": "수직 조준을 반전합니다: 마우스를 올리면 아래를 보고, 내리면 위를 봅니다.",
 	"opt_behavior_lock_desc": "게임을 클릭하면 커서를 캡처하여 마우스 움직임이 페이지 커서가 아닌 조준을 제어합니다. Esc 를 눌러 해제하세요.",
 	"opt_behavior_toggle_desc": "게임 중 padmonk 를 켜거나 끄는 단축키.",
 	"opt_behavior_help_desc": "게임 내 조작 오버레이를 여는 단축키.",
-
 	"opt_support_title": "padmonk 후원",
 	"opt_support_subtitle": "이 확장 프로그램을 무료, 오픈 소스, 활발한 유지 관리 상태로 유지하도록 도와주세요.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -121,7 +112,6 @@
 	"opt_footer_web": "웹사이트 ↗",
 	"opt_footer_bug": "버그 신고 ↗",
 	"opt_language_label": "언어",
-
 	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "준비됨",
 	"popup_state_offline": "오프라인",
@@ -140,7 +130,6 @@
 	"popup_hint_help": "바인딩 편집.",
 	"popup_sponsor": "후원",
 	"popup_coffee": "커피 사주기",
-
 	"hud_on": "ON",
 	"hud_off": "OFF",
 	"hud_toggle": "전환",
@@ -148,7 +137,6 @@
 	"hud_release_lock": "조준 잠금 해제",
 	"hud_click_lock": "게임을 클릭하여 조준 잠금",
 	"hud_unmapped": "매핑되지 않은 조작——바인딩 열기",
-
 	"overlay_unmapped_banner": "일부 조작이 매핑되지 않았습니다——‘키 바인딩 설정’을 열어 매핑하세요",
 	"overlay_title": "padmonk 바인딩",
 	"overlay_online": "가상 Xbox 패드 온라인",
@@ -176,6 +164,11 @@
 	"overlay_view": "보기",
 	"overlay_guide": "가이드",
 	"overlay_menu": "메뉴",
-
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_ko": "한국어"
 }

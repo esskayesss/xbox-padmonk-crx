@@ -1,10 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: Xbox Cloud Gaming 用のマウスとキーボード",
 	"ext_description": "Xbox Cloud Gaming をマウスとキーボードでプレイ。照準とキー割り当てをローカル調整。ドライバー不要、テレメトリなし。",
 	"action_title": "padmonk",
-
 	"input_mouse_left": "左クリック",
 	"input_mouse_middle": "中クリック",
 	"input_mouse_right": "右クリック",
@@ -23,12 +21,10 @@
 	"input_alt_left": "左Alt",
 	"input_alt_right": "右Alt",
 	"input_backquote": "`（チルダ）",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "移動 — 左スティック",
 	"group_right_stick": "エイム — 右スティック",
 	"group_face": "フェイスボタン",
@@ -37,7 +33,6 @@
 	"group_menu": "メニュー",
 	"group_dpad": "方向パッド",
 	"group_right_stick_info": "マウスの動きで操作します。感度／スムージングは下で調整してください。",
-
 	"action_stick_up": "上",
 	"action_stick_down": "下",
 	"action_stick_left": "左",
@@ -59,7 +54,6 @@
 	"action_dpad_down": "下",
 	"action_dpad_left": "左",
 	"action_dpad_right": "右",
-
 	"aim_sensitivity_label": "視点速度",
 	"aim_sensitivity_hint": "デフォルト = 80%",
 	"aim_smoothing_label": "スムージング",
@@ -69,7 +63,6 @@
 	"aim_curve_label": "微エイム強化",
 	"aim_curve_hint": "0 = リニア、+ で微エイム強化",
 	"aim_value_aria": "{label} の値",
-
 	"opt_aim_sensitivity_label": "マウス感度",
 	"opt_aim_sensitivity_desc": "値が高いほど少ないマウス操作で速く振り向けます。値が低いほどエイムが安定し、大きなマウス操作が必要になります。",
 	"opt_aim_smoothing_label": "エイムスムージング",
@@ -78,12 +71,10 @@
 	"opt_aim_deadzone_desc": "小さなマウス操作がゲーム内スティックのデッドゾーンを越えて反応するようにします。低速エイムが引っかかる場合は上げ、エイムが過敏な場合は下げます。",
 	"opt_aim_curve_label": "エイム応答カーブ",
 	"opt_aim_curve_desc": "マウスの動きがスティック出力へ変換される度合いを変えます。値が高いほど中心付近の微エイムが向上します。値が低いほどリニアで素直になります。",
-
 	"opt_behavior_invert_desc": "上下のエイムを反転します：マウス上で下を向き、マウス下で上を向きます。",
 	"opt_behavior_lock_desc": "ゲームをクリックするとカーソルを捕捉し、マウスの動きがページのカーソルではなくエイムを操作します。Esc で解除します。",
 	"opt_behavior_toggle_desc": "ゲーム中に padmonk をオン／オフするホットキー。",
 	"opt_behavior_help_desc": "ゲーム内の操作オーバーレイを開くホットキー。",
-
 	"opt_support_title": "padmonk を支援する",
 	"opt_support_subtitle": "この拡張機能を無料・オープンソース・活発なメンテナンスのままに保つためにご支援ください。",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -121,7 +112,6 @@
 	"opt_footer_web": "ウェブサイト ↗",
 	"opt_footer_bug": "バグを報告 ↗",
 	"opt_language_label": "言語",
-
 	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "稼働中",
 	"popup_state_offline": "オフライン",
@@ -140,7 +130,6 @@
 	"popup_hint_help": "割り当てを編集。",
 	"popup_sponsor": "スポンサー",
 	"popup_coffee": "コーヒーをおごる",
-
 	"hud_on": "ON",
 	"hud_off": "OFF",
 	"hud_toggle": "切替",
@@ -148,7 +137,6 @@
 	"hud_release_lock": "エイムロックを解除",
 	"hud_click_lock": "ゲームをクリックしてエイムをロック",
 	"hud_unmapped": "未割り当ての操作——割り当てを開く",
-
 	"overlay_unmapped_banner": "一部の操作が未割り当てです——「キー割り当ての設定」を開いて割り当ててください",
 	"overlay_title": "padmonk の割り当て",
 	"overlay_online": "仮想 Xbox パッド オンライン",
@@ -176,6 +164,11 @@
 	"overlay_view": "ビュー",
 	"overlay_guide": "ガイド",
 	"overlay_menu": "メニュー",
-
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_ja": "日本語"
 }

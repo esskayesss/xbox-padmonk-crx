@@ -1,10 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: Mouse & Keyboard for Xbox Cloud Gaming",
 	"ext_description": "Play Xbox Cloud Gaming with mouse and keyboard. Tune aim, set key binds, stay local. No drivers or telemetry.",
 	"action_title": "padmonk",
-
 	"input_mouse_left": "Left Click",
 	"input_mouse_middle": "Middle Click",
 	"input_mouse_right": "Right Click",
@@ -23,12 +21,10 @@
 	"input_alt_left": "L-Alt",
 	"input_alt_right": "R-Alt",
 	"input_backquote": "` (tilde)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Movement — Left Stick",
 	"group_right_stick": "Aim — Right Stick",
 	"group_face": "Face Buttons",
@@ -37,7 +33,6 @@
 	"group_menu": "Menu",
 	"group_dpad": "D-Pad",
 	"group_right_stick_info": "Driven by mouse movement. Tune sensitivity / smoothing below.",
-
 	"action_stick_up": "Up",
 	"action_stick_down": "Down",
 	"action_stick_left": "Left",
@@ -59,7 +54,6 @@
 	"action_dpad_down": "Down",
 	"action_dpad_left": "Left",
 	"action_dpad_right": "Right",
-
 	"aim_sensitivity_label": "Look speed",
 	"aim_sensitivity_hint": "Default = 80%",
 	"aim_smoothing_label": "Smoothing",
@@ -69,7 +63,6 @@
 	"aim_curve_label": "Fine aim boost",
 	"aim_curve_hint": "0 = linear, + boosts micro aim",
 	"aim_value_aria": "{label} value",
-
 	"opt_aim_sensitivity_label": "Mouse sensitivity",
 	"opt_aim_sensitivity_desc": "Higher values turn faster with less mouse movement. Lower values give steadier aim and require larger mouse movement.",
 	"opt_aim_smoothing_label": "Aim smoothing",
@@ -78,12 +71,10 @@
 	"opt_aim_deadzone_desc": "Helps small mouse movements register against in-game stick deadzones. Raise if slow aim feels stuck; lower if aim feels twitchy.",
 	"opt_aim_curve_label": "Aim response curve",
 	"opt_aim_curve_desc": "Changes how mouse movement ramps into stick output. Higher values improve micro-aim near center. Lower values feel more linear and raw.",
-
 	"opt_behavior_invert_desc": "Reverses vertical aim: mouse up looks down, mouse down looks up.",
 	"opt_behavior_lock_desc": "Captures the cursor when you click the game so mouse movement controls aim instead of moving the page cursor. Press Esc to release.",
 	"opt_behavior_toggle_desc": "Hotkey for turning padmonk on or off while in game.",
 	"opt_behavior_help_desc": "Hotkey for opening the in-game controls overlay.",
-
 	"opt_support_title": "Support padmonk",
 	"opt_support_subtitle": "Help keep the extension free, open source, and actively maintained.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -121,7 +112,6 @@
 	"opt_footer_web": "Website ↗",
 	"opt_footer_bug": "Report a bug ↗",
 	"opt_language_label": "Language",
-
 	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "armed",
 	"popup_state_offline": "offline",
@@ -140,7 +130,6 @@
 	"popup_hint_help": "edits binds.",
 	"popup_sponsor": "Sponsor",
 	"popup_coffee": "Buy a coffee",
-
 	"hud_on": "ON",
 	"hud_off": "OFF",
 	"hud_toggle": "toggle",
@@ -148,15 +137,14 @@
 	"hud_release_lock": "release aim lock",
 	"hud_click_lock": "click game to lock aim",
 	"hud_unmapped": "Unmapped controls — open binds",
-
 	"overlay_unmapped_banner": "Some controls are unmapped — open Configure keybinds to map them",
-	"overlay_title": "padmonk binds",
+	"overlay_title": "padmonk Controls",
 	"overlay_online": "Virtual Xbox pad online",
 	"overlay_disabled": "padmonk disabled",
 	"overlay_toggle": "Toggle",
 	"overlay_close": "Close",
 	"overlay_close_value": "{combo} / Esc",
-	"overlay_configure": "Configure keybinds",
+	"overlay_configure": "Advanced",
 	"overlay_left_side": "Left side",
 	"overlay_right_side": "Right side",
 	"overlay_unmapped": "UNMAPPED",
@@ -176,6 +164,11 @@
 	"overlay_view": "View",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Menu",
-
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_en": "English"
 }

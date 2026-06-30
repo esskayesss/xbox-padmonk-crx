@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: mouse e tastiera per Xbox Cloud Gaming",
 	"ext_description": "Gioca a Xbox Cloud Gaming con mouse e tastiera. Regola mira e tasti in locale, senza driver né telemetria.",
 	"action_title": "padmonk",
@@ -165,5 +164,11 @@
 	"overlay_view": "Visualizza",
 	"overlay_guide": "Guida",
 	"overlay_menu": "Menu",
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_it": "Italiano"
 }

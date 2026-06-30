@@ -26,9 +26,11 @@ import type { Config } from '../core/types';
 import {
 	mountHud,
 	mountOverlay,
+	mountToast,
 	isPadm0nkUiEvent,
 	type HudProps,
 	type OverlayProps,
+	type ToastProps,
 	type MountHandle,
 } from '../ui/shadow';
 import { installInputCapture, type CaptureController } from './input-capture';
@@ -66,6 +68,11 @@ function main(): void {
 	let gameName: string | null = null;
 	let contextDefaultProfileId = '';
 
+	// Auto-load toast state. `id` bumps on every new toast so re-showing the same
+	// profile/game retriggers the Toast component's dismiss timer.
+	let toast: { id: number; profileName: string; gameName: string } | null = null;
+	let toastSeq = 0;
+
 	// 3. Patch the Gamepad API. Capture native first, then install the override
 	//    (also as webkitGetGamepads for engines that reference it). Legacy parity.
 	const nativeGetGamepads = navigator.getGamepads?.bind(navigator) ?? null;
@@ -101,6 +108,7 @@ function main(): void {
 	//    that arrives after the initial mount (props otherwise update reactively).
 	let hud: MountHandle<HudProps> | null = null;
 	let overlay: MountHandle<OverlayProps> | null = null;
+	let toastUi: MountHandle<ToastProps> | null = null;
 	let mountedFontUrl = '';
 
 	// Active game session: legacy xbox.com uses /<locale>/play/launch/...;
@@ -139,23 +147,31 @@ function main(): void {
 		onSaveAsDefault,
 	});
 
+	const toastProps = (): ToastProps => ({
+		toast,
+		locale: config.locale,
+	});
+
 	function mountUi(): void {
 		hud = mountHud({ ...hudProps(), fontUrl });
 		overlay = mountOverlay({ ...overlayProps(), fontUrl });
+		toastUi = mountToast({ ...toastProps(), fontUrl });
 		mountedFontUrl = fontUrl;
 	}
 	function refreshUi(): void {
-		if (!hud || !overlay) return;
+		if (!hud || !overlay || !toastUi) return;
 		// @font-face is baked into the shadow <style> at mount; remount once if the
 		// bridge delivers a real fontUrl after we mounted with an empty one.
 		if (fontUrl && fontUrl !== mountedFontUrl) {
 			hud.destroy();
 			overlay.destroy();
+			toastUi.destroy();
 			mountUi();
 			return;
 		}
 		hud.update(hudProps());
 		overlay.update(overlayProps());
+		toastUi.update(toastProps());
 		updateNavGuard(); // re-evaluate arming on every config / enabled / overlay change
 	}
 
@@ -310,7 +326,11 @@ function main(): void {
 		const d = e.data as { __padmonk?: string; config?: unknown } & Record<string, unknown>;
 		if (!d) return;
 		if (d.__padmonk === 'toast') {
-			// Phase 3 renders the auto-load toast; ignored here.
+			// Auto-load toast: bump the id so an identical profile/game retriggers it.
+			const profileName = typeof d.profileName === 'string' ? d.profileName : '';
+			const toastGame = typeof d.gameName === 'string' ? d.gameName : '';
+			toast = { id: ++toastSeq, profileName, gameName: toastGame };
+			toastUi?.update({ toast, locale: config.locale });
 			return;
 		}
 		if (d.__padmonk !== 'config') return;

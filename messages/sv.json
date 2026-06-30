@@ -1,10 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: mus och tangentbord för Xbox Cloud Gaming",
 	"ext_description": "Spela Xbox Cloud Gaming med mus och tangentbord. Justera sikte och tangenter lokalt, utan drivrutiner eller telemetri.",
 	"action_title": "padmonk",
-
 	"input_mouse_left": "Vänsterklick",
 	"input_mouse_middle": "Mittenklick",
 	"input_mouse_right": "Högerklick",
@@ -23,12 +21,10 @@
 	"input_alt_left": "V-Alt",
 	"input_alt_right": "H-Alt",
 	"input_backquote": "` (tilde)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Rörelse — Vänster spak",
 	"group_right_stick": "Sikte — Höger spak",
 	"group_face": "Funktionsknappar",
@@ -37,7 +33,6 @@
 	"group_menu": "Meny",
 	"group_dpad": "Styrkors",
 	"group_right_stick_info": "Styrs av musrörelse. Justera känslighet / utjämning nedan.",
-
 	"action_stick_up": "Upp",
 	"action_stick_down": "Ner",
 	"action_stick_left": "Vänster",
@@ -59,7 +54,6 @@
 	"action_dpad_down": "Ner",
 	"action_dpad_left": "Vänster",
 	"action_dpad_right": "Höger",
-
 	"aim_sensitivity_label": "Blickhastighet",
 	"aim_sensitivity_hint": "Standard = 80 %",
 	"aim_smoothing_label": "Utjämning",
@@ -69,7 +63,6 @@
 	"aim_curve_label": "Finsiktesboost",
 	"aim_curve_hint": "0 = linjär, + förstärker mikrosikte",
 	"aim_value_aria": "Värde för {label}",
-
 	"opt_aim_sensitivity_label": "Muskänslighet",
 	"opt_aim_sensitivity_desc": "Högre värden svänger snabbare med mindre musrörelse. Lägre värden ger stadigare sikte och kräver större musrörelse.",
 	"opt_aim_smoothing_label": "Siktesutjämning",
@@ -78,12 +71,10 @@
 	"opt_aim_deadzone_desc": "Hjälper små musrörelser att registreras mot spelets spakdödzoner. Höj om långsamt sikte fastnar; sänk om siktet känns ryckigt.",
 	"opt_aim_curve_label": "Siktesresponskurva",
 	"opt_aim_curve_desc": "Ändrar hur musrörelse trappas upp till spakutmatning. Högre värden förbättrar mikrosikte nära mitten. Lägre värden känns mer linjära och råa.",
-
 	"opt_behavior_invert_desc": "Inverterar vertikalt sikte: mus upp tittar ner, mus ner tittar upp.",
 	"opt_behavior_lock_desc": "Fångar markören när du klickar på spelet så att musrörelse styr siktet i stället för sidmarkören. Tryck Esc för att släppa.",
 	"opt_behavior_toggle_desc": "Snabbtangent för att slå på eller av padmonk under spel.",
 	"opt_behavior_help_desc": "Snabbtangent för att öppna kontrollöverlägget i spelet.",
-
 	"opt_support_title": "Stöd padmonk",
 	"opt_support_subtitle": "Hjälp till att hålla tillägget gratis, öppen källkod och aktivt underhållet.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -121,7 +112,6 @@
 	"opt_footer_web": "Webbplats ↗",
 	"opt_footer_bug": "Rapportera ett fel ↗",
 	"opt_language_label": "Språk",
-
 	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "aktiverad",
 	"popup_state_offline": "offline",
@@ -140,7 +130,6 @@
 	"popup_hint_help": "redigerar bindningar.",
 	"popup_sponsor": "Sponsra",
 	"popup_coffee": "Bjud på kaffe",
-
 	"hud_on": "PÅ",
 	"hud_off": "AV",
 	"hud_toggle": "växla",
@@ -148,7 +137,6 @@
 	"hud_release_lock": "släpp sikteslås",
 	"hud_click_lock": "klicka på spelet för att låsa siktet",
 	"hud_unmapped": "Omappade kontroller — öppna bindningar",
-
 	"overlay_unmapped_banner": "Vissa kontroller är omappade — öppna Konfigurera tangentbindningar för att mappa dem",
 	"overlay_title": "padmonk-bindningar",
 	"overlay_online": "Virtuell Xbox-pad online",
@@ -176,6 +164,11 @@
 	"overlay_view": "Vy",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Meny",
-
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_sv": "Svenska"
 }

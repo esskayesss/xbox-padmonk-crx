@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: souris et clavier pour Xbox Cloud Gaming",
 	"ext_description": "Jouez à Xbox Cloud Gaming avec souris et clavier. Ajustez visée et touches localement, sans pilotes ni télémétrie.",
 	"action_title": "padmonk",
@@ -165,5 +164,11 @@
 	"overlay_view": "Vue",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Menu",
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_fr": "Français"
 }

@@ -44,6 +44,7 @@ import { mount, unmount, type Component } from 'svelte';
 import { createPropsBox } from './reactive-props.svelte';
 import Hud from './hud/Hud.svelte';
 import BindsOverlay from './binds-overlay/BindsOverlay.svelte';
+import Toast from './binds-overlay/Toast.svelte';
 import type { Bindings, Combo } from '../core/types';
 import type { Locale } from '../core/i18n';
 // Compiled Tailwind + theme tokens as a string (CSP-safe shadow injection).
@@ -53,6 +54,7 @@ import compiledCss from './styles/theme.css?inline';
 export const HOST_ATTR = 'data-padmonk';
 export const HUD_HOST_VALUE = 'hud';
 export const OVERLAY_HOST_VALUE = 'overlay';
+export const TOAST_HOST_VALUE = 'toast';
 export const HUD_HOST_SELECTOR = `[${HOST_ATTR}="${HUD_HOST_VALUE}"]`;
 export const OVERLAY_HOST_SELECTOR = `[${HOST_ATTR}="${OVERLAY_HOST_VALUE}"]`;
 
@@ -102,30 +104,38 @@ export type OverlayProps = {
 	onClose: () => void;
 	/** Open the advanced settings page (keybinds are configured there, not here). */
 	onConfigure: () => void;
-	// --- Phase 2 data threading (Phase 3 renders the dropselect/save/toast) -----
-	// Optional until Phase 3: inject.ts passes them today, but BindsOverlay.svelte
-	// consumes none yet — keep these forward seams, not a claimed contract. Phase 3
-	// makes them required when the overlay destructures them.
+	// --- Phase 3 data threading (overlay renders the dropselect/save) -----------
+	// Required now that BindsOverlay.svelte consumes them. productId/slug stay
+	// optional — the overlay does not destructure them (kept as forward seams).
 	/** All profiles as {id,name} for the overlay dropselect. */
-	profiles?: { id: string; name: string }[];
+	profiles: { id: string; name: string }[];
 	/** The profile id this tab currently resolves to. */
-	activeProfileId?: string;
+	activeProfileId: string;
 	/** The product id of the game in this tab, or null off a game. */
 	productId?: string | null;
 	/** The (localized, label-only) slug of the game in this tab, or null. */
 	slug?: string | null;
 	/** The captured human name for the current game, or null. */
-	gameName?: string | null;
+	gameName: string | null;
 	/** The current default profile id for THIS context (game default or global). */
-	contextDefaultProfileId?: string;
+	contextDefaultProfileId: string;
 	/** Session-local profile switch (no durable write). */
-	onSelectProfile?: (id: string) => void;
+	onSelectProfile: (id: string) => void;
 	/** Save the active profile as the default for the current context (durable). */
-	onSaveAsDefault?: () => void;
+	onSaveAsDefault: () => void;
+};
+
+/** Props for the transient auto-load toast surface. */
+export type ToastProps = {
+	/** A monotonically-changing toast; null when nothing to show. */
+	toast: { id: number; profileName: string; gameName: string } | null;
+	/** Active UI language. */
+	locale: Locale;
 };
 
 export type HudMountOptions = HudProps & { fontUrl?: string };
 export type OverlayMountOptions = OverlayProps & { fontUrl?: string };
+export type ToastMountOptions = ToastProps & { fontUrl?: string };
 
 /**
  * True when an event originated inside one of our shadow hosts. P6 uses this
@@ -236,4 +246,10 @@ export function mountHud(opts: HudMountOptions): MountHandle<HudProps> {
 export function mountOverlay(opts: OverlayMountOptions): MountHandle<OverlayProps> {
 	const { fontUrl, ...props } = opts;
 	return mountInShadow<OverlayProps>(BindsOverlay, OVERLAY_HOST_VALUE, props, fontUrl);
+}
+
+/** Mount the transient auto-load toast surface (always present, like the HUD). */
+export function mountToast(opts: ToastMountOptions): MountHandle<ToastProps> {
+	const { fontUrl, ...props } = opts;
+	return mountInShadow<ToastProps>(Toast, TOAST_HOST_VALUE, props, fontUrl);
 }

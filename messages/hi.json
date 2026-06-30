@@ -1,6 +1,5 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: Xbox Cloud Gaming के लिए माउस और कीबोर्ड",
 	"ext_description": "Xbox Cloud Gaming को माउस और कीबोर्ड से खेलें। लक्ष्य और की-बाइंड स्थानीय रूप से बदलें। कोई ड्राइवर या टेलीमेट्री नहीं।",
 	"action_title": "padmonk",
@@ -165,5 +164,11 @@
 	"overlay_view": "View",
 	"overlay_guide": "Guide",
 	"overlay_menu": "Menu",
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_hi": "हिन्दी"
 }

@@ -22,6 +22,7 @@
 	import { comboLabel } from '../../core/combos';
 	import { actionEq, allBindsConfigured } from '../../core/controller-actions';
 	import { m, t } from '../../core/i18n';
+	import ProfileSelect from './ProfileSelect.svelte';
 	import type { Action, Bindings, Combo } from '../../core/types';
 	import type { Locale, MessageKey } from '../../core/i18n';
 
@@ -37,6 +38,13 @@
 		helpCombo: Combo;
 		onClose: () => void;
 		onConfigure: () => void;
+		// --- Bind Profiles (header dropselect + save-as-default) -----------------
+		profiles: { id: string; name: string }[];
+		activeProfileId: string;
+		gameName: string | null;
+		contextDefaultProfileId: string;
+		onSelectProfile: (id: string) => void;
+		onSaveAsDefault: () => void;
 	}
 	let {
 		open,
@@ -50,6 +58,12 @@
 		helpCombo,
 		onClose,
 		onConfigure,
+		profiles,
+		activeProfileId,
+		gameName,
+		contextDefaultProfileId,
+		onSelectProfile,
+		onSaveAsDefault,
 	}: Props = $props();
 
 	/** A rail/system row: either a bound action or a static INFO value. */
@@ -113,6 +127,15 @@
 
 	// Warn when one or more controller actions have no input bound.
 	const bindsComplete = $derived(allBindsConfigured(bindings));
+
+	// Save-as-default only surfaces when the active profile differs from the
+	// context's current default (game default off a game → global default).
+	const showSaveDefault = $derived(activeProfileId !== contextDefaultProfileId);
+	const saveDefaultLabel = $derived(
+		gameName != null
+			? m.overlay_save_default_game({ game: gameName }, { locale })
+			: m.overlay_save_default_global({}, { locale }),
+	);
 </script>
 
 {#snippet bindEditor(row: Row, compact = false)}
@@ -211,23 +234,30 @@
 					</div>
 				</div>
 
-				<div class="flex items-stretch gap-2.5 max-binds:flex-1">
-					<div class="grid min-w-64 grid-cols-2 gap-2.5 max-binds:min-w-0 max-binds:flex-1">
-						<div class="pad-surface rounded-sm border px-3 py-2">
-							<span class="text-pad-muted block text-xs uppercase"
-								>{m.overlay_toggle({}, { locale })}</span
-							>
-							<span class="text-pad-text block text-sm">{comboLabel(toggleCombo, locale)}</span>
-						</div>
-						<div class="pad-surface rounded-sm border px-3 py-2">
-							<span class="text-pad-muted block text-xs uppercase"
-								>{m.overlay_close({}, { locale })}</span
-							>
-							<span class="text-pad-text block text-sm"
-								>{m.overlay_close_value({ combo: comboLabel(helpCombo, locale) }, { locale })}</span
-							>
-						</div>
-					</div>
+				<div class="flex items-center gap-2.5 max-binds:flex-1 max-binds:flex-wrap">
+					<ProfileSelect {profiles} {activeProfileId} {locale} onSelect={onSelectProfile} />
+					{#if showSaveDefault}
+						<button
+							type="button"
+							class="pad-surface text-pad-text hover:bg-pad-key/10 grid size-9 shrink-0 cursor-pointer place-items-center rounded-sm border text-base leading-none"
+							aria-label={saveDefaultLabel}
+							title={saveDefaultLabel}
+							onpointerdown={stop}
+							onmousedown={stop}
+							onclick={(e) => {
+								e.stopPropagation();
+								onSaveAsDefault();
+							}}
+						>
+							<span aria-hidden="true">💾</span>
+						</button>
+					{/if}
+					<span class="text-pad-muted text-xs whitespace-nowrap max-binds:whitespace-normal">
+						{m.overlay_shortcut_hint(
+							{ toggle: comboLabel(toggleCombo, locale), close: comboLabel(helpCombo, locale) },
+							{ locale },
+						)}
+					</span>
 					<button
 						type="button"
 						class="bg-pad-white text-pad-ink hover:bg-pad-key flex cursor-pointer flex-col items-start rounded-sm px-3 py-2"

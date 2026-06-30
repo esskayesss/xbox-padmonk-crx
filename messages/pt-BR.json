@@ -1,10 +1,8 @@
 {
 	"$schema": "https://inlang.com/schema/inlang-message-format",
-
 	"ext_name": "padmonk: mouse e teclado para Xbox Cloud Gaming",
 	"ext_description": "Jogue Xbox Cloud Gaming com mouse e teclado. Ajuste mira e teclas localmente, sem drivers nem telemetria.",
 	"action_title": "padmonk",
-
 	"input_mouse_left": "Clique esquerdo",
 	"input_mouse_middle": "Clique do meio",
 	"input_mouse_right": "Clique direito",
@@ -23,12 +21,10 @@
 	"input_alt_left": "Alt esq.",
 	"input_alt_right": "Alt dir.",
 	"input_backquote": "` (til)",
-
 	"combo_ctrl": "Ctrl",
 	"combo_alt": "Alt",
 	"combo_shift": "Shift",
 	"combo_meta": "Meta",
-
 	"group_left_stick": "Movimento — Analógico esquerdo",
 	"group_right_stick": "Mira — Analógico direito",
 	"group_face": "Botões frontais",
@@ -37,7 +33,6 @@
 	"group_menu": "Menu",
 	"group_dpad": "Direcional",
 	"group_right_stick_info": "Controlado pelo movimento do mouse. Ajuste a sensibilidade / suavização abaixo.",
-
 	"action_stick_up": "Cima",
 	"action_stick_down": "Baixo",
 	"action_stick_left": "Esquerda",
@@ -59,7 +54,6 @@
 	"action_dpad_down": "Baixo",
 	"action_dpad_left": "Esquerda",
 	"action_dpad_right": "Direita",
-
 	"aim_sensitivity_label": "Velocidade da mira",
 	"aim_sensitivity_hint": "Padrão = 80%",
 	"aim_smoothing_label": "Suavização",
@@ -69,7 +63,6 @@
 	"aim_curve_label": "Reforço de mira fina",
 	"aim_curve_hint": "0 = linear, + reforça a micromira",
 	"aim_value_aria": "Valor de {label}",
-
 	"opt_aim_sensitivity_label": "Sensibilidade do mouse",
 	"opt_aim_sensitivity_desc": "Valores mais altos giram mais rápido com menos movimento do mouse. Valores mais baixos dão uma mira mais estável e exigem maior movimento do mouse.",
 	"opt_aim_smoothing_label": "Suavização da mira",
@@ -78,12 +71,10 @@
 	"opt_aim_deadzone_desc": "Ajuda pequenos movimentos do mouse a serem registrados contra as zonas mortas do analógico no jogo. Aumente se a mira lenta parecer travada; diminua se a mira parecer nervosa.",
 	"opt_aim_curve_label": "Curva de resposta da mira",
 	"opt_aim_curve_desc": "Altera como o movimento do mouse se transforma na saída do analógico. Valores mais altos melhoram a micromira perto do centro. Valores mais baixos parecem mais lineares e diretos.",
-
 	"opt_behavior_invert_desc": "Inverte a mira vertical: mouse para cima olha para baixo, mouse para baixo olha para cima.",
 	"opt_behavior_lock_desc": "Captura o cursor quando você clica no jogo para que o movimento do mouse controle a mira em vez de mover o cursor da página. Pressione Esc para liberar.",
 	"opt_behavior_toggle_desc": "Atalho para ligar ou desligar o padmonk durante o jogo.",
 	"opt_behavior_help_desc": "Atalho para abrir a sobreposição de controles no jogo.",
-
 	"opt_support_title": "Apoie o padmonk",
 	"opt_support_subtitle": "Ajude a manter a extensão gratuita, de código aberto e ativamente mantida.",
 	"opt_support_github_sponsors": "GitHub Sponsors",
@@ -121,7 +112,6 @@
 	"opt_footer_web": "Site ↗",
 	"opt_footer_bug": "Relatar um bug ↗",
 	"opt_language_label": "Idioma",
-
 	"popup_tuning": "Tuning: {name}",
 	"popup_state_armed": "ativo",
 	"popup_state_offline": "offline",
@@ -140,7 +130,6 @@
 	"popup_hint_help": "edita os vínculos.",
 	"popup_sponsor": "Patrocinar",
 	"popup_coffee": "Pague um café",
-
 	"hud_on": "ON",
 	"hud_off": "OFF",
 	"hud_toggle": "alternar",
@@ -148,7 +137,6 @@
 	"hud_release_lock": "liberar trava de mira",
 	"hud_click_lock": "clique no jogo para travar a mira",
 	"hud_unmapped": "Controles não mapeados — abrir vínculos",
-
 	"overlay_unmapped_banner": "Alguns controles não estão mapeados — abra Configurar atalhos para mapeá-los",
 	"overlay_title": "Vínculos do padmonk",
 	"overlay_online": "Controle Xbox virtual conectado",
@@ -176,6 +164,11 @@
 	"overlay_view": "Exibir",
 	"overlay_guide": "Guia",
 	"overlay_menu": "Menu",
-
+	"overlay_profile_select": "Active profile: {name}",
+	"overlay_profile_panel_label": "Select profile",
+	"overlay_save_default_game": "Set as default for {game}",
+	"overlay_save_default_global": "Set as the global default",
+	"overlay_toast_loaded": "Loaded {profile} for {game}",
+	"overlay_shortcut_hint": "{toggle} toggle · {close} close",
 	"lang_name_pt-BR": "Português (Brasil)"
 }
