@@ -89,7 +89,6 @@
 	"opt_add": "＋ Hinzufügen",
 	"opt_capture_input": "Eingabe drücken… (Esc bricht ab)",
 	"opt_capture_combo": "Kombi drücken… (Esc bricht ab)",
-	"opt_fixed": "fest",
 	"opt_unbind": "Aufheben",
 	"opt_unbind_aria": "{input} aufheben",
 	"opt_behavior_section": "Maus- & Zielverhalten",

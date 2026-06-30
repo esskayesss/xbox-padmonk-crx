@@ -89,7 +89,6 @@
 	"opt_add": "＋ Dodaj",
 	"opt_capture_input": "naciśnij wejście… (Esc anuluje)",
 	"opt_capture_combo": "naciśnij kombinację… (Esc anuluje)",
-	"opt_fixed": "stałe",
 	"opt_unbind": "Usuń przypisanie",
 	"opt_unbind_aria": "Usuń przypisanie {input}",
 	"opt_behavior_section": "Zachowanie myszy i celowania",

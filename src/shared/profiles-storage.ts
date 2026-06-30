@@ -176,10 +176,17 @@ let syncTimer: ReturnType<typeof setTimeout> | null = null;
 export function writeProfilesState(state: ProfilesState): Promise<void> {
 	const normalized = normalizeProfilesState(state);
 	const localWrite = rawSet(chrome.storage.local, KEY, normalized);
+	// WHY: chrome.storage.sync enforces QUOTA_BYTES_PER_ITEM (8192 bytes) per key.
+	// `seenGames` grows unbounded (one entry per game ever played), so backing the
+	// full state up under one sync item silently overflows that quota and breaks
+	// the cross-device backup. seenGames is a re-populatable convenience cache —
+	// strip it from the SYNC item only; local keeps the complete state. On read,
+	// the sync fallback yielding empty seenGames is fine (normalize handles it).
+	const syncValue = { ...normalized, seenGames: {} };
 	if (syncTimer != null) clearTimeout(syncTimer);
 	syncTimer = setTimeout(() => {
 		syncTimer = null;
-		void rawSet(chrome.storage.sync, KEY, normalized);
+		void rawSet(chrome.storage.sync, KEY, syncValue);
 	}, SYNC_DEBOUNCE_MS);
 	return localWrite;
 }
@@ -250,6 +257,9 @@ function normalizeTabProfile(raw: unknown): TabProfile | null {
 		productId: r.productId as string | null,
 		slug: r.slug as string | null,
 		profileId: r.profileId,
+		// Default to false (non-sticky) when absent/garbage: only a record an
+		// EXPLICIT overlay pick wrote carries explicit:true.
+		explicit: r.explicit === true,
 	};
 }
 

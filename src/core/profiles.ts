@@ -113,6 +113,14 @@ export interface TabProfile {
 	productId: string | null;
 	slug: string | null;
 	profileId: string;
+	/**
+	 * True only for an EXPLICIT overlay pick. An auto-resolved record (a default
+	 * the bridge resolved and wrote back for popup display) is `false`. The bridge
+	 * honors this record as a precedence-1 session override ONLY when `explicit` is
+	 * true, so a durable default change (game/global) still reaches an open tab
+	 * while an explicit pick stays sticky. See content/bridge.ts resolveAndPost.
+	 */
+	explicit: boolean;
 }
 
 /** The kinds of issue `validateBindPlan` / `inProfileConflict` can surface. */
@@ -609,14 +617,10 @@ export function migrateLegacyConfig(rawConfig: unknown): ProfilesState {
 export function validateBindPlan(draftGlobals: Globals, draftProfile: Profile): BindIssue[] {
 	const issues: BindIssue[] = [];
 
-	// Global-shortcut collisions (blocking).
+	// Global-shortcut collisions (blocking). Single source of truth: globalCollision.
 	for (const inputId of Object.keys(draftProfile.bindings)) {
-		if (inputId === draftGlobals.toggleCombo.code) {
-			issues.push({ kind: 'global-collision', inputId, comboKind: 'toggle' });
-		}
-		if (inputId === draftGlobals.helpCombo.code) {
-			issues.push({ kind: 'global-collision', inputId, comboKind: 'help' });
-		}
+		const comboKind = globalCollision(draftGlobals, inputId);
+		if (comboKind) issues.push({ kind: 'global-collision', inputId, comboKind });
 	}
 
 	// Unmapped registry actions (warning).
@@ -636,6 +640,20 @@ export function validateBindPlan(draftGlobals: Globals, draftProfile: Profile): 
  * `inputId` is already bound to a DIFFERENT action (so the UI can confirm the
  * reassignment), else null (the input is free or already drives this action).
  */
+/**
+ * The ONE rule for a global-shortcut collision, shared by `validateBindPlan`
+ * (profiles.ts), the options editor's `commitBinding` (SettingsPage), and the
+ * import paths (`bundleFromImport` + single-profile `applyConfigToDraft`). An
+ * inputId equal to a global combo's `code` is a collision because a bare key
+ * press would fire BOTH the bind and the global shortcut. Returns which combo it
+ * collides with (toggle wins if both share a code), else null.
+ */
+export function globalCollision(globals: Globals, inputId: string): 'toggle' | 'help' | null {
+	if (inputId === globals.toggleCombo.code) return 'toggle';
+	if (inputId === globals.helpCombo.code) return 'help';
+	return null;
+}
+
 export function inProfileConflict(
 	bindings: Bindings,
 	inputId: string,

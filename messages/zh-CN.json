@@ -89,7 +89,6 @@
 	"opt_add": "＋ 添加",
 	"opt_capture_input": "按下输入…（Esc 取消）",
 	"opt_capture_combo": "按下组合键…（Esc 取消）",
-	"opt_fixed": "固定",
 	"opt_unbind": "解除绑定",
 	"opt_unbind_aria": "解除绑定 {input}",
 	"opt_behavior_section": "鼠标与瞄准行为",

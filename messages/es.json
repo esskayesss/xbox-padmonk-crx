@@ -89,7 +89,6 @@
 	"opt_add": "＋ Añadir",
 	"opt_capture_input": "pulsa una entrada… (Esc cancela)",
 	"opt_capture_combo": "pulsa una combinación… (Esc cancela)",
-	"opt_fixed": "fijo",
 	"opt_unbind": "Desasignar",
 	"opt_unbind_aria": "Desasignar {input}",
 	"opt_behavior_section": "Comportamiento del ratón y el apuntado",

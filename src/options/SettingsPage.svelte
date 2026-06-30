@@ -42,6 +42,7 @@
 		createProfile,
 		deleteProfile,
 		duplicateProfile,
+		globalCollision,
 		inProfileConflict,
 		normalizeProfilesState,
 		renameProfile,
@@ -220,12 +221,9 @@
 		capturing = null;
 
 		// 1) Global-shortcut collision (keyboard codes only; mouse/wheel can't match).
-		if (inputId === draftGlobals.toggleCombo.code) {
-			globalModal = { open: true, inputLabel: prettyInput(inputId, locale), comboKind: 'toggle' };
-			return;
-		}
-		if (inputId === draftGlobals.helpCombo.code) {
-			globalModal = { open: true, inputLabel: prettyInput(inputId, locale), comboKind: 'help' };
+		const comboKind = globalCollision(draftGlobals, inputId);
+		if (comboKind) {
+			globalModal = { open: true, inputLabel: prettyInput(inputId, locale), comboKind };
 			return;
 		}
 
@@ -409,7 +407,21 @@
 
 	// ---- import / export (operate on the active draft) ----
 	function applyConfigToDraft(cfg: Config): void {
-		draftProfile.bindings = cfg.bindings;
+		// Strip bindings the editor would hard-block (input == toggle/help combo code)
+		// so a single-profile import can never load a draft the editor then blocks —
+		// identical to the bundle import path (bundleFromImport). globalCollision is
+		// the shared predicate for both.
+		const combos: Globals = {
+			enabled: cfg.enabled,
+			locale: cfg.locale,
+			toggleCombo: cfg.toggleCombo,
+			helpCombo: cfg.helpCombo,
+		};
+		const bindings = { ...cfg.bindings };
+		for (const inputId of Object.keys(bindings)) {
+			if (globalCollision(combos, inputId)) delete bindings[inputId];
+		}
+		draftProfile.bindings = bindings;
 		draftProfile.sensitivity = cfg.sensitivity;
 		draftProfile.smoothing = cfg.smoothing;
 		draftProfile.aimMin = cfg.aimMin;
@@ -818,47 +830,32 @@
 						{/if}
 						<span>{item.label}</span>
 					</div>
-					{#if group.fixed}
-						<div class="flex flex-wrap items-center gap-1.5">
-							{#each inputsFor(item.action) as id (id)}
-								<span
-									class="bg-pad-chip border-pad-border inline-flex items-center rounded-md border px-2 py-0.5 text-sm"
-								>
-									<b class="text-pad-key font-semibold">{prettyInput(id, locale)}</b>
-								</span>
-							{/each}
-							<span class="text-pad-muted text-2xs tracking-wide uppercase"
-								>{m.opt_fixed({}, { locale })}</span
+					<div class="flex flex-wrap items-center gap-1.5">
+						{#each inputsFor(item.action) as id (id)}
+							<span
+								class="bg-pad-chip border-pad-border inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-sm"
 							>
-						</div>
-					{:else}
-						<div class="flex flex-wrap items-center gap-1.5">
-							{#each inputsFor(item.action) as id (id)}
-								<span
-									class="bg-pad-chip border-pad-border inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-sm"
+								<b class="text-pad-key font-semibold">{prettyInput(id, locale)}</b>
+								<button
+									type="button"
+									class="chip-x text-pad-danger cursor-pointer font-bold"
+									title={m.opt_unbind({}, { locale })}
+									aria-label={m.opt_unbind_aria({ input: prettyInput(id, locale) }, { locale })}
+									onclick={() => unbind(id)}>×</button
 								>
-									<b class="text-pad-key font-semibold">{prettyInput(id, locale)}</b>
-									<button
-										type="button"
-										class="chip-x text-pad-danger cursor-pointer font-bold"
-										title={m.opt_unbind({}, { locale })}
-										aria-label={m.opt_unbind_aria({ input: prettyInput(id, locale) }, { locale })}
-										onclick={() => unbind(id)}>×</button
-									>
-								</span>
-							{/each}
-							{@render captureButton(
-								isCapturing(capturing, 'binding', item.id),
+							</span>
+						{/each}
+						{@render captureButton(
+							isCapturing(capturing, 'binding', item.id),
+							isCapturing(capturing, 'binding', item.id)
+								? m.opt_capture_input({}, { locale })
+								: m.opt_add({}, { locale }),
+							() =>
 								isCapturing(capturing, 'binding', item.id)
-									? m.opt_capture_input({}, { locale })
-									: m.opt_add({}, { locale }),
-								() =>
-									isCapturing(capturing, 'binding', item.id)
-										? cancelCapture()
-										: startCapture({ kind: 'binding', action: item.action, id: item.id }),
-							)}
-						</div>
-					{/if}
+									? cancelCapture()
+									: startCapture({ kind: 'binding', action: item.action, id: item.id }),
+						)}
+					</div>
 				{/each}
 			</div>
 		{/if}

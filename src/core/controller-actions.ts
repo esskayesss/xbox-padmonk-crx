@@ -39,17 +39,6 @@ export const INFO_GROUPS: ReadonlyArray<{
 	},
 ];
 
-/**
- * Group titles whose inputs are fixed (not user-rebindable from the options
- * page). Keyed off the GROUP_TITLES constant — the same single source the
- * registry groups by — so this can't drift from a renamed heading.
- *
- * Bug fix (plan §6.1): now EMPTY. LeftStick (WASD) was the sole fixed group, so
- * once another group stole a WASD input it could never be re-added — the WASD
- * rebind bug. Every bind is now rebindable; right-stick stays an INFO group.
- */
-const FIXED_GROUP_TITLES = new Set<string>();
-
 /** Stable serialization of an action's identity (button index, or axis+dir). */
 export function actionKey(a: Action): string {
 	return a.t === 'b' ? `b:${a.i}` : `a:${a.a}:${a.v}`;
@@ -291,9 +280,8 @@ export function groupsForOptions(locale: Locale = baseLocale): ControllerGroup[]
 		const infoKey = infoByTitle.get(key);
 		if (items.length === 0 && infoKey === undefined) continue;
 		const title = t(key as MessageKey, locale);
-		const fixed = FIXED_GROUP_TITLES.has(key);
 		const info = infoKey === undefined ? undefined : t(infoKey as MessageKey, locale);
-		groups.push(info === undefined ? { title, fixed, items } : { title, fixed, info, items });
+		groups.push(info === undefined ? { title, items } : { title, info, items });
 	}
 	return groups;
 }

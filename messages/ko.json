@@ -89,7 +89,6 @@
 	"opt_add": "＋ 추가",
 	"opt_capture_input": "입력을 누르세요…（Esc 취소）",
 	"opt_capture_combo": "조합을 누르세요…（Esc 취소）",
-	"opt_fixed": "고정",
 	"opt_unbind": "바인딩 해제",
 	"opt_unbind_aria": "{input} 바인딩 해제",
 	"opt_behavior_section": "마우스 및 조준 동작",

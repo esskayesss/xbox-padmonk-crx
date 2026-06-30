@@ -89,7 +89,6 @@
 	"opt_add": "＋ Добавить",
 	"opt_capture_input": "нажмите ввод… (Esc отменяет)",
 	"opt_capture_combo": "нажмите комбинацию… (Esc отменяет)",
-	"opt_fixed": "фиксировано",
 	"opt_unbind": "Отвязать",
 	"opt_unbind_aria": "Отвязать {input}",
 	"opt_behavior_section": "Поведение мыши и прицела",

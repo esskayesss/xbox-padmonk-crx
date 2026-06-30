@@ -112,8 +112,6 @@ export interface ControllerAction {
 export interface ControllerGroup {
 	/** Resolved, display-ready section title (already localized). */
 	title: string;
-	/** True when this group's inputs are display-only (not user-rebindable). */
-	fixed?: boolean;
 	/** Optional resolved descriptive text (e.g. the mouse-driven right stick). */
 	info?: string;
 	items: ControllerAction[];

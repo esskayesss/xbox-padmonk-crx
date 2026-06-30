@@ -180,6 +180,24 @@ describe('writeProfilesState', () => {
 		vi.advanceTimersByTime(400);
 		expect((syncStore.profiles as ProfilesState).globals.locale).toBe('fr');
 	});
+
+	it('strips seenGames from the sync backup but keeps it full in local (8KB per-item quota)', async () => {
+		const { writeProfilesState } = await loadStorage();
+		const base = normalizeProfilesState(undefined);
+		const state: ProfilesState = {
+			...base,
+			seenGames: { GAME1: { name: 'Halo', slug: 'halo', lastSeen: 1 } },
+		};
+		await writeProfilesState(state);
+		// Local keeps the full state (instant live path).
+		expect((localStore.profiles as ProfilesState).seenGames).toEqual({
+			GAME1: { name: 'Halo', slug: 'halo', lastSeen: 1 },
+		});
+		vi.advanceTimersByTime(400);
+		// Sync item is bounded: seenGames stripped, everything else preserved.
+		expect((syncStore.profiles as ProfilesState).seenGames).toEqual({});
+		expect((syncStore.profiles as ProfilesState).profiles).toHaveLength(state.profiles.length);
+	});
 });
 
 describe('onProfilesChanged', () => {
@@ -205,17 +223,33 @@ describe('onProfilesChanged', () => {
 });
 
 describe('session helpers', () => {
-	const tab: TabProfile = { productId: 'prod-1', slug: 'halo', profileId: 'p_abc' };
+	const tab: TabProfile = {
+		productId: 'prod-1',
+		slug: 'halo',
+		profileId: 'p_abc',
+		explicit: true,
+	};
 
 	it('round-trips read/write/clear via the session store', async () => {
 		const { readTabProfile, writeTabProfile, clearTabProfile } = await loadStorage();
 		expect(await readTabProfile(7)).toBeNull();
 		await writeTabProfile(7, tab);
 		expect(sessionStore['tab:7']).toEqual(tab);
-		expect(await readTabProfile(7)).toEqual(tab);
+		expect(await readTabProfile(7)).toEqual(tab); // round-trip preserves explicit:true
 		await clearTabProfile(7);
 		expect('tab:7' in sessionStore).toBe(false);
 		expect(await readTabProfile(7)).toBeNull();
+	});
+
+	it('defaults explicit to false when the stored record omits it', async () => {
+		const { readTabProfile } = await loadStorage();
+		sessionStore['tab:8'] = { productId: 'p', slug: 's', profileId: 'x' }; // no explicit
+		expect(await readTabProfile(8)).toEqual({
+			productId: 'p',
+			slug: 's',
+			profileId: 'x',
+			explicit: false,
+		});
 	});
 
 	it('reads a garbage session value back as null (shape guard)', async () => {

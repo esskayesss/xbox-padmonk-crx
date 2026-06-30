@@ -28,12 +28,11 @@ import {
 	resolveProfileId,
 	setGameDefault,
 	setGlobalDefault,
-	updateProfile,
 	upsertSeenGame,
 } from '../core/profiles';
 import type { ProfilesState } from '../core/profiles';
 import { gameNameFromTitle, gameRefFromPath } from './page-match';
-import type { Action, Config } from '../core/types';
+import type { Config } from '../core/types';
 
 /**
  * The payload posted to MAIN. Beyond the resolved Config + asset URLs, Phase 2
@@ -181,14 +180,6 @@ function postToast(profileName: string, gameName: string): void {
 // depend on storage, so we post them immediately too (before readProfilesState).
 post({});
 
-function isAction(v: unknown): v is Action {
-	if (!v || typeof v !== 'object') return false;
-	const a = v as Record<string, unknown>;
-	if (a.t === 'b') return typeof a.i === 'number' && Number.isInteger(a.i);
-	if (a.t === 'a') return (a.a === 0 || a.a === 1) && (a.v === -1 || a.v === 1);
-	return false;
-}
-
 /** Persist a durable state mutation: update memory, repost, write-through. */
 function persistDurable(next: ProfilesState): void {
 	pstate = next;
@@ -214,11 +205,19 @@ async function resolveAndPost(isNavigation: boolean): Promise<void> {
 
 	const fresh = await readProfilesState();
 
-	// This tab's session override only counts when it was written for THIS game
-	// context; a navigation to a different game discards a stale override.
+	// This tab's session override only counts when it was an EXPLICIT overlay pick
+	// (explicit:true) FOR THIS game context. An auto-resolved record (explicit:
+	// false) contributes NO override, so resolveProfileId falls through to the
+	// FRESH durable gameDefaults/globalDefault — a default change reaches this open
+	// tab. A navigation to a different game also discards a stale override.
 	const tab = tabId != null ? await readTabProfile(tabId) : null;
-	const override = tab && tab.productId === nextProductId ? tab.profileId : null;
+	const override =
+		tab && tab.explicit === true && tab.productId === nextProductId ? tab.profileId : null;
 	const resolvedId = resolveProfileId(fresh, nextProductId, override);
+	// Carry explicit:true forward ONLY when this tab's explicit pick was actually
+	// honored for this game (override present AND still resolvable). Otherwise the
+	// record is auto-resolved — non-sticky.
+	const explicit = override != null && resolvedId === override;
 
 	// Publish the freshly-resolved context to module scope. Everything below this
 	// point uses the LOCALS (nextProductId/nextSlug/resolvedId), not the module
@@ -235,6 +234,7 @@ async function resolveAndPost(isNavigation: boolean): Promise<void> {
 			productId: nextProductId,
 			slug: nextSlug,
 			profileId: resolvedId,
+			explicit,
 		});
 	}
 
@@ -281,8 +281,6 @@ window.addEventListener('message', (e) => {
 	const d = e.data as {
 		__padmonk?: string;
 		enabled?: unknown;
-		action?: unknown;
-		inputId?: unknown;
 		profileId?: unknown;
 	} | null;
 	if (!d) return;
@@ -308,7 +306,8 @@ window.addEventListener('message', (e) => {
 		if (!pstate) return;
 		activeProfileId = d.profileId;
 		if (tabId != null) {
-			void writeTabProfile(tabId, { productId, slug, profileId: d.profileId });
+			// EXPLICIT pick: mark sticky so it survives durable default changes/reload.
+			void writeTabProfile(tabId, { productId, slug, profileId: d.profileId, explicit: true });
 		}
 		postResolved();
 		return;
@@ -329,25 +328,6 @@ window.addEventListener('message', (e) => {
 		if (!pstate) return;
 		persistDurable({ ...pstate, globals: { ...pstate.globals, enabled: d.enabled } });
 		return;
-	}
-	if (d.__padmonk === 'bind' && typeof d.inputId === 'string' && isAction(d.action)) {
-		if (!pstate) return;
-		const active = pstate.profiles.find((p) => p.id === activeProfileId);
-		if (!active) return;
-		persistDurable(
-			updateProfile(pstate, activeProfileId, {
-				bindings: { ...active.bindings, [d.inputId]: { ...d.action } },
-			}),
-		);
-		return;
-	}
-	if (d.__padmonk === 'unbind' && typeof d.inputId === 'string') {
-		if (!pstate) return;
-		const active = pstate.profiles.find((p) => p.id === activeProfileId);
-		if (!active) return;
-		const bindings = { ...active.bindings };
-		delete bindings[d.inputId];
-		persistDurable(updateProfile(pstate, activeProfileId, { bindings }));
 	}
 });
 

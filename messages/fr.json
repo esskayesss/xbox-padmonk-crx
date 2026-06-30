@@ -89,7 +89,6 @@
 	"opt_add": "＋ Ajouter",
 	"opt_capture_input": "appuyez sur une entrée… (Esc annule)",
 	"opt_capture_combo": "appuyez sur une combinaison… (Esc annule)",
-	"opt_fixed": "fixe",
 	"opt_unbind": "Dissocier",
 	"opt_unbind_aria": "Dissocier {input}",
 	"opt_behavior_section": "Comportement de la souris et de la visée",

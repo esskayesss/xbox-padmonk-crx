@@ -89,7 +89,6 @@
 	"opt_add": "＋ Adicionar",
 	"opt_capture_input": "pressione uma entrada… (Esc cancela)",
 	"opt_capture_combo": "pressione uma combinação… (Esc cancela)",
-	"opt_fixed": "fixo",
 	"opt_unbind": "Desvincular",
 	"opt_unbind_aria": "Desvincular {input}",
 	"opt_behavior_section": "Comportamento do mouse e da mira",

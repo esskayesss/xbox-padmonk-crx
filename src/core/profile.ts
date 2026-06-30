@@ -17,6 +17,7 @@ import {
 	type Globals,
 	type ProfilesState,
 	type SeenGame,
+	globalCollision,
 	normalizeProfilesState,
 } from './profiles';
 import type { Bindings, Config } from './types';
@@ -207,34 +208,47 @@ export function bundleFromImport(raw: unknown): ProfilesState {
 	if (!isBundle(raw)) {
 		throw new Error('Not a padmonk bundle');
 	}
+	// Resolve the imported globals' combo codes up front via the SAME path
+	// normalizeProfilesState uses (normalizeConfig), so we can strip global-shortcut
+	// collisions on the RAW profiles BELOW — before the SINGLE normalize pass. The
+	// editor hard-blocks exactly these binds; an import must not smuggle them in.
+	const g = isRecord(raw.globals) ? raw.globals : {};
+	const gcfg = normalizeConfig({
+		enabled: g.enabled,
+		locale: g.locale,
+		toggleCombo: g.toggleCombo,
+		helpCombo: g.helpCombo,
+	});
+	const combos: Globals = {
+		enabled: gcfg.enabled,
+		locale: gcfg.locale,
+		toggleCombo: gcfg.toggleCombo,
+		helpCombo: gcfg.helpCombo,
+	};
+
 	const rawProfiles = Array.isArray(raw.profiles) ? raw.profiles : [];
 	const profiles = rawProfiles.map((p) => {
 		const src = isRecord(p) ? p : {};
 		const converted: Record<string, unknown> = { ...src };
 		decodeAimFields(converted);
+		// Strip global-shortcut collisions on the raw bindings (shared predicate).
+		if (isRecord(converted.bindings)) {
+			const bindings = { ...(converted.bindings as Record<string, unknown>) };
+			for (const inputId of Object.keys(bindings)) {
+				if (globalCollision(combos, inputId)) delete bindings[inputId];
+			}
+			converted.bindings = bindings;
+		}
 		return converted;
 	});
-	const state = normalizeProfilesState({
+
+	// One normalize pass: garbage-safety guarantee (≥ 1 profile, unique ids/names,
+	// clamped numerics, pruned dangling defaults) still holds.
+	return normalizeProfilesState({
 		profiles,
 		globals: raw.globals,
 		globalDefaultProfileId: raw.globalDefaultProfileId,
 		gameDefaults: raw.gameDefaults,
 		seenGames: raw.seenGames,
 	});
-
-	// Strip global-shortcut collisions an import must not smuggle in: any binding
-	// on the toggle/help combo code is exactly what the editor hard-blocks. Drop
-	// those, then re-normalize so every store invariant still holds.
-	const toggleCode = state.globals.toggleCombo.code;
-	const helpCode = state.globals.helpCombo.code;
-	const sanitized = {
-		...state,
-		profiles: state.profiles.map((p) => {
-			const bindings = { ...p.bindings };
-			delete bindings[toggleCode];
-			delete bindings[helpCode];
-			return { ...p, bindings };
-		}),
-	};
-	return normalizeProfilesState(sanitized);
 }

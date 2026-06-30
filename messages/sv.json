@@ -89,7 +89,6 @@
 	"opt_add": "＋ Lägg till",
 	"opt_capture_input": "tryck inmatning… (Esc avbryter)",
 	"opt_capture_combo": "tryck kombo… (Esc avbryter)",
-	"opt_fixed": "fast",
 	"opt_unbind": "Avbinda",
 	"opt_unbind_aria": "Avbinda {input}",
 	"opt_behavior_section": "Mus- & siktesbeteende",

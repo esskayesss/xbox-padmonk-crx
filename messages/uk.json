@@ -89,7 +89,6 @@
 	"opt_add": "＋ Додати",
 	"opt_capture_input": "натисніть клавішу / кнопку миші… (Esc скасовує)",
 	"opt_capture_combo": "натисніть комбінацію клавіш… (Esc скасовує)",
-	"opt_fixed": "фіксована",
 	"opt_unbind": "Відв’язати",
 	"opt_unbind_aria": "Відв’язати {input}",
 	"opt_behavior_section": "Поведінка миші та прицілювання",

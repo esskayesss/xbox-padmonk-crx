@@ -89,7 +89,6 @@
 	"opt_add": "＋ Add",
 	"opt_capture_input": "press input… (Esc cancels)",
 	"opt_capture_combo": "press combo… (Esc cancels)",
-	"opt_fixed": "fixed",
 	"opt_unbind": "Unbind",
 	"opt_unbind_aria": "Unbind {input}",
 	"opt_behavior_section": "Mouse & aim behavior",

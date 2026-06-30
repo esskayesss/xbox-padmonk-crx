@@ -89,7 +89,6 @@
 	"opt_add": "＋ 追加",
 	"opt_capture_input": "入力を押してください…（Esc でキャンセル）",
 	"opt_capture_combo": "組み合わせを押してください…（Esc でキャンセル）",
-	"opt_fixed": "固定",
 	"opt_unbind": "割り当て解除",
 	"opt_unbind_aria": "{input} を割り当て解除",
 	"opt_behavior_section": "マウスとエイムの挙動",
