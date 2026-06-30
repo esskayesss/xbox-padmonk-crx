@@ -31,7 +31,12 @@
 		allBindsConfigured,
 	} from '../core/controller-actions';
 	import { normalizeConfig } from '../core/config';
-	import { configToProfile, profileToConfig } from '../core/profile';
+	import {
+		configToProfile,
+		profileToConfig,
+		profilesToBundle,
+		bundleFromImport,
+	} from '../core/profile';
 	import {
 		addProfile,
 		createProfile,
@@ -127,6 +132,7 @@
 	let jsonText = $state('');
 	let savedTimer: ReturnType<typeof setTimeout> | null = null;
 	let fileInput: HTMLInputElement;
+	let bundleInput: HTMLInputElement;
 
 	// ---- helpers ----
 	/** Input ids in the DRAFT profile currently bound to a given action. */
@@ -450,6 +456,53 @@
 			} catch (err) {
 				alert(
 					m.opt_invalid_file(
+						{ error: err instanceof Error ? err.message : String(err) },
+						{ locale },
+					),
+				);
+			}
+		};
+		reader.readAsText(file);
+		(e.target as HTMLInputElement).value = ''; // allow re-uploading same file
+	}
+
+	// ---- bundle import / export (operate on the WHOLE store) ----
+	/** Download every profile + globals + mappings as one padmonk bundle file. */
+	function downloadBundle(): void {
+		const blob = new Blob([JSON.stringify(profilesToBundle($state.snapshot(pstate)), null, 2)], {
+			type: 'application/json',
+		});
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = 'padmonk-profiles.json';
+		a.click();
+		URL.revokeObjectURL(url);
+	}
+
+	/**
+	 * Import a bundle file: REPLACES all profiles/globals/mappings. After a
+	 * successful write, reload the active draft from the new state so the page
+	 * reflects the imported store immediately (the onProfilesChanged subscription
+	 * also fires, but we reconcile the active id eagerly here).
+	 */
+	function onUploadBundle(e: Event): void {
+		const file = (e.target as HTMLInputElement).files?.[0];
+		if (!file) return;
+		const reader = new FileReader();
+		reader.onload = () => {
+			try {
+				const next = bundleFromImport(JSON.parse(String(reader.result)));
+				pstate = next;
+				void writeProfilesState(next);
+				activeProfileId = resolveProfileId(next, null, null);
+				draftGlobals = structuredClone(next.globals);
+				globalsDirty = false;
+				loadDraftProfile(activeProfileId);
+				flashSaved();
+			} catch (err) {
+				alert(
+					m.opt_bundle_invalid(
 						{ error: err instanceof Error ? err.message : String(err) },
 						{ locale },
 					),
@@ -929,6 +982,27 @@
 				accept="application/json,.json"
 				class="hidden"
 				onchange={onUpload}
+			/>
+			<button
+				type="button"
+				class="bg-pad-chip text-pad-text border-pad-border cursor-pointer rounded-md border px-3.5 py-2 text-sm hover:brightness-125"
+				onclick={downloadBundle}
+			>
+				{m.opt_export_all({}, { locale })}
+			</button>
+			<button
+				type="button"
+				class="bg-pad-chip text-pad-text border-pad-border cursor-pointer rounded-md border px-3.5 py-2 text-sm hover:brightness-125"
+				onclick={() => bundleInput.click()}
+			>
+				{m.opt_import_all({}, { locale })}
+			</button>
+			<input
+				bind:this={bundleInput}
+				type="file"
+				accept="application/json,.json"
+				class="hidden"
+				onchange={onUploadBundle}
 			/>
 		</div>
 	</details>

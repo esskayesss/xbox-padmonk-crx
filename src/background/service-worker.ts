@@ -32,13 +32,66 @@ async function updateActionIconFromStorage(): Promise<void> {
 // Grant content scripts (untrusted contexts) the ability to write
 // chrome.storage.session, then sync the toolbar icon. Run on initial SW
 // evaluation and on both lifecycle events so the access level survives a
-// worker restart. (What's-new onInstalled gating is Phase 5.)
+// worker restart.
 void setSessionAccessLevel();
 void updateActionIconFromStorage();
 
-chrome.runtime.onInstalled.addListener(() => {
+// --- What's-new gating -----------------------------------------------------
+// Built path of the programmatically-opened what's-new page. crxjs emits the
+// rollup HTML input at dist/src/whatsnew/index.html (verified post-build), so
+// the runtime URL mirrors the source layout.
+const WHATS_NEW_PATH = 'src/whatsnew/index.html';
+const LAST_WHATS_NEW_KEY = 'lastWhatsNewVersion';
+
+/**
+ * A bump is "meaningful" when MAJOR or MINOR changes (patch-only → false).
+ * Defensive: a missing/garbage previous version is treated as meaningful so we
+ * never silently swallow a first real update after a broken record.
+ */
+function isMeaningful(prev: string | undefined, current: string): boolean {
+	const parse = (v: string | undefined): [number, number] | null => {
+		if (typeof v !== 'string') return null;
+		const parts = v.split('.');
+		const major = Number(parts[0]);
+		const minor = Number(parts[1] ?? 0);
+		if (!Number.isFinite(major) || !Number.isFinite(minor)) return null;
+		return [major, minor];
+	};
+	const p = parse(prev);
+	const c = parse(current);
+	// Garbage on either side → treat as meaningful (fail open).
+	if (!p || !c) return true;
+	return p[0] !== c[0] || p[1] !== c[1];
+}
+
+// onInstalled: keep the existing install-time wiring (session access level +
+// toolbar icon) AND gate the what's-new tab. A fresh install only SEEDS
+// lastWhatsNewVersion (no tab). A meaningful update opens the page once per
+// version. chrome.tabs.create works for extension pages WITHOUT the `tabs`
+// permission, so no manifest change. lastWhatsNewVersion is a standalone
+// chrome.storage.local key, intentionally separate from the profiles store.
+chrome.runtime.onInstalled.addListener(({ reason, previousVersion }) => {
 	void setSessionAccessLevel();
 	void updateActionIconFromStorage();
+	void (async () => {
+		try {
+			const current = chrome.runtime.getManifest().version;
+			if (reason === 'install') {
+				await chrome.storage?.local?.set({ [LAST_WHATS_NEW_KEY]: current });
+				return;
+			}
+			if (reason === 'update') {
+				const stored = await chrome.storage?.local?.get(LAST_WHATS_NEW_KEY);
+				const last = stored?.[LAST_WHATS_NEW_KEY];
+				if (isMeaningful(previousVersion, current) && current !== last) {
+					await chrome.tabs?.create?.({ url: chrome.runtime.getURL(WHATS_NEW_PATH) });
+					await chrome.storage?.local?.set({ [LAST_WHATS_NEW_KEY]: current });
+				}
+			}
+		} catch {
+			/* chrome.* unavailable / storage failure — skip what's-new gating */
+		}
+	})();
 });
 
 chrome.runtime.onStartup.addListener(() => {

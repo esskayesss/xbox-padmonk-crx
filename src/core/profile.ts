@@ -13,7 +13,13 @@
 
 import { AIM_CONTROLS, type AimSettingKey, aimControlFor } from './aim-settings';
 import { normalizeConfig } from './config';
-import type { Config } from './types';
+import {
+	type Globals,
+	type ProfilesState,
+	type SeenGame,
+	normalizeProfilesState,
+} from './profiles';
+import type { Bindings, Config } from './types';
 
 export const PROFILE_VERSION = 2;
 
@@ -70,4 +76,145 @@ export function profileToConfig(raw: unknown): Config {
 	}
 	// Legacy / unmarked / garbage: EXACT current behavior.
 	return normalizeConfig(raw);
+}
+
+// ---------------------------------------------------------------------------
+// Multi-profile "bundle" wire format (export/import the WHOLE ProfilesState).
+//
+// The single-profile format above moves one Config across the wire. A bundle
+// moves the entire store — every profile plus the globals, defaults, game
+// mappings, and seen-games registry — so a user can back up or transfer their
+// full padmonk setup in one file.
+//
+// Two disciplines, mirrored from the single-profile layer:
+//   1. DISPLAY-ENCODE the 4 aim fields per profile (same `toDisplay`/`toConfig`
+//      round-trip), so exported numbers are the clean UI values, not raw mapper
+//      constants.
+//   2. A back-compat MARKER (`kind` + `version`) gates import. A file is only
+//      treated as a bundle when it is explicitly marked; anything else throws so
+//      the caller can report an "invalid bundle" error rather than silently
+//      corrupting the store.
+//
+// Safety: a recognized-but-garbage bundle can NEVER corrupt the store — it is
+// reassembled into a raw ProfilesState shape and run through
+// `normalizeProfilesState`, which enforces every store invariant (>= 1 profile,
+// unique ids/names, clamped numerics, pruned dangling defaults).
+// ---------------------------------------------------------------------------
+
+/** Bundle schema marker; bump on a breaking bundle-shape change. */
+export const BUNDLE_VERSION = 1;
+
+/** A single profile inside a bundle: like Profile but aim fields DISPLAY-encoded. */
+export interface BundleProfile {
+	/** Optional stable id (normalize regenerates on absence/collision). */
+	id?: string;
+	name: string;
+	bindings: Bindings;
+	/** DISPLAY-encoded aim fields (clean UI integers, decoded on import). */
+	sensitivity: number;
+	smoothing: number;
+	aimMin: number;
+	aimCurve: number;
+	invertY: boolean;
+	lockPointerOnClick: boolean;
+}
+
+/**
+ * Export wire format for the whole store. Carries a `kind` discriminator + a
+ * finite `version` marker so `bundleFromImport` can recognize it unambiguously
+ * (range heuristics are never used — they would be ambiguous).
+ */
+export interface ProfileBundle {
+	version: number;
+	kind: 'padmonk-bundle';
+	profiles: BundleProfile[];
+	globals: Globals;
+	globalDefaultProfileId: string;
+	gameDefaults: Record<string, string>;
+	seenGames: Record<string, SeenGame>;
+}
+
+/** Display-encode one raw aim value exactly like `configToProfile`. */
+function encodeAim(key: AimSettingKey, raw: number): number {
+	const c = aimControlFor(key);
+	return Number(c.toDisplay(raw).toFixed(c.dp));
+}
+
+/**
+ * Serialize an entire ProfilesState into a display-encoded, marked bundle. Each
+ * profile's 4 aim fields are display-encoded; everything else (name/id/bindings/
+ * invertY/lockPointerOnClick + globals + defaults + game mappings + seen games)
+ * is carried verbatim.
+ */
+export function profilesToBundle(state: ProfilesState): ProfileBundle {
+	return {
+		version: BUNDLE_VERSION,
+		kind: 'padmonk-bundle',
+		profiles: state.profiles.map((p) => ({
+			id: p.id,
+			name: p.name,
+			bindings: p.bindings,
+			sensitivity: encodeAim('sensitivity', p.sensitivity),
+			smoothing: encodeAim('smoothing', p.smoothing),
+			aimMin: encodeAim('aimMin', p.aimMin),
+			aimCurve: encodeAim('aimCurve', p.aimCurve),
+			invertY: p.invertY,
+			lockPointerOnClick: p.lockPointerOnClick,
+		})),
+		globals: state.globals,
+		globalDefaultProfileId: state.globalDefaultProfileId,
+		gameDefaults: state.gameDefaults,
+		seenGames: state.seenGames,
+	};
+}
+
+/** True when `raw` is a marked v1+ bundle (marker presence only — see header). */
+function isBundle(raw: unknown): raw is Record<string, unknown> {
+	return (
+		isRecord(raw) &&
+		raw.kind === 'padmonk-bundle' &&
+		typeof raw.version === 'number' &&
+		Number.isFinite(raw.version) &&
+		raw.version >= 1
+	);
+}
+
+/**
+ * Decode a marked bundle into a fully-normalized ProfilesState. Each profile's
+ * present+finite aim fields are decoded back to raw mapper constants (missing /
+ * NaN omitted so `normalizeProfilesState` fills the default); the reassembled
+ * raw shape is then run through `normalizeProfilesState`, which enforces every
+ * store invariant — so even a marked-but-garbage bundle yields a VALID state and
+ * can never corrupt storage.
+ *
+ * Throws when `raw` is NOT a recognized bundle (single-profile export, `{}`,
+ * `null`, …), so the UI can surface an "invalid bundle" error instead of
+ * silently replacing the store.
+ */
+export function bundleFromImport(raw: unknown): ProfilesState {
+	if (!isBundle(raw)) {
+		throw new Error('Not a padmonk bundle');
+	}
+	const rawProfiles = Array.isArray(raw.profiles) ? raw.profiles : [];
+	const profiles = rawProfiles.map((p) => {
+		const src = isRecord(p) ? p : {};
+		const converted: Record<string, unknown> = { ...src };
+		for (const key of AIM_KEYS) {
+			const value = converted[key];
+			if (typeof value === 'number' && Number.isFinite(value)) {
+				converted[key] = aimControlFor(key).toConfig(value);
+			} else {
+				// Missing / NaN -> omit so normalizeProfilesState fills the default.
+				delete converted[key];
+			}
+		}
+		return converted;
+	});
+	return normalizeProfilesState({
+		profiles,
+		globals: raw.globals,
+		globalDefaultProfileId: raw.globalDefaultProfileId,
+		gameDefaults: raw.gameDefaults,
+		seenGames: raw.seenGames,
+	});
 }

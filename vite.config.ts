@@ -1,10 +1,14 @@
 import { defineConfig } from 'vite';
+import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { crx } from '@crxjs/vite-plugin';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
 import { paraglideVitePlugin } from '@inlang/paraglide-js';
 import manifest from './manifest.config';
 import { BUILD_STAMP } from './build-stamp';
+
+const rootDir = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	define: {
@@ -26,5 +30,13 @@ export default defineConfig({
 	build: {
 		outDir: 'dist',
 		emptyOutDir: true,
+		rollupOptions: {
+			// The what's-new page is NOT manifest-referenced (the SW opens it via
+			// chrome.tabs.create), so crxjs won't discover it. Register it as an
+			// explicit input; crxjs merges its own manifest-derived inputs with this.
+			input: {
+				whatsnew: resolve(rootDir, 'src/whatsnew/index.html'),
+			},
+		},
 	},
 });
