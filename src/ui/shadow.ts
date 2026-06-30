@@ -102,6 +102,23 @@ export type OverlayProps = {
 	onClose: () => void;
 	/** Open the advanced settings page (keybinds are configured there, not here). */
 	onConfigure: () => void;
+	// --- Phase 2 data threading (Phase 3 renders the dropselect/save/toast) -----
+	/** All profiles as {id,name} for the overlay dropselect. */
+	profiles: { id: string; name: string }[];
+	/** The profile id this tab currently resolves to. */
+	activeProfileId: string;
+	/** The product id of the game in this tab, or null off a game. */
+	productId: string | null;
+	/** The (localized, label-only) slug of the game in this tab, or null. */
+	slug: string | null;
+	/** The captured human name for the current game, or null. */
+	gameName: string | null;
+	/** The current default profile id for THIS context (game default or global). */
+	contextDefaultProfileId: string;
+	/** Session-local profile switch (no durable write). */
+	onSelectProfile: (id: string) => void;
+	/** Save the active profile as the default for the current context (durable). */
+	onSaveAsDefault: () => void;
 };
 
 export type HudMountOptions = HudProps & { fontUrl?: string };

@@ -48,3 +48,42 @@ export function gameRefFromPath(pathname: string): GameRef | null {
 	const slug = pickable(after) ? after : pickable(before) ? before : '';
 	return { productId, slug };
 }
+
+/** Prettify a hyphen-slug into a Title-Case label ("forza-horizon-5" -> "Forza Horizon 5"). */
+function prettifySlug(slug: string): string {
+	return slug
+		.split('-')
+		.filter((w) => w.length > 0)
+		.map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+		.join(' ');
+}
+
+/**
+ * Boilerplate document-title segments that are NOT a real game name. When the
+ * parsed segment is one of these (case-insensitive), we fall back to the slug.
+ */
+const TITLE_BOILERPLATE = new Set([
+	'xbox',
+	'xbox cloud gaming',
+	'xbox cloud gaming (beta)',
+	'play',
+]);
+
+/**
+ * Derive a human game name from the document title, falling back to a prettified
+ * slug. Xbox titles look like "Play \u27e8Game\u27e9 | Xbox Cloud Gaming (Beta)" or
+ * "\u27e8Game\u27e9 | Xbox". Strategy: strip a leading "Play ", take the segment before
+ * the first " | ", trim; if that is empty or recognised boilerplate, prettify the
+ * slug. Defensive: handles empty title/slug (returns "" when both are empty).
+ */
+export function gameNameFromTitle(title: string, slug: string): string {
+	const raw = typeof title === 'string' ? title : '';
+	const safeSlug = typeof slug === 'string' ? slug : '';
+	// Take the segment before the first " | " separator, then strip a leading "Play ".
+	let candidate = raw.split('|')[0] ?? '';
+	candidate = candidate.replace(/^\s*play\s+/i, '').trim();
+	if (candidate.length > 0 && !TITLE_BOILERPLATE.has(candidate.toLowerCase())) {
+		return candidate;
+	}
+	return prettifySlug(safeSlug);
+}

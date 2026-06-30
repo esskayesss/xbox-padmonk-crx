@@ -1,4 +1,5 @@
 import {
+	clearTabProfile,
 	onProfilesChanged,
 	readProfilesState,
 	setSessionAccessLevel,
@@ -47,10 +48,24 @@ chrome.runtime.onStartup.addListener(() => {
 
 onProfilesChanged((state) => void setActionIcon(state.globals.enabled));
 
-// Open the advanced settings page on request (the binds overlay links here).
-// openOptionsPage isn't exposed to content scripts, so the bridge relays here.
-chrome.runtime.onMessage.addListener((msg) => {
+// Content-script message relay. Two messages:
+//   - 'open-options': openOptionsPage isn't exposed to content scripts, so the
+//     bridge relays the request here.
+//   - 'whoami': the bridge has no direct way to learn its own tabId (needed to
+//     key chrome.storage.session). sender.tab.id is available here WITHOUT the
+//     `tabs` permission, so we hand it back. Returning true keeps the response
+//     channel open for the async sendResponse.
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 	if (msg?.__padmonk === 'open-options') {
 		void chrome.runtime.openOptionsPage();
+		return;
+	}
+	if (msg?.__padmonk === 'whoami') {
+		sendResponse({ tabId: sender.tab?.id ?? null });
+		return true;
 	}
 });
+
+// Clean up a tab's ephemeral profile record when the tab closes. onRemoved +
+// sender.tab.id both work WITHOUT the `tabs` permission, so no manifest change.
+chrome.tabs.onRemoved.addListener((tabId) => void clearTabProfile(tabId));

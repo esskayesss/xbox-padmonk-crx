@@ -2,9 +2,11 @@
 //
 // Only this world has chrome.* APIs. The MAIN-world inject coordinator has NO
 // chrome.* access (different JS world), so the bridge is the sole channel that:
-//   1. reads the stored config (local-first, sync-fallback + migrate; see
-//      shared/storage.ts for the rationale), and
-//   2. resolves extension asset URLs via chrome.runtime.getURL and ships them to
+//   1. reads the stored profiles state (local-first, sync-fallback + migrate;
+//      see shared/profiles-storage.ts for the rationale),
+//   2. RESOLVES the per-tab active profile (Phase 2: tabId + storage.session +
+//      per-game defaults) and projects it to a Config, and
+//   3. resolves extension asset URLs via chrome.runtime.getURL and ships them to
 //      MAIN through window.postMessage. MAIN cannot compute these URLs itself.
 //
 // fontUrl (Bug 6): legacy hotlinked Bahnschrift from the xbox CDN. We now ship a
@@ -17,12 +19,28 @@
 import {
 	onProfilesChanged,
 	readProfilesState,
+	readTabProfile,
 	writeProfilesState,
+	writeTabProfile,
 } from '../shared/profiles-storage';
-import { projectProfileConfig, resolveProfileId, updateProfile } from '../core/profiles';
+import {
+	projectProfileConfig,
+	resolveProfileId,
+	setGameDefault,
+	setGlobalDefault,
+	updateProfile,
+	upsertSeenGame,
+} from '../core/profiles';
 import type { ProfilesState } from '../core/profiles';
+import { gameNameFromTitle, gameRefFromPath } from './page-match';
 import type { Action, Config } from '../core/types';
 
+/**
+ * The payload posted to MAIN. Beyond the resolved Config + asset URLs, Phase 2
+ * threads everything the Phase-3 overlay will need (profile list, the resolved
+ * active id, the current game context, and the context's current default) plus
+ * the callback seams (set-active-profile / save-as-default) the overlay emits.
+ */
 interface BridgePayload {
 	__padmonk: 'config';
 	config: Config | Record<string, never>;
@@ -30,6 +48,18 @@ interface BridgePayload {
 	iconUrl: string;
 	bindIconBase: string;
 	fontUrl: string;
+	/** All profiles as {id,name} for the overlay dropselect. */
+	profiles: { id: string; name: string }[];
+	/** The profile id this tab currently resolves to. */
+	activeProfileId: string;
+	/** The product id of the game in this tab, or null off a game. */
+	productId: string | null;
+	/** The (localized, label-only) slug of the game in this tab, or null. */
+	slug: string | null;
+	/** The captured human name for productId from the seen-games registry, or null. */
+	gameName: string | null;
+	/** The current default profile id for THIS context (game default or global). */
+	contextDefaultProfileId: string;
 }
 
 /** chrome.runtime.getURL with a guard for when chrome.* is unavailable. */
@@ -41,22 +71,94 @@ function getURL(path: string): string {
 	}
 }
 
-// Last config we posted — replayed when MAIN sends a `hello` (handshake below).
-let lastConfig: Config | Record<string, never> = {};
-
-/** Post config + freshly-resolved asset URLs to the MAIN world. */
-function post(config: Config | Record<string, never>): void {
-	lastConfig = config;
-	const payload: BridgePayload = {
-		__padmonk: 'config',
-		config,
+/** Freshly-resolved asset URLs (independent of storage, posted on every payload). */
+function assetUrls(): Pick<
+	BridgePayload,
+	'controllerUrl' | 'iconUrl' | 'bindIconBase' | 'fontUrl'
+> {
+	return {
 		controllerUrl: getURL('assets/xbox-controller.svg'),
 		iconUrl: getURL('icons/padmonk.png'),
 		bindIconBase: getURL('assets/bind-icons/'),
 		// NEW (Bug 6): bundled font, no longer hotlinked from the xbox CDN.
 		fontUrl: getURL('assets/fonts/bahnschrift.woff'),
 	};
-	window.postMessage(payload, '*');
+}
+
+// ---------------------------------------------------------------------------
+// Per-tab resolution state (module-scoped).
+// ---------------------------------------------------------------------------
+let tabId: number | null = null;
+let pstate: ProfilesState | null = null;
+let activeProfileId = '';
+let productId: string | null = null;
+let slug: string | null = null;
+
+// Seen-games throttle: only upsert a given productId once per page load to avoid
+// churn (document.title may settle late; we accept the first real name we see).
+const upsertedGames = new Set<string>();
+
+// The last full payload we posted — replayed verbatim when MAIN sends `hello`
+// (handshake below). Seeded with assets + safe defaults so a `hello` that lands
+// before the first resolution still gets the asset URLs.
+let lastPayload: BridgePayload = {
+	__padmonk: 'config',
+	config: {},
+	...assetUrls(),
+	profiles: [],
+	activeProfileId: '',
+	productId: null,
+	slug: null,
+	gameName: null,
+	contextDefaultProfileId: '',
+};
+
+/**
+ * Post an asset-only payload (empty/standalone config) to MAIN. Used ONLY for
+ * the proactive handshake post before storage is read — asset URLs don't depend
+ * on storage, so MAIN can render with defaults until the first resolution lands.
+ */
+function post(config: Config | Record<string, never>): void {
+	lastPayload = {
+		__padmonk: 'config',
+		config,
+		...assetUrls(),
+		profiles: [],
+		activeProfileId: '',
+		productId: null,
+		slug: null,
+		gameName: null,
+		contextDefaultProfileId: '',
+	};
+	window.postMessage(lastPayload, '*');
+}
+
+/** Post the fully-resolved payload (config + profiles + context) to MAIN. */
+function postResolved(): void {
+	if (!pstate) return;
+	const config = projectProfileConfig(pstate, activeProfileId);
+	const profiles = pstate.profiles.map((p) => ({ id: p.id, name: p.name }));
+	const gameName = productId ? (pstate.seenGames[productId]?.name ?? null) : null;
+	const contextDefaultProfileId = productId
+		? (pstate.gameDefaults[productId] ?? pstate.globalDefaultProfileId)
+		: pstate.globalDefaultProfileId;
+	lastPayload = {
+		__padmonk: 'config',
+		config,
+		...assetUrls(),
+		profiles,
+		activeProfileId,
+		productId,
+		slug,
+		gameName,
+		contextDefaultProfileId,
+	};
+	window.postMessage(lastPayload, '*');
+}
+
+/** Best-effort auto-load toast: posted on a NAVIGATION into a game default. */
+function postToast(profileName: string, gameName: string): void {
+	window.postMessage({ __padmonk: 'toast', kind: 'profile-loaded', profileName, gameName }, '*');
 }
 
 // HANDSHAKE (fixes the dynamic-import race): the MAIN-world inject coordinator
@@ -64,7 +166,7 @@ function post(config: Config | Record<string, never>): void {
 // import), so a single proactive post can land before MAIN is listening — and
 // every asset URL silently goes missing. So we BOTH (a) post proactively, and
 // (b) reply to MAIN's `hello` pings with the latest payload. Asset URLs do not
-// depend on storage, so we post them immediately too (before readConfig).
+// depend on storage, so we post them immediately too (before readProfilesState).
 post({});
 
 function isAction(v: unknown): v is Action {
@@ -75,23 +177,70 @@ function isAction(v: unknown): v is Action {
 	return false;
 }
 
-// Latest durable state + the profile id this tab currently resolves to. Per-tab
-// resolution (tabId + storage.session) is Phase 2; for now every tab resolves
-// the GLOBAL DEFAULT via resolveProfileId(state, null, null).
-let pstate: ProfilesState | null = null;
-let activeProfileId = '';
-
-/** Project the active profile to a Config and post it to MAIN. */
-function postState(state: ProfilesState): void {
-	activeProfileId = resolveProfileId(state, null, null);
-	post(projectProfileConfig(state, activeProfileId));
+/** Persist a durable state mutation: update memory, repost, write-through. */
+function persistDurable(next: ProfilesState): void {
+	pstate = next;
+	postResolved();
+	void writeProfilesState(next);
+	// onProfilesChanged → resolveAndPost will also fire; idempotent.
 }
 
-/** Persist a new state, re-project + post, and keep module state in sync. */
-function persistState(next: ProfilesState): void {
-	pstate = next;
-	postState(next);
-	void writeProfilesState(next);
+/**
+ * The core per-tab resolution routine. Called on init, on navigation, and on any
+ * durable profiles-store change. Resolves which profile THIS tab should use,
+ * persists the resolved TabProfile to storage.session, captures the game name
+ * into the durable seen-games registry, and posts the resolved payload to MAIN.
+ *
+ * `reason` distinguishes the call site so the auto-load toast only fires when we
+ * NAVIGATE into a new game (not on initial load or a store edit).
+ */
+async function resolveAndPost(reason: 'init' | 'nav' | 'store'): Promise<void> {
+	const ref = gameRefFromPath(location.pathname);
+	const nextProductId = ref?.productId ?? null;
+	const enteredNewGame = reason === 'nav' && nextProductId != null && nextProductId !== productId;
+	productId = nextProductId;
+	slug = ref?.slug ?? null;
+
+	pstate = await readProfilesState();
+
+	// This tab's session override only counts when it was written for THIS game
+	// context; a navigation to a different game discards a stale override.
+	const tab = tabId != null ? await readTabProfile(tabId) : null;
+	const override = tab && tab.productId === productId ? tab.profileId : null;
+	activeProfileId = resolveProfileId(pstate, productId, override);
+
+	// Persist the resolved record so the popup/service worker can read this tab's
+	// active profile (no-op when tabId is null / session area is unavailable).
+	if (tabId != null) {
+		await writeTabProfile(tabId, { productId, slug, profileId: activeProfileId });
+	}
+
+	// Seen-games (durable label registry). Capture the human name once per game
+	// per load; only write when it actually differs from what we already stored.
+	if (productId && !upsertedGames.has(productId)) {
+		const name = gameNameFromTitle(document.title, slug ?? '');
+		if (name) {
+			upsertedGames.add(productId);
+			if (name !== pstate.seenGames[productId]?.name) {
+				pstate = upsertSeenGame(pstate, productId, {
+					name,
+					slug: slug ?? '',
+					lastSeen: Date.now(),
+				});
+				await writeProfilesState(pstate);
+			}
+		}
+	}
+
+	postResolved();
+
+	// Auto-load toast: only when we just entered a game whose resolved profile
+	// came from a per-game default. Best-effort; Phase 3 renders the toast UI.
+	if (enteredNewGame && productId && pstate.gameDefaults[productId] === activeProfileId) {
+		const profileName = pstate.profiles.find((p) => p.id === activeProfileId)?.name ?? '';
+		const gameName = pstate.seenGames[productId]?.name ?? gameNameFromTitle('', slug ?? '');
+		postToast(profileName, gameName);
+	}
 }
 
 window.addEventListener('message', (e) => {
@@ -101,10 +250,12 @@ window.addEventListener('message', (e) => {
 		enabled?: unknown;
 		action?: unknown;
 		inputId?: unknown;
+		profileId?: unknown;
 	} | null;
 	if (!d) return;
+
 	if (d.__padmonk === 'hello') {
-		post(lastConfig);
+		window.postMessage(lastPayload, '*');
 		return;
 	}
 	if (d.__padmonk === 'open-options') {
@@ -115,16 +266,42 @@ window.addEventListener('message', (e) => {
 		}
 		return;
 	}
+
+	// --- Phase 2 overlay seams (Phase 3 emits these) ------------------------
+	if (d.__padmonk === 'set-active-profile' && typeof d.profileId === 'string') {
+		// SESSION-LOCAL switch: this tab only, no durable write. If tabId is null
+		// (no session store) we still update in-memory + repost so the switch is
+		// felt within this page.
+		if (!pstate) return;
+		activeProfileId = d.profileId;
+		if (tabId != null) {
+			void writeTabProfile(tabId, { productId, slug, profileId: d.profileId });
+		}
+		postResolved();
+		return;
+	}
+	if (d.__padmonk === 'save-as-default') {
+		// DURABLE: link the active profile to this game (in a game) or set it as the
+		// global default (off a game).
+		if (!pstate) return;
+		const next = productId
+			? setGameDefault(pstate, productId, activeProfileId)
+			: setGlobalDefault(pstate, activeProfileId);
+		persistDurable(next);
+		return;
+	}
+
+	// --- Phase 1 seams (popup/overlay) --------------------------------------
 	if (d.__padmonk === 'set-enabled' && typeof d.enabled === 'boolean') {
 		if (!pstate) return;
-		persistState({ ...pstate, globals: { ...pstate.globals, enabled: d.enabled } });
+		persistDurable({ ...pstate, globals: { ...pstate.globals, enabled: d.enabled } });
 		return;
 	}
 	if (d.__padmonk === 'bind' && typeof d.inputId === 'string' && isAction(d.action)) {
 		if (!pstate) return;
 		const active = pstate.profiles.find((p) => p.id === activeProfileId);
 		if (!active) return;
-		persistState(
+		persistDurable(
 			updateProfile(pstate, activeProfileId, {
 				bindings: { ...active.bindings, [d.inputId]: { ...d.action } },
 			}),
@@ -137,24 +314,43 @@ window.addEventListener('message', (e) => {
 		if (!active) return;
 		const bindings = { ...active.bindings };
 		delete bindings[d.inputId];
-		persistState(updateProfile(pstate, activeProfileId, { bindings }));
+		persistDurable(updateProfile(pstate, activeProfileId, { bindings }));
 	}
 });
 
-// Initial load. readProfilesState handles local-first → sync-fallback (+ migrate)
-// and always returns a normalized ProfilesState. On any failure keep the empty
-// config so MAIN still has the asset URLs and renders with safe defaults.
-readProfilesState()
-	.then((state) => {
-		pstate = state;
-		postState(state);
-	})
-	.catch(() => post({}));
+/**
+ * Acquire this tab's id from the service worker (sender.tab.id is only knowable
+ * there). Promise form, guarded: if chrome.runtime / sendMessage is unavailable
+ * or the worker doesn't answer, tabId stays null and session reads/writes no-op
+ * gracefully — resolution then just uses the global default.
+ */
+async function acquireTabId(): Promise<void> {
+	try {
+		const res = (await chrome.runtime?.sendMessage?.({ __padmonk: 'whoami' })) as
+			| { tabId?: number | null }
+			| undefined;
+		tabId = typeof res?.tabId === 'number' ? res.tabId : null;
+	} catch {
+		tabId = null;
+	}
+}
 
-// Relay live state changes (popup/options write local; sync may also change).
-// We re-post the full payload so MAIN's asset URLs stay fresh too. Per-tab
-// resolution via tabId + storage.session is Phase 2.
-onProfilesChanged((state) => {
-	pstate = state;
-	postState(state);
-});
+// Initial load: learn our tabId first (so the resolved TabProfile can be keyed),
+// then resolve + post. Either branch still resolves so MAIN gets a config.
+void acquireTabId().then(
+	() => void resolveAndPost('init'),
+	() => void resolveAndPost('init'),
+);
+
+// Navigation watch: Xbox is an SPA and the bridge loads once. Poll the pathname
+// (mirrors inject.ts's 1s URL poll) and re-resolve on a change.
+let lastPath = location.pathname;
+setInterval(() => {
+	if (location.pathname === lastPath) return;
+	lastPath = location.pathname;
+	void resolveAndPost('nav');
+}, 1000);
+
+// Store-change watch: any Options/popup edit re-resolves this tab and re-posts.
+// resolveAndPost reads fresh state itself, so we ignore the callback's argument.
+onProfilesChanged(() => void resolveAndPost('store'));

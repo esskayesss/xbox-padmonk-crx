@@ -57,6 +57,17 @@ function main(): void {
 	let fontUrl = '';
 	let overlayOpen = false;
 
+	// Phase 2 payload threading: data the Phase-3 overlay will render (dropselect,
+	// save-as-default, toast). Defaulted so Phase-1 mounting still type-checks.
+	let profiles: { id: string; name: string }[] = [];
+	let activeProfileId = '';
+	let productId: string | null = null;
+	let slug: string | null = null;
+	let gameName: string | null = null;
+	let contextDefaultProfileId = '';
+	// Latest auto-load toast (Phase 3 renders it). Stashed only for now.
+	let lastToast: { kind: string; profileName: string; gameName: string } | null = null;
+
 	// 3. Patch the Gamepad API. Capture native first, then install the override
 	//    (also as webkitGetGamepads for engines that reference it). Legacy parity.
 	const nativeGetGamepads = navigator.getGamepads?.bind(navigator) ?? null;
@@ -120,6 +131,14 @@ function main(): void {
 		helpCombo: config.helpCombo,
 		onClose: closeOverlay,
 		onConfigure: openOptions,
+		profiles,
+		activeProfileId,
+		productId,
+		slug,
+		gameName,
+		contextDefaultProfileId,
+		onSelectProfile,
+		onSaveAsDefault,
 	});
 
 	function mountUi(): void {
@@ -275,6 +294,13 @@ function main(): void {
 	function openOptions(): void {
 		window.postMessage({ __padmonk: 'open-options' }, '*');
 	}
+	// Phase 2 overlay seams → bridge (session-local switch + durable save-as-default).
+	function onSelectProfile(id: string): void {
+		window.postMessage({ __padmonk: 'set-active-profile', profileId: id }, '*');
+	}
+	function onSaveAsDefault(): void {
+		window.postMessage({ __padmonk: 'save-as-default' }, '*');
+	}
 
 	// 7. Config bridge (isolated world → MAIN). Asset URLs arrive ONLY here.
 	//    HANDSHAKE: the bridge may post before this listener exists (CRXJS loads
@@ -284,12 +310,34 @@ function main(): void {
 	window.addEventListener('message', (e) => {
 		if (e.source !== window) return;
 		const d = e.data as { __padmonk?: string; config?: unknown } & Record<string, unknown>;
-		if (!d || d.__padmonk !== 'config') return;
+		if (!d) return;
+		if (d.__padmonk === 'toast') {
+			// Phase 2: stash the latest auto-load toast. Phase 3 builds the toast UI.
+			lastToast = {
+				kind: typeof d.kind === 'string' ? d.kind : '',
+				profileName: typeof d.profileName === 'string' ? d.profileName : '',
+				gameName: typeof d.gameName === 'string' ? d.gameName : '',
+			};
+			void lastToast; // TODO(Phase 3): render auto-load toast from lastToast.
+			return;
+		}
+		if (d.__padmonk !== 'config') return;
 		gotConfig = true;
 		if (typeof d.iconUrl === 'string' && d.iconUrl) iconUrl = d.iconUrl;
 		if (typeof d.bindIconBase === 'string' && d.bindIconBase) bindIconBase = d.bindIconBase;
 		if (typeof d.controllerUrl === 'string' && d.controllerUrl) controllerUrl = d.controllerUrl;
 		if (typeof d.fontUrl === 'string' && d.fontUrl) fontUrl = d.fontUrl;
+		// Phase 2 fields (productId/slug/gameName are legitimately null off a game).
+		if (Array.isArray(d.profiles)) {
+			profiles = d.profiles as { id: string; name: string }[];
+		}
+		if (typeof d.activeProfileId === 'string') activeProfileId = d.activeProfileId;
+		productId = typeof d.productId === 'string' ? d.productId : null;
+		slug = typeof d.slug === 'string' ? d.slug : null;
+		gameName = typeof d.gameName === 'string' ? d.gameName : null;
+		if (typeof d.contextDefaultProfileId === 'string') {
+			contextDefaultProfileId = d.contextDefaultProfileId;
+		}
 		config = normalizeConfig(d.config);
 		refreshUi();
 	});
