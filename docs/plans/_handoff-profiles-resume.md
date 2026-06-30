@@ -51,29 +51,55 @@ NOT merged to main. NOT released.
   onInstalled gating (isMeaningful minor/major bump, once per version via
   `lastWhatsNewVersion` in storage.local). vite.config rollup input for whatsnew.
 
-## Phase 6 — REMAINING (plan §12.6)
+## Phase 6 — STATUS
 
-"Polish: resolution/migration/multi-tab/conflict tests, locale propagation,
-CHANGELOG/README, manual QA on both Xbox surfaces."
-Concrete tasks:
+Mostly DONE. Remaining = the user's hands-on QA + version bump + push (user-owned).
 
-1. **Test gaps**: add integration-ish tests for multi-tab resolution + the bridge
-   protocol where feasible (bridge is chrome-heavy — focus on pure pieces already
-   covered; consider tests for any untested resolveProfileId/migrate edges).
-2. **Locale propagation**: changing language in Global settings should propagate
-   live to overlay/HUD/popup (globals.locale → onProfilesChanged → bridge re-posts).
-   Verify end-to-end; the shell header still tracks SAVED locale (known, acceptable).
-3. **i18n debt**: 15 non-en locales carry ENGLISH PLACEHOLDERS for all new keys
-   (profiles/overlay/options/mapping/whatsnew). Also `overlay_title`/`overlay_configure`
-   en-rename NOT propagated to other locales (still old translations). Decide: ship
-   English placeholders now + track, or do a translation pass. Pre-existing: pt-BR.json
-   & zh-CN.json missing `lang_name_en` (1 key short — predates this work).
-4. **CHANGELOG.md + README.md**: document the profiles feature (use the `changelog`
-   skill if desired). Bump version if releasing (zip/release derives from tag).
-5. **Manual QA**: load unpacked dist on <www.xbox.com/*/play>*and play.xbox.com/stream/\*
-   — verify profile switch from overlay, save-as-default + toast, popup "Tuning:" line,
-   mapping page, migration from a legacy `config` install, what's-new on a minor bump.
-6. Final full audit pass + merge decision.
+1. **Test gaps** — ASSESSED, no action. Existing coverage already thorough:
+   resolveProfileId precedence, migrate (structure/no-loss/defensive), conflict
+   (global-collision/unmapped/inProfileConflict), storage round-trips + session
+   tab-key parsing all covered. Multi-tab isolation is covered at the storage layer;
+   the bridge orchestration is chrome-heavy → left to manual QA. Did NOT manufacture
+   low-value tests.
+2. **Locale propagation** — VERIFIED working live (not a bug). Flow: SettingsPage
+   saves globals.locale → `onProfilesChanged` (bridge.ts:389) → `scheduleResolve` →
+   `resolveAndPost` → `projectProfileConfig` carries locale → posts config → inject.ts
+   msg handler sets `config` + `refreshUi()` → overlay/HUD/toast `.update()` with new
+   locale (props reactive). Popup reads fresh per open. Shell header previews SAVED
+   locale (known, acceptable).
+3. **i18n** — DONE. All 53 feature keys (51 added + overlay_title/overlay_configure
+   renames) translated into ALL 15 non-en locales (commit f10cd13). Placeholder
+   integrity + brand-literal "padmonk" verified across 15×53. No pre-existing
+   pt-BR/zh-CN gap after all — parity 0 everywhere. `npm run i18n` + i18n.test green.
+4. **CHANGELOG + README** — DONE (commit, under [Unreleased], no version bump).
+   Profiles/per-game-defaults/conflict-safe rebinding documented.
+5. **Manual QA** — USER-OWNED (needs real Xbox auth + a game). See checklist below.
+6. **Merge/push** — USER-OWNED. Decision: stay on feature/profiles, do NOT merge to
+   main, do NOT push to remote. User will push after local testing. Version still
+   1.0.0 under [Unreleased]; bump + tag at release time.
+
+## Manual QA checklist (user, load unpacked `dist/` after `npm run build`)
+
+Surfaces: `https://www.xbox.com/*/play*`, `https://play.xbox.com/stream/*`.
+
+- [ ] Migration: an existing install with a legacy `config` key opens to a "Default"
+      profile; legacy key removed; no settings lost.
+- [ ] Overlay (toggle F8) renamed "padmonk Controls"; profile switcher present;
+      switching profile applies live; "Advanced" opens options.
+- [ ] Save-as-default ★ (shows when active≠context default) → toast on next load of
+      that game; auto-load toast "Loaded {profile} for {game}" on navigating into a
+      game with a default.
+- [ ] Popup is tab-aware; shows "Tuning: {profile}".
+- [ ] Options: two tabs (Settings / Game mapping); staged saves (dirty markers,
+      Save Global / Save Profile); switching tabs preserves an unsaved draft.
+- [ ] Rebinding: every control incl. WASD/left-stick rebindable; in-profile reuse →
+      confirm dialog; binding a global-shortcut key → hard-block modal.
+- [ ] Mapping page lists played games; profile select + reset to global default work.
+- [ ] Import/export: single profile AND full bundle (Export all / Import profiles);
+      importing a bundle with a global-collision strips that bind.
+- [ ] What's-new tab opens on a minor/major version bump (not patch), once per version.
+- [ ] Locale switch in Global settings re-localizes the in-game overlay/HUD live.
+- [ ] Multi-tab: two game tabs resolve/switch profiles independently.
 
 ## Known low-priority items deferred (from audits, not blockers)
 
