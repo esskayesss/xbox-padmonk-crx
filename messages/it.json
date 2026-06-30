@@ -85,7 +85,6 @@
 	"opt_intro_between": "una riga, poi premi il tasto o il pulsante del mouse da assegnare. Clicca sull’icona",
 	"opt_intro_after_unbind": "di un chip per annullare l’assegnazione. Le modifiche si applicano in tempo reale — basta ricaricare la scheda di xCloud.",
 	"opt_unmapped_warning": "Alcuni comandi non sono assegnati — assegna ogni azione qui sotto per una copertura completa.",
-	"opt_conflict_reassigned": "{input} riassegnato da {control}",
 	"opt_control_fallback": "un altro comando",
 	"opt_add": "＋ Aggiungi",
 	"opt_capture_input": "premi un input… (Esc annulla)",

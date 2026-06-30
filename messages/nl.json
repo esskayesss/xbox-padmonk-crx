@@ -85,7 +85,6 @@
 	"opt_intro_between": "op een rij en druk dan op de toets / muisknop die je wilt koppelen. Klik op het pictogram",
 	"opt_intro_after_unbind": "van een chip om te ontkoppelen. Wijzigingen gelden meteen — herlaad gewoon het xCloud-tabblad.",
 	"opt_unmapped_warning": "Sommige besturingen zijn niet toegewezen — koppel elke actie hieronder voor volledige dekking.",
-	"opt_conflict_reassigned": "{input} opnieuw toegewezen vanaf {control}",
 	"opt_control_fallback": "een andere besturing",
 	"opt_add": "＋ Toevoegen",
 	"opt_capture_input": "druk invoer… (Esc annuleert)",

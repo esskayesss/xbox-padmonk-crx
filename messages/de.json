@@ -85,7 +85,6 @@
 	"opt_intro_between": "eine Zeile und drücke dann die Taste oder Maustaste, die du belegen willst. Klicke das Symbol",
 	"opt_intro_after_unbind": "eines Chips zum Aufheben. Änderungen gelten sofort — lade einfach den xCloud-Tab neu.",
 	"opt_unmapped_warning": "Einige Steuerungen sind nicht belegt — belege jede Aktion unten für volle Abdeckung.",
-	"opt_conflict_reassigned": "{input} von {control} neu zugewiesen",
 	"opt_control_fallback": "eine andere Steuerung",
 	"opt_add": "＋ Hinzufügen",
 	"opt_capture_input": "Eingabe drücken… (Esc bricht ab)",

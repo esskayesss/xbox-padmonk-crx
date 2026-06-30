@@ -85,7 +85,6 @@
 	"opt_intro_between": "une ligne, puis appuyez sur la touche ou le bouton de souris à associer. Cliquez sur l’icône",
 	"opt_intro_after_unbind": "d’une puce pour dissocier. Les changements s’appliquent en direct — rechargez simplement l’onglet xCloud.",
 	"opt_unmapped_warning": "Certaines commandes ne sont pas assignées — associez chaque action ci-dessous pour une couverture complète.",
-	"opt_conflict_reassigned": "{input} réassigné depuis {control}",
 	"opt_control_fallback": "une autre commande",
 	"opt_add": "＋ Ajouter",
 	"opt_capture_input": "appuyez sur une entrée… (Esc annule)",

@@ -85,7 +85,6 @@
 	"opt_intro_between": "una fila y pulsa la tecla o el botón del ratón que quieras asignar. Haz clic en el icono",
 	"opt_intro_after_unbind": "de un chip para desasignar. Los cambios se aplican al instante — solo recarga la pestaña de xCloud.",
 	"opt_unmapped_warning": "Algunos controles están sin asignar — asigna cada acción abajo para una cobertura completa.",
-	"opt_conflict_reassigned": "{input} reasignado desde {control}",
 	"opt_control_fallback": "otro control",
 	"opt_add": "＋ Añadir",
 	"opt_capture_input": "pulsa una entrada… (Esc cancela)",

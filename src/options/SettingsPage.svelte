@@ -88,7 +88,7 @@
 	let profileDirty = $state(false);
 
 	// Display locale tracks the DRAFT language so the page previews live.
-	const locale = $derived(draftGlobals.locale as Locale);
+	const locale = $derived(draftGlobals.locale);
 	const groups = $derived(groupsForOptions(locale));
 	const toggleLabel = $derived(comboLabel(draftGlobals.toggleCombo, locale));
 	const helpLabel = $derived(comboLabel(draftGlobals.helpCombo, locale));
@@ -123,7 +123,6 @@
 	// Banners.
 	let saved = $state(false);
 	let globalError = $state<string | null>(null);
-	let unmappedWarn = $state(false);
 
 	let jsonText = $state('');
 	let savedTimer: ReturnType<typeof setTimeout> | null = null;
@@ -176,7 +175,8 @@
 	function loadDraftProfile(id: string): void {
 		const p = pstate.profiles.find((x) => x.id === id) ?? pstate.profiles[0];
 		activeProfileId = p.id;
-		draftProfile = structuredClone($state.snapshot(p));
+		// $state.snapshot already deep-copies the proxy → draft is ref-isolated.
+		draftProfile = $state.snapshot(p);
 		profileDirty = false;
 	}
 
@@ -294,7 +294,10 @@
 	/** Save Global: block on a cross-profile global-shortcut collision. */
 	function saveGlobal(): void {
 		const g = $state.snapshot(draftGlobals) as Globals;
-		for (const p of pstate.profiles) {
+		// Validate against every SAVED profile AND the in-progress active draft, so a
+		// global-shortcut collision against an UNSAVED bind is caught at Save Global.
+		const plans: Profile[] = [...pstate.profiles, $state.snapshot(draftProfile) as Profile];
+		for (const p of plans) {
 			const issues = validateBindPlan(g, p);
 			const hit = issues.find((i) => i.kind === 'global-collision');
 			if (hit) {
@@ -315,7 +318,7 @@
 		const next = normalizeProfilesState({ ...$state.snapshot(pstate), globals: g });
 		pstate = next;
 		void writeProfilesState(next);
-		draftGlobals = structuredClone($state.snapshot(next.globals));
+		draftGlobals = structuredClone(next.globals);
 		globalsDirty = false;
 		flashSaved();
 	}
@@ -334,7 +337,6 @@
 			};
 			return;
 		}
-		unmappedWarn = issues.some((i) => i.kind === 'unmapped');
 		const next = updateProfile(pstate, activeProfileId, {
 			bindings: p.bindings,
 			sensitivity: p.sensitivity,
@@ -373,19 +375,30 @@
 		});
 	}
 	function onDuplicate(id: string): void {
-		const next = duplicateProfile(pstate, id);
-		pstate = next;
-		void writeProfilesState(next);
+		guardDiscard(() => {
+			const before = new Set(pstate.profiles.map((p) => p.id));
+			const next = duplicateProfile(pstate, id);
+			pstate = next;
+			void writeProfilesState(next);
+			// Switch+reload to the freshly created copy (the id absent before), so
+			// duplicate behaves like add rather than persisting a copy out of view.
+			const created = next.profiles.find((p) => !before.has(p.id));
+			if (created) loadDraftProfile(created.id);
+		});
 	}
 	function onDelete(id: string): void {
 		if (!canDelete) return; // core guards last-profile; UI guard here too
-		const next = deleteProfile(pstate, id);
-		pstate = next;
-		void writeProfilesState(next);
-		// Reconcile the active profile against the resulting list.
-		if (!next.profiles.some((p) => p.id === activeProfileId)) {
-			loadDraftProfile(resolveProfileId(next, null, null));
-		}
+		// Deleting the active profile discards its draft — prompt first when dirty
+		// (mirrors onSelect/onAdd). Durable delete proceeds after confirmation.
+		guardDiscard(() => {
+			const next = deleteProfile(pstate, id);
+			pstate = next;
+			void writeProfilesState(next);
+			// Reconcile the active profile against the resulting list.
+			if (!next.profiles.some((p) => p.id === activeProfileId)) {
+				loadDraftProfile(resolveProfileId(next, null, null));
+			}
+		});
 	}
 
 	// ---- import / export (operate on the active draft) ----
@@ -454,20 +467,25 @@
 		void readProfilesState().then((s) => {
 			pstate = s;
 			activeProfileId = resolveProfileId(s, null, null);
-			draftGlobals = structuredClone($state.snapshot(s.globals));
+			draftGlobals = structuredClone(s.globals);
 			loadDraftProfile(activeProfileId);
 		});
 		const unsub = onProfilesChanged((s) => {
 			pstate = s;
 			// Reconcile the active id if it vanished externally.
 			if (!s.profiles.some((p) => p.id === activeProfileId)) {
+				// WHY: the active profile was deleted elsewhere. A dirty draft now targets
+				// a profile that no longer exists — saving it would write the dead draft
+				// onto an unrelated profile (corruption). Discard the dead draft and load
+				// the resolved fallback UNCONDITIONALLY (nothing valid to save it to).
 				activeProfileId = resolveProfileId(s, null, null);
-				if (!profileDirty) loadDraftProfile(activeProfileId);
+				loadDraftProfile(activeProfileId);
 			} else if (!profileDirty) {
+				// Active profile still exists: refresh only when no pending profile edits.
 				loadDraftProfile(activeProfileId);
 			}
 			// Refresh globals draft only when the user has no pending global edits.
-			if (!globalsDirty) draftGlobals = structuredClone($state.snapshot(s.globals));
+			if (!globalsDirty) draftGlobals = structuredClone(s.globals);
 		});
 
 		const onKey = (e: KeyboardEvent): void => {
@@ -527,6 +545,44 @@
 	comboKind={globalModal.comboKind}
 	onClose={() => (globalModal = { ...globalModal, open: false })}
 />
+
+<!-- Dashed capture button, shared by toggle/help/binding sites. `label` is the
+     fully-resolved text (active vs idle decided by the caller); `active` drives
+     the capturing pulse styling; `onToggle` starts/cancels the capture. -->
+{#snippet captureButton(active: boolean, label: string, onToggle: () => void)}
+	<button
+		type="button"
+		class="cursor-pointer rounded-md border border-dashed px-2.5 py-0.5 text-sm {active
+			? 'border-pad-capture bg-pad-capture-bg text-pad-capture animate-pulse'
+			: 'border-pad-accent/40 bg-pad-green/10 text-pad-accent'}"
+		onclick={onToggle}
+	>
+		{label}
+	</button>
+{/snippet}
+
+<!-- Per-profile boolean row (label + desc + checkbox) for the aim grid. -->
+{#snippet boolRow(
+	id: string,
+	label: string,
+	desc: string,
+	checked: boolean,
+	onToggle: (value: boolean) => void,
+)}
+	<div>
+		<label id={`${id}-label`} for={id} class="text-pad-text/85 block font-semibold">{label}</label>
+		<p class="text-pad-muted mt-1 text-xs leading-snug">{desc}</p>
+	</div>
+	<div>
+		<input
+			{id}
+			type="checkbox"
+			class="accent-pad-accent"
+			{checked}
+			onchange={(e) => onToggle(e.currentTarget.checked)}
+		/>
+	</div>
+{/snippet}
 
 <div class="flex items-center gap-2">
 	<h1 class="text-pad-accent m-0 flex items-center gap-2 text-xl">
@@ -622,19 +678,12 @@
 			</p>
 		</div>
 		<div>
-			<button
-				type="button"
-				class="cursor-pointer rounded-md border border-dashed px-2.5 py-0.5 text-sm {isCapturing(
-					capturing,
-					'toggle',
-				)
-					? 'border-pad-capture bg-pad-capture-bg text-pad-capture animate-pulse'
-					: 'border-pad-accent/40 bg-pad-green/10 text-pad-accent'}"
-				onclick={() =>
-					isCapturing(capturing, 'toggle') ? cancelCapture() : startCapture({ kind: 'toggle' })}
-			>
-				{isCapturing(capturing, 'toggle') ? m.opt_capture_combo({}, { locale }) : toggleLabel}
-			</button>
+			{@render captureButton(
+				isCapturing(capturing, 'toggle'),
+				isCapturing(capturing, 'toggle') ? m.opt_capture_combo({}, { locale }) : toggleLabel,
+				() =>
+					isCapturing(capturing, 'toggle') ? cancelCapture() : startCapture({ kind: 'toggle' }),
+			)}
 		</div>
 
 		<div>
@@ -644,19 +693,11 @@
 			</p>
 		</div>
 		<div>
-			<button
-				type="button"
-				class="cursor-pointer rounded-md border border-dashed px-2.5 py-0.5 text-sm {isCapturing(
-					capturing,
-					'help',
-				)
-					? 'border-pad-capture bg-pad-capture-bg text-pad-capture animate-pulse'
-					: 'border-pad-accent/40 bg-pad-green/10 text-pad-accent'}"
-				onclick={() =>
-					isCapturing(capturing, 'help') ? cancelCapture() : startCapture({ kind: 'help' })}
-			>
-				{isCapturing(capturing, 'help') ? m.opt_capture_combo({}, { locale }) : helpLabel}
-			</button>
+			{@render captureButton(
+				isCapturing(capturing, 'help'),
+				isCapturing(capturing, 'help') ? m.opt_capture_combo({}, { locale }) : helpLabel,
+				() => (isCapturing(capturing, 'help') ? cancelCapture() : startCapture({ kind: 'help' })),
+			)}
 		</div>
 	</div>
 </section>
@@ -692,7 +733,8 @@
 		{onRename}
 		{onAdd}
 		{onDuplicate}
-		onDelete={canDelete ? onDelete : () => {}}
+		{onDelete}
+		{canDelete}
 	/>
 
 	<!-- Coverage warning: one or more controller actions have no input bound. -->
@@ -700,16 +742,6 @@
 		<div
 			role="alert"
 			class="bg-pad-danger text-pad-bg mt-4 rounded-md px-3 py-2 text-sm font-semibold"
-		>
-			⚠ {m.opt_unmapped_warning({}, { locale })}
-		</div>
-	{/if}
-
-	<!-- Non-blocking save-time warning (unmapped actions). -->
-	{#if unmappedWarn}
-		<div
-			role="status"
-			class="border-pad-accent/40 bg-pad-green/10 text-pad-accent mt-4 rounded-md border px-3 py-2 text-sm"
 		>
 			⚠ {m.opt_unmapped_warning({}, { locale })}
 		</div>
@@ -768,24 +800,16 @@
 									>
 								</span>
 							{/each}
-							<button
-								type="button"
-								class="cursor-pointer rounded-md border border-dashed px-2.5 py-0.5 text-sm {isCapturing(
-									capturing,
-									'binding',
-									item.id,
-								)
-									? 'border-pad-capture bg-pad-capture-bg text-pad-capture animate-pulse'
-									: 'border-pad-accent/40 bg-pad-green/10 text-pad-accent'}"
-								onclick={() =>
+							{@render captureButton(
+								isCapturing(capturing, 'binding', item.id),
+								isCapturing(capturing, 'binding', item.id)
+									? m.opt_capture_input({}, { locale })
+									: m.opt_add({}, { locale }),
+								() =>
 									isCapturing(capturing, 'binding', item.id)
 										? cancelCapture()
-										: startCapture({ kind: 'binding', action: item.action, id: item.id })}
-							>
-								{isCapturing(capturing, 'binding', item.id)
-									? m.opt_capture_input({}, { locale })
-									: m.opt_add({}, { locale })}
-							</button>
+										: startCapture({ kind: 'binding', action: item.action, id: item.id }),
+							)}
 						</div>
 					{/if}
 				{/each}
@@ -845,49 +869,21 @@
 			</div>
 		{/each}
 
-		<div>
-			<label
-				id="settings-invertY-label"
-				for="settings-invertY"
-				class="text-pad-text/85 block font-semibold"
-			>
-				{m.opt_invert_label({}, { locale })}
-			</label>
-			<p class="text-pad-muted mt-1 text-xs leading-snug">
-				{m.opt_behavior_invert_desc({}, { locale })}
-			</p>
-		</div>
-		<div>
-			<input
-				id="settings-invertY"
-				type="checkbox"
-				class="accent-pad-accent"
-				checked={draftProfile.invertY}
-				onchange={(e) => setBool('invertY', e.currentTarget.checked)}
-			/>
-		</div>
+		{@render boolRow(
+			'settings-invertY',
+			m.opt_invert_label({}, { locale }),
+			m.opt_behavior_invert_desc({}, { locale }),
+			draftProfile.invertY,
+			(v) => setBool('invertY', v),
+		)}
 
-		<div>
-			<label
-				id="settings-lockPointer-label"
-				for="settings-lockPointer"
-				class="text-pad-text/85 block font-semibold"
-			>
-				{m.opt_lock_label({}, { locale })}
-			</label>
-			<p class="text-pad-muted mt-1 text-xs leading-snug">
-				{m.opt_behavior_lock_desc({}, { locale })}
-			</p>
-		</div>
-		<div>
-			<input
-				id="settings-lockPointer"
-				type="checkbox"
-				class="accent-pad-accent"
-				checked={draftProfile.lockPointerOnClick}
-				onchange={(e) => setBool('lockPointerOnClick', e.currentTarget.checked)}
-			/>
-		</div>
+		{@render boolRow(
+			'settings-lockPointer',
+			m.opt_lock_label({}, { locale }),
+			m.opt_behavior_lock_desc({}, { locale }),
+			draftProfile.lockPointerOnClick,
+			(v) => setBool('lockPointerOnClick', v),
+		)}
 	</div>
 
 	<!-- Import / Export (active draft profile). -->

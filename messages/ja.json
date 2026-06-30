@@ -85,7 +85,6 @@
 	"opt_intro_between": "行の上で押し、割り当てたいキー／マウスボタンを押します。チップの",
 	"opt_intro_after_unbind": "をクリックで割り当て解除。変更は即時反映されます——xCloud のタブを再読み込みするだけです。",
 	"opt_unmapped_warning": "一部の操作が未割り当てです——完全にカバーするには下の各アクションを割り当ててください。",
-	"opt_conflict_reassigned": "{input} を {control} から再割り当てしました",
 	"opt_control_fallback": "別の操作",
 	"opt_add": "＋ 追加",
 	"opt_capture_input": "入力を押してください…（Esc でキャンセル）",

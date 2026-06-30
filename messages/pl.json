@@ -85,7 +85,6 @@
 	"opt_intro_between": "wiersz, a następnie naciśnij klawisz lub przycisk myszy do przypisania. Kliknij na chipie",
 	"opt_intro_after_unbind": "aby usunąć przypisanie. Zmiany działają na żywo — wystarczy odświeżyć kartę xCloud.",
 	"opt_unmapped_warning": "Niektóre kontrolki nie są przypisane — przypisz każdą akcję poniżej dla pełnego pokrycia.",
-	"opt_conflict_reassigned": "Przypisano ponownie {input} z {control}",
 	"opt_control_fallback": "inna kontrolka",
 	"opt_add": "＋ Dodaj",
 	"opt_capture_input": "naciśnij wejście… (Esc anuluje)",

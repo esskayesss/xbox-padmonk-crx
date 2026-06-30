@@ -85,7 +85,6 @@
 	"opt_intro_between": "v řádku, poté stiskněte klávesu / tlačítko myši, které chcete přiřadit. Klikněte na",
 	"opt_intro_after_unbind": "na čipu pro zrušení přiřazení. Změny se projeví okamžitě — stačí znovu načíst kartu xCloud.",
 	"opt_unmapped_warning": "Některé ovládací prvky nejsou přiřazeny — přiřaďte každou akci níže pro plné pokrytí.",
-	"opt_conflict_reassigned": "Přiřazeno {input} z {control}",
 	"opt_control_fallback": "jiný ovládací prvek",
 	"opt_add": "＋ Přidat",
 	"opt_capture_input": "stiskněte vstup… (Esc ruší)",

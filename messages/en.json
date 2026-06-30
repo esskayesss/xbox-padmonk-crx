@@ -85,7 +85,6 @@
 	"opt_intro_between": "on a row, then press the key / mouse button you want to bind. Click a chip's",
 	"opt_intro_after_unbind": "to unbind. Changes apply live — just reload the xCloud tab.",
 	"opt_unmapped_warning": "Some controls are unmapped — bind every action below for full coverage.",
-	"opt_conflict_reassigned": "Reassigned {input} from {control}",
 	"opt_control_fallback": "another control",
 	"opt_add": "＋ Add",
 	"opt_capture_input": "press input… (Esc cancels)",

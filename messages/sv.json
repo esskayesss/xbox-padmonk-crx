@@ -85,7 +85,6 @@
 	"opt_intro_between": "på en rad och tryck sedan på tangenten eller musknappen du vill binda. Klicka på ett chip",
 	"opt_intro_after_unbind": "för att avbinda. Ändringar gäller direkt — ladda bara om xCloud-fliken.",
 	"opt_unmapped_warning": "Vissa kontroller är omappade — binda varje åtgärd nedan för full täckning.",
-	"opt_conflict_reassigned": "{input} omtilldelad från {control}",
 	"opt_control_fallback": "en annan kontroll",
 	"opt_add": "＋ Lägg till",
 	"opt_capture_input": "tryck inmatning… (Esc avbryter)",

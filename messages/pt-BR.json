@@ -85,7 +85,6 @@
 	"opt_intro_between": "em uma linha e pressione a tecla / botão do mouse que deseja vincular. Clique no",
 	"opt_intro_after_unbind": "de um chip para desvincular. As alterações são aplicadas ao vivo — basta recarregar a aba do xCloud.",
 	"opt_unmapped_warning": "Alguns controles não estão mapeados — vincule cada ação abaixo para cobertura completa.",
-	"opt_conflict_reassigned": "{input} reatribuído de {control}",
 	"opt_control_fallback": "outro controle",
 	"opt_add": "＋ Adicionar",
 	"opt_capture_input": "pressione uma entrada… (Esc cancela)",

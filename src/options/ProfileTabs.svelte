@@ -28,6 +28,7 @@
 		onAdd: () => void; // add a blank/new profile
 		onDuplicate: (id: string) => void;
 		onDelete: (id: string) => void; // parent guards last-profile
+		canDelete?: boolean; // false hides the Delete menu item (last profile)
 	}
 	let {
 		profiles,
@@ -38,6 +39,7 @@
 		onAdd,
 		onDuplicate,
 		onDelete,
+		canDelete = true,
 	}: Props = $props();
 
 	// Swallow on our own subtree so the trailing menu's clicks never bubble up to
@@ -196,7 +198,7 @@
 
 				{#if isActive && menuOpen}
 					<div
-						class="pad-panel-bg border-pad-accent/40 absolute top-full right-0 z-50 mt-1 min-w-32 rounded-sm border p-1 shadow-lg"
+						class="pad-panel-bg border-pad-accent/40 absolute top-full right-0 z-50 mt-1 min-w-32 rounded-sm border p-1 shadow-pad-panel"
 						role="menu"
 						tabindex="-1"
 						onpointerdown={stop}
@@ -213,18 +215,20 @@
 						>
 							{duplicateLabel}
 						</button>
-						<button
-							type="button"
-							class="text-pad-danger hover:bg-pad-chip flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-left text-sm"
-							role="menuitem"
-							onclick={(e) => {
-								stop(e);
-								menuOpen = false;
-								onDelete(activeProfileId);
-							}}
-						>
-							{deleteLabel}
-						</button>
+						{#if canDelete}
+							<button
+								type="button"
+								class="text-pad-danger hover:bg-pad-chip flex w-full cursor-pointer items-center rounded-sm px-2 py-1.5 text-left text-sm"
+								role="menuitem"
+								onclick={(e) => {
+									stop(e);
+									menuOpen = false;
+									onDelete(activeProfileId);
+								}}
+							>
+								{deleteLabel}
+							</button>
+						{/if}
 					</div>
 				{/if}
 			{/if}

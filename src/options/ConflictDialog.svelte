@@ -6,6 +6,7 @@
 	// to confirm unbinding the current control before reusing the input. No
 	// business logic — the parent owns `open` and the confirm/cancel actions.
 	import { m, type Locale } from '../core/i18n';
+	import ModalBackdrop from './ModalBackdrop.svelte';
 
 	interface Props {
 		open: boolean;
@@ -50,27 +51,10 @@
 </script>
 
 {#if open}
-	<!-- Backdrop: click outside the card cancels; Escape cancels. -->
-	<div
-		class="pad-backdrop fixed inset-0 z-50 grid place-items-center p-4"
-		role="presentation"
-		onclick={(e) => {
-			if (e.target === e.currentTarget) onCancel();
-		}}
-		onkeydown={(e) => {
-			if (e.key === 'Escape') {
-				e.preventDefault();
-				onCancel();
-			}
-		}}
-	>
+	<ModalBackdrop onClose={onCancel} ariaRole="dialog" ariaLabel={title}>
 		<!-- Card -->
 		<div
 			class="text-pad-text pad-panel-bg border-pad-accent/40 w-full max-w-sm rounded-lg border p-5 shadow-pad-panel"
-			role="dialog"
-			aria-modal="true"
-			aria-label={title}
-			tabindex="-1"
 		>
 			<h2 class="text-pad-accent m-0 mb-2 text-base font-semibold">{title}</h2>
 			<p class="text-pad-text/85 mb-5 text-sm leading-relaxed">{body}</p>
@@ -92,5 +76,5 @@
 				</button>
 			</div>
 		</div>
-	</div>
+	</ModalBackdrop>
 {/if}

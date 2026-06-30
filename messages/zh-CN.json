@@ -85,7 +85,6 @@
 	"opt_intro_between": "在某一行上，然后按你想绑定的按键 / 鼠标按钮。点击按键标签的",
 	"opt_intro_after_unbind": "以解除绑定。更改实时生效——只需重新加载 xCloud 标签页。",
 	"opt_unmapped_warning": "部分控制项尚未映射——请绑定下方每个操作以实现完整覆盖。",
-	"opt_conflict_reassigned": "已将 {input} 从 {control} 重新分配",
 	"opt_control_fallback": "另一个控制项",
 	"opt_add": "＋ 添加",
 	"opt_capture_input": "按下输入…（Esc 取消）",
