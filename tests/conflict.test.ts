@@ -17,14 +17,14 @@ describe('validateBindPlan global-collision', () => {
 		const s = baseState();
 		const globals: Globals = s.globals; // toggle F8 / help F9
 		const draft = draftFrom(s, { ...s.profiles[0].bindings, F8: { t: 'b', i: 0 } });
-		const issues = validateBindPlan(s, globals, draft);
+		const issues = validateBindPlan(globals, draft);
 		expect(issues).toContainEqual({ kind: 'global-collision', inputId: 'F8', comboKind: 'toggle' });
 	});
 
 	it('flags an inputId equal to the help combo code (F9) as comboKind help', () => {
 		const s = baseState();
 		const draft = draftFrom(s, { ...s.profiles[0].bindings, F9: { t: 'b', i: 1 } });
-		const issues = validateBindPlan(s, s.globals, draft);
+		const issues = validateBindPlan(s.globals, draft);
 		expect(issues).toContainEqual({ kind: 'global-collision', inputId: 'F9', comboKind: 'help' });
 	});
 });
@@ -35,13 +35,13 @@ describe('validateBindPlan unmapped', () => {
 		const bindings = { ...s.profiles[0].bindings };
 		delete bindings.Space; // Space is the sole input for btn.a (b:0)
 		const draft = draftFrom(s, bindings);
-		const issues = validateBindPlan(s, s.globals, draft);
+		const issues = validateBindPlan(s.globals, draft);
 		expect(issues).toContainEqual({ kind: 'unmapped', actionKey: 'b:0' });
 	});
 
 	it('yields no unmapped issues for a fully-bound default profile', () => {
 		const s = baseState();
-		const issues = validateBindPlan(s, s.globals, s.profiles[0]);
+		const issues = validateBindPlan(s.globals, s.profiles[0]);
 		expect(issues.some((i) => i.kind === 'unmapped')).toBe(false);
 	});
 });
@@ -51,7 +51,7 @@ describe('validateBindPlan invariants', () => {
 		const s = baseState();
 		const bindings: Bindings = { ...s.profiles[0].bindings, F8: { t: 'b', i: 0 } };
 		delete bindings.Space;
-		const issues = validateBindPlan(s, s.globals, draftFrom(s, bindings));
+		const issues = validateBindPlan(s.globals, draftFrom(s, bindings));
 		expect(issues.some((i) => i.kind === 'in-profile')).toBe(false);
 	});
 });

@@ -218,6 +218,12 @@ describe('session helpers', () => {
 		expect(await readTabProfile(7)).toBeNull();
 	});
 
+	it('reads a garbage session value back as null (shape guard)', async () => {
+		const { readTabProfile } = await loadStorage();
+		sessionStore['tab:9'] = { productId: 5, slug: [], profileId: null };
+		expect(await readTabProfile(9)).toBeNull();
+	});
+
 	it('setSessionAccessLevel calls the spy with TRUSTED_AND_UNTRUSTED_CONTEXTS', async () => {
 		const { setSessionAccessLevel } = await loadStorage();
 		await setSessionAccessLevel();

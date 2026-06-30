@@ -13,6 +13,7 @@ import {
 	resolveProfileId,
 	setGameDefault,
 	setGlobalDefault,
+	updateProfile,
 	upsertSeenGame,
 } from '../src/core/profiles';
 import type { ProfilesState } from '../src/core/profiles';
@@ -184,16 +185,51 @@ describe('deleteProfile', () => {
 		expect(next.globalDefaultProfileId).toBe(next.profiles[0].id);
 	});
 
-	it('reassigns gameDefaults pointing at the deleted id', () => {
-		let s = twoProfileState();
+	it('prunes gameDefaults pointing at the deleted id (falls through to global default)', () => {
+		let s = twoProfileState(); // global default 'a'
 		s = setGameDefault(s, 'GAME1', 'a');
 		const next = deleteProfile(s, 'a');
-		expect(next.gameDefaults.GAME1).toBe(next.profiles[0].id);
+		// The dangling entry is pruned, not reassigned.
+		expect('GAME1' in next.gameDefaults).toBe(false);
+		// Resolution now falls through to the (reassigned) global default.
+		expect(resolveProfileId(next, 'GAME1', null)).toBe(next.globalDefaultProfileId);
 	});
 
 	it('is a no-op for unknown ids', () => {
 		const s = twoProfileState();
 		expect(deleteProfile(s, 'ghost')).toBe(s);
+	});
+});
+
+describe('updateProfile', () => {
+	it('patches fields, bumps updatedAt, and re-normalizes/clamps', async () => {
+		const s = twoProfileState();
+		const before = s.profiles[1].updatedAt;
+		await new Promise((r) => setTimeout(r, 2));
+		const next = updateProfile(s, 'b', { sensitivity: 999, invertY: true });
+		const b = next.profiles.find((p) => p.id === 'b')!;
+		expect(b.sensitivity).toBe(0.05); // clamped through normalizeConfig
+		expect(b.invertY).toBe(true);
+		expect(b.updatedAt).toBeGreaterThanOrEqual(before);
+	});
+
+	it('patches a name and dedupes it against existing names', () => {
+		const s = twoProfileState();
+		const next = updateProfile(s, 'b', { name: 'Alpha' }); // collides with 'a'
+		expect(next.profiles.find((p) => p.id === 'b')!.name).toBe('Alpha 2');
+	});
+
+	it('is a no-op for unknown ids (state normalized but otherwise unchanged)', () => {
+		const s = twoProfileState();
+		const next = updateProfile(s, 'ghost', { sensitivity: 999 });
+		expect(next.profiles).toEqual(s.profiles);
+	});
+
+	it('does not mutate its input', () => {
+		const s = twoProfileState();
+		const snapshot = structuredClone(s);
+		updateProfile(s, 'a', { smoothing: 0.5, lockPointerOnClick: true });
+		expect(s).toEqual(snapshot);
 	});
 });
 

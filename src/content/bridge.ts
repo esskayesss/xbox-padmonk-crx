@@ -19,7 +19,7 @@ import {
 	readProfilesState,
 	writeProfilesState,
 } from '../shared/profiles-storage';
-import { projectProfileConfig, resolveProfileId } from '../core/profiles';
+import { projectProfileConfig, resolveProfileId, updateProfile } from '../core/profiles';
 import type { ProfilesState } from '../core/profiles';
 import type { Action, Config } from '../core/types';
 
@@ -87,20 +87,6 @@ function postState(state: ProfilesState): void {
 	post(projectProfileConfig(state, activeProfileId));
 }
 
-/** Replace the active profile's fields immutably (bumps updatedAt). */
-function patchActiveProfile(
-	state: ProfilesState,
-	patch: Partial<ProfilesState['profiles'][number]>,
-): ProfilesState {
-	const now = Date.now();
-	return {
-		...state,
-		profiles: state.profiles.map((p) =>
-			p.id === activeProfileId ? { ...p, ...patch, updatedAt: now } : p,
-		),
-	};
-}
-
 /** Persist a new state, re-project + post, and keep module state in sync. */
 function persistState(next: ProfilesState): void {
 	pstate = next;
@@ -136,9 +122,10 @@ window.addEventListener('message', (e) => {
 	}
 	if (d.__padmonk === 'bind' && typeof d.inputId === 'string' && isAction(d.action)) {
 		if (!pstate) return;
-		const active = pstate.profiles.find((p) => p.id === activeProfileId) ?? pstate.profiles[0];
+		const active = pstate.profiles.find((p) => p.id === activeProfileId);
+		if (!active) return;
 		persistState(
-			patchActiveProfile(pstate, {
+			updateProfile(pstate, activeProfileId, {
 				bindings: { ...active.bindings, [d.inputId]: { ...d.action } },
 			}),
 		);
@@ -146,10 +133,11 @@ window.addEventListener('message', (e) => {
 	}
 	if (d.__padmonk === 'unbind' && typeof d.inputId === 'string') {
 		if (!pstate) return;
-		const active = pstate.profiles.find((p) => p.id === activeProfileId) ?? pstate.profiles[0];
+		const active = pstate.profiles.find((p) => p.id === activeProfileId);
+		if (!active) return;
 		const bindings = { ...active.bindings };
 		delete bindings[d.inputId];
-		persistState(patchActiveProfile(pstate, { bindings }));
+		persistState(updateProfile(pstate, activeProfileId, { bindings }));
 	}
 });
 

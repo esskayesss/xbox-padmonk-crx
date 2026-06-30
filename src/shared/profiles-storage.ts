@@ -145,7 +145,9 @@ export async function readProfilesState(): Promise<ProfilesState> {
 		// One-shot cleanup: the legacy key must never be re-read after this.
 		await rawRemove(chrome.storage.local, LEGACY_KEY);
 		await rawRemove(chrome.storage.sync, LEGACY_KEY);
-		return normalizeProfilesState(migrated);
+		// migrateLegacyConfig already returns a normalized state and writeProfilesState
+		// normalized it again on persist; a third pass here would be redundant.
+		return migrated;
 	}
 
 	// 3. True first run: nothing stored anywhere. Synthesize a Default profile and
@@ -233,6 +235,25 @@ function tabKey(tabId: number): string {
 }
 
 /**
+ * Validate an untrusted session value into a TabProfile, or null when the shape
+ * is wrong. The session store is writable by untrusted contexts, so every read
+ * is validated here (productId/slug are string|null, profileId is a string) to
+ * keep the module's "all reads validated" discipline honest.
+ */
+function normalizeTabProfile(raw: unknown): TabProfile | null {
+	if (typeof raw !== 'object' || raw === null) return null;
+	const r = raw as Record<string, unknown>;
+	const productIdOk = r.productId === null || typeof r.productId === 'string';
+	const slugOk = r.slug === null || typeof r.slug === 'string';
+	if (!productIdOk || !slugOk || typeof r.profileId !== 'string') return null;
+	return {
+		productId: r.productId as string | null,
+		slug: r.slug as string | null,
+		profileId: r.profileId,
+	};
+}
+
+/**
  * Read a tab's ephemeral profile record. Resolves null when the entry is absent
  * OR the session area is unavailable (MAIN world / vitest).
  */
@@ -240,7 +261,7 @@ export async function readTabProfile(tabId: number): Promise<TabProfile | null> 
 	const area = sessionArea();
 	if (area == null) return null;
 	const raw = await rawGet(area, tabKey(tabId));
-	return raw != null ? (raw as TabProfile) : null;
+	return normalizeTabProfile(raw);
 }
 
 /**
@@ -301,7 +322,7 @@ export function onTabProfileChanged(
 			if (!key.startsWith(TAB_PREFIX)) continue;
 			const tabId = Number(key.slice(TAB_PREFIX.length));
 			if (!Number.isFinite(tabId)) continue;
-			const next = change.newValue != null ? (change.newValue as TabProfile) : null;
+			const next = normalizeTabProfile(change.newValue);
 			cb(tabId, next);
 		}
 	};

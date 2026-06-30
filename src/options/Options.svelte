@@ -24,6 +24,7 @@
 		normalizeProfilesState,
 		projectProfileConfig,
 		resolveProfileId,
+		updateProfile,
 		type ProfilesState,
 	} from '../core/profiles';
 	import { comboFromEvent, comboLabel } from '../core/combos';
@@ -124,8 +125,8 @@
 		const snap = $state.snapshot(config);
 		const id = activeProfileId || resolveProfileId(pstate, null, null);
 		activeProfileId = id;
-		const now = Date.now();
-		const next: ProfilesState = {
+		// Globals split out; per-profile fields collapse into one updateProfile patch.
+		const withGlobals: ProfilesState = {
 			...pstate,
 			globals: {
 				...pstate.globals,
@@ -134,22 +135,16 @@
 				toggleCombo: snap.toggleCombo,
 				helpCombo: snap.helpCombo,
 			},
-			profiles: pstate.profiles.map((p) =>
-				p.id === id
-					? {
-							...p,
-							bindings: snap.bindings,
-							sensitivity: snap.sensitivity,
-							smoothing: snap.smoothing,
-							aimMin: snap.aimMin,
-							aimCurve: snap.aimCurve,
-							invertY: snap.invertY,
-							lockPointerOnClick: snap.lockPointerOnClick,
-							updatedAt: now,
-						}
-					: p,
-			),
 		};
+		const next = updateProfile(withGlobals, id, {
+			bindings: snap.bindings,
+			sensitivity: snap.sensitivity,
+			smoothing: snap.smoothing,
+			aimMin: snap.aimMin,
+			aimCurve: snap.aimCurve,
+			invertY: snap.invertY,
+			lockPointerOnClick: snap.lockPointerOnClick,
+		});
 		pstate = next;
 		void writeProfilesState(next);
 		flashSaved();

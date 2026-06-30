@@ -431,13 +431,43 @@ export function addProfile(state: ProfilesState, profile: Profile): ProfilesStat
 	return normalizeProfilesState({ ...state, profiles: [...state.profiles, profile] });
 }
 
-/** Rename a profile (no-op for unknown ids after normalize); bumps updatedAt. */
-export function renameProfile(state: ProfilesState, id: string, name: string): ProfilesState {
+/**
+ * Patch one profile's mutable fields immutably. Maps the profile list and, for
+ * the profile whose id matches, shallow-merges `patch` over it and bumps
+ * `updatedAt` to now; every other profile is left untouched. The result is run
+ * through `normalizeProfilesState` so the patched fields are cleaned (bindings
+ * validated, aim clamped, name deduped) — a caller can't smuggle a broken shape
+ * in through a patch. An unknown id is a no-op: the state is returned normalized
+ * but otherwise unchanged. This is the single generic mutator the popup/options/
+ * bridge consumers route their per-profile edits through.
+ */
+export function updateProfile(
+	state: ProfilesState,
+	id: string,
+	patch: Partial<
+		Pick<
+			Profile,
+			| 'name'
+			| 'bindings'
+			| 'sensitivity'
+			| 'smoothing'
+			| 'aimMin'
+			| 'aimCurve'
+			| 'invertY'
+			| 'lockPointerOnClick'
+		>
+	>,
+): ProfilesState {
 	const now = Date.now();
 	const profiles = state.profiles.map((p) =>
-		p.id === id ? { ...p, name: sanitizeName(name), updatedAt: now } : p,
+		p.id === id ? { ...p, ...patch, updatedAt: now } : p,
 	);
 	return normalizeProfilesState({ ...state, profiles });
+}
+
+/** Rename a profile (no-op for unknown ids after normalize); bumps updatedAt. */
+export function renameProfile(state: ProfilesState, id: string, name: string): ProfilesState {
+	return updateProfile(state, id, { name });
 }
 
 /**
@@ -452,9 +482,10 @@ export function duplicateProfile(state: ProfilesState, id: string): ProfilesStat
 
 /**
  * Delete a profile. GUARD: refuses to delete the last profile (returns the state
- * unchanged) so the >= 1 invariant holds. Reassigns `globalDefaultProfileId` and
- * any `gameDefaults` pointing at the deleted id to profiles[0] of the resulting
- * list. No-op when the id is unknown.
+ * unchanged) so the >= 1 invariant holds. Reassigns `globalDefaultProfileId` to
+ * profiles[0] of the resulting list when it pointed at the deleted id, and
+ * PRUNES any `gameDefaults` entries that pointed at the deleted id (so those
+ * games fall through to the global default per §5). No-op when the id is unknown.
  */
 export function deleteProfile(state: ProfilesState, id: string): ProfilesState {
 	if (state.profiles.length <= 1) return state;
@@ -463,9 +494,11 @@ export function deleteProfile(state: ProfilesState, id: string): ProfilesState {
 	const fallbackId = remaining[0].id;
 	const globalDefaultProfileId =
 		state.globalDefaultProfileId === id ? fallbackId : state.globalDefaultProfileId;
+	// PRUNE gameDefaults pointing at the deleted id (don't reassign): resolution
+	// then falls through to the global default per the §5 precedence model.
 	const gameDefaults: Record<string, string> = {};
 	for (const [k, v] of Object.entries(state.gameDefaults)) {
-		gameDefaults[k] = v === id ? fallbackId : v;
+		if (v !== id) gameDefaults[k] = v;
 	}
 	return normalizeProfilesState({
 		...state,
@@ -569,16 +602,11 @@ export function migrateLegacyConfig(rawConfig: unknown): ProfilesState {
  *
  * NOTE: the third kind, 'in-profile', is NOT produced here. It is an EDIT-time
  * concern surfaced by `inProfileConflict` when the user assigns one inputId that
- * is already bound to a different action. The `state` parameter is accepted for
- * call-site symmetry (both save buttons pass the live state) and reserved for
- * future cross-profile checks; current rules need only the drafts.
+ * is already bound to a different action. Save-Global cross-profile validation is
+ * the caller's job (loop the profiles, call this per-profile); the function only
+ * needs the two drafts.
  */
-export function validateBindPlan(
-	state: ProfilesState,
-	draftGlobals: Globals,
-	draftProfile: Profile,
-): BindIssue[] {
-	void state;
+export function validateBindPlan(draftGlobals: Globals, draftProfile: Profile): BindIssue[] {
 	const issues: BindIssue[] = [];
 
 	// Global-shortcut collisions (blocking).

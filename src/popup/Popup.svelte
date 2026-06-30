@@ -18,6 +18,7 @@
 		normalizeProfilesState,
 		projectProfileConfig,
 		resolveProfileId,
+		updateProfile,
 		type ProfilesState,
 	} from '../core/profiles';
 	import {
@@ -63,8 +64,11 @@
 		void (async () => {
 			const state = await readProfilesState();
 			pstate = state;
-			// Resolve this tab's profile: prefer storage.session, else global default.
-			let id = resolveProfileId(state, null, null);
+			// Seed the active profile SYNCHRONOUSLY (global default) before any await so
+			// early slider/toggle edits target a real profile, not ''. The tab-aware
+			// block below refines it if this tab has a TabProfile override.
+			activeProfileId = resolveProfileId(state, null, null);
+			let id = activeProfileId;
 			try {
 				const tabs = await chrome.tabs?.query?.({ active: true, currentWindow: true });
 				const tabId = tabs?.[0]?.id;
@@ -91,13 +95,7 @@
 
 	/** Patch the active profile's per-profile fields (bumps updatedAt). */
 	function patchActiveProfile(patch: Partial<ProfilesState['profiles'][number]>): void {
-		const now = Date.now();
-		pstate = {
-			...pstate,
-			profiles: pstate.profiles.map((p) =>
-				p.id === activeProfileId ? { ...p, ...patch, updatedAt: now } : p,
-			),
-		};
+		pstate = updateProfile(pstate, activeProfileId, patch);
 	}
 
 	function queueSave(): void {
